@@ -7,8 +7,10 @@ local defaultDB = {
 	GuildBankFrame = {save = true},
 }
 
+local debug = false
 local function Debug(...)
-	 	local s = "BlizzMove:"
+	if debug then
+		local s = "BlizzMove:"
 		for i=1,select("#", ...) do
 			local x = select(i, ...)
 			if(type(x)== "string" or type(x)== "number")then
@@ -22,6 +24,7 @@ local function Debug(...)
 			end
 		end
 		DEFAULT_CHAT_FRAME:AddMessage(s)
+	end
 end
 
 local function SetMoveHandler(frameToMove, handler)
@@ -32,7 +35,6 @@ local function SetMoveHandler(frameToMove, handler)
 		handler = frameToMove
 	end
 	
-	-- only fullscreen frames will have settings, do not add settings for other frames
 	local settings = db[frameToMove:GetName()]
 	if not settings then
 		settings = defaultDB[frameToMove:GetName()]
@@ -54,38 +56,47 @@ local function SetMoveHandler(frameToMove, handler)
 			frameToMove:StopMovingOrSizing()
 			frameToMove.isMoving = false
 			if settings then
-					--for i=1,frameToMove:GetNumPoints() do
-						settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
-					--end
+					settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
 			end
 		end
 	)
 
 	--override frame position according to settings when shown
-	if settings and settings.save then
-		local showhandler = frameToMove:GetScript("OnShow") 
-		frameToMove:SetScript("OnShow", 
-			function(self, ...)
-				if settings.point then
-					self:ClearAllPoints()
-					self:SetPoint(settings.point,settings.relativeTo, settings.relativePoint, settings.xOfs,settings.yOfs)
-					local scale = settings.scale
-					if scale then 
-						self:SetScale(scale)
-					end
-				end
-				if showhandler then
-					showhandler(self, ...)
+	frameToMove:HookScript("OnShow", 
+		function(self, ...)
+			if settings and settings.point and settings.save then
+				self:ClearAllPoints()
+				self:SetPoint(settings.point,settings.relativeTo, settings.relativePoint, settings.xOfs,settings.yOfs)
+				local scale = settings.scale
+				if scale then 
+					self:SetScale(scale)
 				end
 			end
-		)
-	end
+		end
+	)			
 	
-	handler:EnableMouseWheel(true) 
-	scrollhandler = handler:GetScript("OnMouseWheel") 
-	handler:SetScript("OnMouseWheel", 
+	--hook OnMouseUp 
+	handler:HookScript("OnMouseUp", 
 		function(self, ...)
-			if(IsControlKeyDown()) then
+			if IsControlKeyDown() then
+				--toggle save
+				if settings then
+					settings.save = not settings.save
+				else
+					db[frameToMove:GetName()] = {}
+					settings = db[frameToMove:GetName()]
+					settings.save = true
+					settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
+				end
+			end
+		end
+	)
+	
+	--hook Scroll for setting scale
+	handler:EnableMouseWheel(true) 
+	handler:HookScript("OnMouseWheel", 
+		function(self, ...)
+			if IsControlKeyDown() then
 				local scale = frameToMove:GetScale() or 1
 				if(arg1 == 1) then --scale up 
 					scale = scale +.1
@@ -104,16 +115,13 @@ local function SetMoveHandler(frameToMove, handler)
 				end
 				--Debug("scroll", arg1, scale, frameToMove:GetScale())
 			end
-			if scrollhandler then
-				scrollhandler(self, ...)
-			end
 		end
 	)
 end
 
 local frame = CreateFrame("Frame")
 local function OnEvent()
-	--Debug(event, arg1, arg2)
+	Debug(event, arg1, arg2)
 	if event == "PLAYER_ENTERING_WORLD" then
 		frame:RegisterEvent("ADDON_LOADED") --for blizz lod addons
 		db = BlizzMoveDB or defaultDB
@@ -140,6 +148,9 @@ local function OnEvent()
 		SetMoveHandler(ClassTrainerFrame)
 		SetMoveHandler(MailFrame)
 		SetMoveHandler(BankFrame)
+		SetMoveHandler(VideoOptionsFrame)
+		SetMoveHandler(InterfaceOptionsFrame)
+		SetMoveHandler(LootFrame)
 	-- blizzard lod addons
 	elseif arg1 == "Blizzard_InspectUI" then
 		SetMoveHandler(InspectFrame)
@@ -163,6 +174,8 @@ local function OnEvent()
 		SetMoveHandler(CalendarFrame)
 	elseif arg1 == "Blizzard_TrainerUI" then
 		SetMoveHandler(ClassTrainerFrame)
+	elseif arg1 == "Blizzard_BindingUI" then
+		SetMoveHandler(KeyBindingFrame)
 	end
 end
 
@@ -199,12 +212,12 @@ function BlizzMove:Toggle(handler)
 		if handler:GetScript("OnDragStart") then
 			handler:SetScript("OnDragStart", nil)
 		else
-			Debug("Frame: ", frameToMove:GetName(), " to move with handler ", handler:GetName())
+			DEFAULT_CHAT_FRAME:AddMessage("Frame: ", frameToMove:GetName(), " to move with handler ", handler:GetName())
 			SetMoveHandler(frameToMove, handler)
 		end
 	
 	else
-		Debug("Error parent not found.")
+		DEFAULT_CHAT_FRAME:AddMessage("Error parent not found.")
 	end
 	
 end
