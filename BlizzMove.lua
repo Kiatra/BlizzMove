@@ -7,23 +7,84 @@ local defaultDB = {
 	GuildBankFrame = {save = true},
 }
 
+
+local function Print(...)
+	local s = "BlizzMove:"
+	for i=1,select("#", ...) do
+		local x = select(i, ...)
+		if(type(x)== "string" or type(x)== "number")then
+				s = strjoin(" ",s,x)
+		else
+			if(x)then
+				s = strjoin(" ",s,"not a string")
+			else
+				s = strjoin(" ",s,"nil")
+			end
+		end
+	end
+	DEFAULT_CHAT_FRAME:AddMessage(s)
+end
+
 local debug = false
 local function Debug(...)
 	if debug then
-		local s = "BlizzMove:"
-		for i=1,select("#", ...) do
-			local x = select(i, ...)
-			if(type(x)== "string" or type(x)== "number")then
-					s = s.." "..x
-			else
-				if(x)then
-					s = s.." ".."not a string"
-				else
-					s = s.." ".."nil"
-				end
+		Print(...)
+	end
+end
+
+local function OnShow(self, ...)
+	local settings = self.settings
+	if settings and settings.point and settings.save then
+		self:ClearAllPoints()
+		self:SetPoint(settings.point,settings.relativeTo, settings.relativePoint, settings.xOfs,settings.yOfs)
+		local scale = settings.scale
+		if scale then 
+			self:SetScale(scale)
+		end
+	end
+end
+
+local function OnMouseWheel(self, ...)
+	if IsControlKeyDown() then
+		local scale = frameToMove:GetScale() or 1
+		if(arg1 == 1) then --scale up 
+			scale = scale +.1
+			if(scale > 1.5) then 
+				scale = 1.5
+			end
+		else -- scale down
+			scale = scale -.1
+			if(scale < .5) then
+				scale = .5
 			end
 		end
-		DEFAULT_CHAT_FRAME:AddMessage(s)
+		frameToMove:SetScale(scale)
+		if self.settings then
+			self.settings.scale = scale
+		end
+		--Debug("scroll", arg1, scale, frameToMove:GetScale())
+	end
+end
+
+local function OnMouseUp(self, ...)
+	local frameToMove = self.frameToMove
+	if IsControlKeyDown() then
+		local settings = frameToMove.settings
+		--toggle save
+		if settings then
+			settings.save = not settings.save
+			if settings.save then
+				Print("Frame: ",frameToMove:GetName()," will be saved.")
+			else
+				Print("Frame: ",frameToMove:GetName()," will be not saved.")
+			end
+		else
+			Print("Frame: ",frameToMove:GetName()," will be saved.")
+			db[frameToMove:GetName()] = {}
+			settings = db[frameToMove:GetName()]
+			settings.save = true
+			settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
+		end
 	end
 end
 
@@ -40,6 +101,8 @@ local function SetMoveHandler(frameToMove, handler)
 		settings = defaultDB[frameToMove:GetName()]
 		db[frameToMove:GetName()] = settings
 	end
+	frameToMove.settings = settings
+	handler.frameToMove = frameToMove
 	
 	frameToMove:EnableMouse(true)
 	frameToMove:SetMovable(true) 
@@ -62,61 +125,14 @@ local function SetMoveHandler(frameToMove, handler)
 	)
 
 	--override frame position according to settings when shown
-	frameToMove:HookScript("OnShow", 
-		function(self, ...)
-			if settings and settings.point and settings.save then
-				self:ClearAllPoints()
-				self:SetPoint(settings.point,settings.relativeTo, settings.relativePoint, settings.xOfs,settings.yOfs)
-				local scale = settings.scale
-				if scale then 
-					self:SetScale(scale)
-				end
-			end
-		end
-	)			
+	frameToMove:HookScript("OnShow", OnShow)			
 	
 	--hook OnMouseUp 
-	handler:HookScript("OnMouseUp", 
-		function(self, ...)
-			if IsControlKeyDown() then
-				--toggle save
-				if settings then
-					settings.save = not settings.save
-				else
-					db[frameToMove:GetName()] = {}
-					settings = db[frameToMove:GetName()]
-					settings.save = true
-					settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
-				end
-			end
-		end
-	)
+	handler:HookScript("OnMouseUp", OnMouseUp)
 	
 	--hook Scroll for setting scale
 	handler:EnableMouseWheel(true) 
-	handler:HookScript("OnMouseWheel", 
-		function(self, ...)
-			if IsControlKeyDown() then
-				local scale = frameToMove:GetScale() or 1
-				if(arg1 == 1) then --scale up 
-					scale = scale +.1
-					if(scale > 1.5) then 
-						scale = 1.5
-					end
-				else -- scale down
-					scale = scale -.1
-					if(scale < .5) then
-						scale = .5
-					end
-				end
-				frameToMove:SetScale(scale)
-				if settings then
-					settings.scale = scale
-				end
-				--Debug("scroll", arg1, scale, frameToMove:GetScale())
-			end
-		end
-	)
+	handler:HookScript("OnMouseWheel",OnMouseWheel)
 end
 
 local frame = CreateFrame("Frame")
@@ -211,13 +227,14 @@ function BlizzMove:Toggle(handler)
 	if handler and frameToMove then
 		if handler:GetScript("OnDragStart") then
 			handler:SetScript("OnDragStart", nil)
+			Print("Frame: ",frameToMove:GetName()," locked.")
 		else
-			DEFAULT_CHAT_FRAME:AddMessage("Frame: ", frameToMove:GetName(), " to move with handler ", handler:GetName())
+			Print("Frame: ",frameToMove:GetName()," to move with handler ",handler:GetName())
 			SetMoveHandler(frameToMove, handler)
 		end
 	
 	else
-		DEFAULT_CHAT_FRAME:AddMessage("Error parent not found.")
+		Print("Error parent not found.")
 	end
 	
 end
