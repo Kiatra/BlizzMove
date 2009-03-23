@@ -1,5 +1,8 @@
 ﻿-- BlizzMmove, move the blizzard frames by yess
-local db
+db = nil
+local frame = CreateFrame("Frame")
+local optionPanel = nil
+
 local defaultDB = { 
 	AchievementFrame = {save = true},
 	CalendarFrame = {save = true},
@@ -7,20 +10,11 @@ local defaultDB = {
 	GuildBankFrame = {save = true},
 }
 
-
 local function Print(...)
 	local s = "BlizzMove:"
 	for i=1,select("#", ...) do
 		local x = select(i, ...)
-		if(type(x)== "string" or type(x)== "number")then
-				s = strjoin(" ",s,x)
-		else
-			if(x)then
-				s = strjoin(" ",s,"not a string")
-			else
-				s = strjoin(" ",s,"nil")
-			end
-		end
+		s = strjoin(" ",s,tostring(x))
 	end
 	DEFAULT_CHAT_FRAME:AddMessage(s)
 end
@@ -44,8 +38,10 @@ local function OnShow(self, ...)
 	end
 end
 
+
 local function OnMouseWheel(self, ...)
 	if IsControlKeyDown() then
+		local frameToMove = self.frameToMove
 		local scale = frameToMove:GetScale() or 1
 		if(arg1 == 1) then --scale up 
 			scale = scale +.1
@@ -63,6 +59,31 @@ local function OnMouseWheel(self, ...)
 			self.settings.scale = scale
 		end
 		--Debug("scroll", arg1, scale, frameToMove:GetScale())
+	end
+end
+
+local function OnDragStart(self)
+	local frameToMove = self.frameToMove
+	local settings = frameToMove.settings
+	if settings and not settings.default then -- set defaults 
+		settings.default = {}
+		local def = settings.default
+		def.point, def.relativeTo , def.relativePoint, def.xOfs, def.yOfs = frameToMove:GetPoint()
+		if def.relativeTo then
+			def.relativeTo = def.relativeTo:GetName()
+		end
+	end
+	frameToMove:StartMoving()
+	frameToMove.isMoving = true
+end
+
+local function OnDragStop(self)
+	local frameToMove = self.frameToMove
+	local settings = frameToMove.settings
+	frameToMove:StopMovingOrSizing()
+	frameToMove.isMoving = false
+	if settings then
+			settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
 	end
 end
 
@@ -84,6 +105,10 @@ local function OnMouseUp(self, ...)
 			settings = db[frameToMove:GetName()]
 			settings.save = true
 			settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
+			if settings.relativeTo then
+			settings.relativeTo = settings.relativeTo:GetName()
+			end
+			frameToMove.settings = settings
 		end
 	end
 end
@@ -98,7 +123,7 @@ local function SetMoveHandler(frameToMove, handler)
 	
 	local settings = db[frameToMove:GetName()]
 	if not settings then
-		settings = defaultDB[frameToMove:GetName()]
+		settings = defaultDB[frameToMove:GetName()] or {}
 		db[frameToMove:GetName()] = settings
 	end
 	frameToMove.settings = settings
@@ -108,21 +133,8 @@ local function SetMoveHandler(frameToMove, handler)
 	frameToMove:SetMovable(true) 
 	handler:RegisterForDrag("LeftButton");
 	
-	handler:SetScript("OnDragStart", 
-		function()
-			frameToMove:StartMoving()
-			frameToMove.isMoving = true
-		end
-	)
-	handler:SetScript("OnDragStop", 
-		function()
-			frameToMove:StopMovingOrSizing()
-			frameToMove.isMoving = false
-			if settings then
-					settings.point, settings.relativeTo, settings.relativePoint, settings.xOfs, settings.yOfs = frameToMove:GetPoint()
-			end
-		end
-	)
+	handler:SetScript("OnDragStart", OnDragStart)
+	handler:SetScript("OnDragStop", OnDragStop)
 
 	--override frame position according to settings when shown
 	frameToMove:HookScript("OnShow", OnShow)			
@@ -135,7 +147,48 @@ local function SetMoveHandler(frameToMove, handler)
 	handler:HookScript("OnMouseWheel",OnMouseWheel)
 end
 
-local frame = CreateFrame("Frame")
+local function resetDB()
+	for k, v in pairs(db) do
+		local f = _G[k]
+		if f and f.settings then
+			f.settings.save = false
+			local def = f.settings.default
+			if def then
+				f:ClearAllPoints()
+				f:SetPoint(def.point,def.relativeTo, def.relativePoint, def.xOfs,def.yOfs)
+			end
+		end
+	end
+end
+
+local function createOptionPanel()
+	optionPanel = CreateFrame( "Frame", "BlizzMovePanel", UIParent );
+	local title = optionPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	title:SetPoint("TOPLEFT", 16, -16)
+	local version = GetAddOnMetadata("BlizzMove","Version") or ""
+	title:SetText("BlizzMove "..version)
+
+	local subtitle = optionPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+	subtitle:SetHeight(35)
+	subtitle:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -8)
+	subtitle:SetPoint("RIGHT", optionPanel, -32, 0)
+	subtitle:SetNonSpaceWrap(true)
+	subtitle:SetJustifyH("LEFT")
+	subtitle:SetJustifyV("TOP")
+
+	subtitle:SetText("Click the button below to reset all frames.")
+
+	local button = CreateFrame("Button",nil,optionPanel, "UIPanelButtonTemplate")
+	button:SetWidth(100)
+	button:SetHeight(30)
+	button:SetScript("OnClick", resetDB)
+	button:SetText("Reset")
+	button:SetPoint("TOPLEFT",20,-60)
+	
+	optionPanel.name = "BlizzMove";
+	InterfaceOptions_AddCategory(optionPanel);
+end
+
 local function OnEvent()
 	Debug(event, arg1, arg2)
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -167,6 +220,12 @@ local function OnEvent()
 		SetMoveHandler(VideoOptionsFrame)
 		SetMoveHandler(InterfaceOptionsFrame)
 		SetMoveHandler(LootFrame)
+		
+		InterfaceOptionsFrame:HookScript("OnShow", function() 
+			if not optionPanel then
+				createOptionPanel()
+			end
+		end)
 	-- blizzard lod addons
 	elseif arg1 == "Blizzard_InspectUI" then
 		SetMoveHandler(InspectFrame)
