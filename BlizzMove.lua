@@ -208,7 +208,6 @@ local function OnEvent()
 		SetMoveHandler(LFGParentFrame)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
-		SetMoveHandler(AuctionFrame)
 		SetMoveHandler(DressUpFrame)
 		SetMoveHandler(QuestFrame)
 		SetMoveHandler(MerchantFrame)
@@ -251,6 +250,8 @@ local function OnEvent()
 		SetMoveHandler(ClassTrainerFrame)
 	elseif arg1 == "Blizzard_BindingUI" then
 		SetMoveHandler(KeyBindingFrame)
+	elseif arg1 == "Blizzard_AuctionUI" then
+		SetMoveHandler(AuctionFrame)
 	end
 end
 

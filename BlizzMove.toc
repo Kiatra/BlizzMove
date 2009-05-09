@@ -1,8 +1,8 @@
-﻿## Interface: 30000
+﻿## Interface: 30100
 ## Title: Blizzmove
 ## Notes: Move thoes blizzard windows by yess
 ## Author: yess
-## Version: 0.4
+## Version: 0.3
 ## X-Email: yessica@fantasymail.de
 
 ## SavedVariables: BlizzMoveDB
