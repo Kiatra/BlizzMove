@@ -225,6 +225,7 @@ local function OnEvent()
 				createOptionPanel()
 			end
 		end)
+		frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	-- blizzard lod addons
 	elseif arg1 == "Blizzard_InspectUI" then
 		SetMoveHandler(InspectFrame)
