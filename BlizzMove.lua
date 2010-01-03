@@ -129,6 +129,8 @@ local function SetMoveHandler(frameToMove, handler)
 	frameToMove.settings = settings
 	handler.frameToMove = frameToMove
 	
+	if not frameToMove.EnableMouse then return end
+	
 	frameToMove:EnableMouse(true)
 	frameToMove:SetMovable(true) 
 	handler:RegisterForDrag("LeftButton");
@@ -219,6 +221,7 @@ local function OnEvent()
 		SetMoveHandler(VideoOptionsFrame)
 		SetMoveHandler(InterfaceOptionsFrame)
 		SetMoveHandler(LootFrame)
+		SetMoveHandler(LFDParentFrame)
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
 			if not optionPanel then
