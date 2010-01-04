@@ -222,6 +222,7 @@ local function OnEvent()
 		SetMoveHandler(InterfaceOptionsFrame)
 		SetMoveHandler(LootFrame)
 		SetMoveHandler(LFDParentFrame)
+		SetMoveHandler(LFRParentFrame)
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
 			if not optionPanel then
