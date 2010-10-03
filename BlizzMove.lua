@@ -191,7 +191,7 @@ local function createOptionPanel()
 	InterfaceOptions_AddCategory(optionPanel);
 end
 
-local function OnEvent()
+local function OnEvent(self, event, arg1, arg2)
 	Debug(event, arg1, arg2)
 	if event == "PLAYER_ENTERING_WORLD" then
 		frame:RegisterEvent("ADDON_LOADED") --for blizz lod addons
@@ -206,7 +206,14 @@ local function OnEvent()
 		SetMoveHandler(SpellBookFrame)
 		SetMoveHandler(QuestLogFrame)
 		SetMoveHandler(FriendsFrame)
-		SetMoveHandler(PVPParentFrame)
+		--SetMoveHandler(PVPParentFrame)
+		
+		if PVPParentFrame then
+			SetMoveHandler(PVPParentFrame,PVPFrame)
+		else
+			SetMoveHandler(PVPFrame)
+		end
+		
 		SetMoveHandler(LFGParentFrame)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
