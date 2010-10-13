@@ -265,6 +265,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(KeyBindingFrame)
 	elseif arg1 == "Blizzard_AuctionUI" then
 		SetMoveHandler(AuctionFrame)
+	elseif arg1 == "Blizzard_GuildUI" then
+		SetMoveHandler(GuildFrame)
 	end
 end
 
