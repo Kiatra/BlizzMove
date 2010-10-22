@@ -39,11 +39,11 @@ local function OnShow(self, ...)
 end
 
 
-local function OnMouseWheel(self, ...)
+local function OnMouseWheel(self, value, ...)
 	if IsControlKeyDown() then
 		local frameToMove = self.frameToMove
 		local scale = frameToMove:GetScale() or 1
-		if(arg1 == 1) then --scale up 
+		if(value == 1) then --scale up 
 			scale = scale +.1
 			if(scale > 1.5) then 
 				scale = 1.5
