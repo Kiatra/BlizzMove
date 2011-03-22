@@ -19,12 +19,16 @@ local function Print(...)
 	DEFAULT_CHAT_FRAME:AddMessage(s)
 end
 
-local debug = false
+--@debug@
 local function Debug(...)
-	if debug then
-		Print(...)
+	local s = "Blizzmove Debug:"
+	for i=1,select("#", ...) do
+		local x = select(i, ...)
+		s = strjoin(" ",s,tostring(x))
 	end
+	DEFAULT_CHAT_FRAME:AddMessage(s)
 end
+--@end-debug@
 
 local function OnShow(self, ...)
 	local settings = self.settings
@@ -192,7 +196,7 @@ local function createOptionPanel()
 end
 
 local function OnEvent(self, event, arg1, arg2)
-	Debug(event, arg1, arg2)
+	--Debug(event, arg1, arg2)
 	if event == "PLAYER_ENTERING_WORLD" then
 		frame:RegisterEvent("ADDON_LOADED") --for blizz lod addons
 		db = BlizzMoveDB or defaultDB
@@ -206,7 +210,6 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(SpellBookFrame)
 		SetMoveHandler(QuestLogFrame)
 		SetMoveHandler(FriendsFrame)
-		--SetMoveHandler(PVPParentFrame)
 		
 		if PVPParentFrame then
 			SetMoveHandler(PVPParentFrame,PVPFrame)
@@ -214,6 +217,7 @@ local function OnEvent(self, event, arg1, arg2)
 			SetMoveHandler(PVPFrame)
 		end
 		
+		SetMoveHandler(WatchFrame,WatchFrameHeader)
 		SetMoveHandler(LFGParentFrame)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
@@ -267,6 +271,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(AuctionFrame)
 	elseif arg1 == "Blizzard_GuildUI" then
 		SetMoveHandler(GuildFrame)
+	elseif arg1 == "Blizzard_LookingForGuildUI" then
+		SetMoveHandler(LookingForGuildFrame)
 	end
 end
 
