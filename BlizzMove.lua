@@ -217,7 +217,7 @@ local function OnEvent(self, event, arg1, arg2)
 			SetMoveHandler(PVPFrame)
 		end
 		
-		SetMoveHandler(WatchFrame,WatchFrameHeader)
+		--SetMoveHandler(WatchFrame,WatchFrameHeader)
 		SetMoveHandler(LFGParentFrame)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
