@@ -1,9 +1,9 @@
-﻿## Interface: 40000
+﻿## Interface: 40100
 ## Title: Blizzmove
 ## Notes: Move those blizzard windows
 ## Author: yess
 ## Version: @project-version@
-## X-Email: yessica@fantasymail.de
+## X-Email: starfire@fantasymail.de
 
 ## SavedVariables: BlizzMoveDB
 

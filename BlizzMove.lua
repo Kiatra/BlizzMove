@@ -273,6 +273,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(GuildFrame)
 	elseif arg1 == "Blizzard_LookingForGuildUI" then
 		SetMoveHandler(LookingForGuildFrame)
+	elseif arg1 == "Blizzard_ArchaeologyUI" then
+		SetMoveHandler(ArchaeologyFrame)
 	end
 end
 
