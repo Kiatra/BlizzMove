@@ -210,6 +210,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(SpellBookFrame)
 		SetMoveHandler(QuestLogFrame)
 		SetMoveHandler(FriendsFrame)
+		SetMoveHandler(WorldMapFrame,WorldMapTitleButton)
+		if EncounterJournal then SetMoveHandler(EncounterJournal) end
 		
 		if PVPParentFrame then
 			SetMoveHandler(PVPParentFrame,PVPFrame)
