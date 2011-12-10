@@ -211,7 +211,6 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(QuestLogFrame)
 		SetMoveHandler(FriendsFrame)
 		SetMoveHandler(WorldMapFrame,WorldMapTitleButton)
-		if EncounterJournal then SetMoveHandler(EncounterJournal) end
 		
 		if PVPParentFrame then
 			SetMoveHandler(PVPParentFrame,PVPFrame)
@@ -237,6 +236,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(LFDParentFrame)
 		SetMoveHandler(LFRParentFrame)
 		SetMoveHandler(TradeFrame)
+		
+		if RaidParentFrame then SetMoveHandler(RaidParentFrame) end
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
 			if not optionPanel then
@@ -281,6 +282,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(VoidStorageFrame)
 	elseif arg1 == "Blizzard_ItemAlterationUI" then
 		SetMoveHandler(TransmogrifyFrame)
+	elseif arg1 == "Blizzard_EncounterJournal" then
+		SetMoveHandler(EncounterJournal)
 	elseif arg1 == "Blizzard_ArchaeologyUI" then
 		SetMoveHandler(ArchaeologyFrame)
 	end
