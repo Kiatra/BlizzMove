@@ -284,6 +284,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(TransmogrifyFrame)
 	elseif arg1 == "Blizzard_EncounterJournal" then
 		SetMoveHandler(EncounterJournal)
+	elseif arg1 == "Blizzard_PetJournal" then
+		SetMoveHandler(PetJournalParent)
 	elseif arg1 == "Blizzard_ArchaeologyUI" then
 		SetMoveHandler(ArchaeologyFrame)
 	end
