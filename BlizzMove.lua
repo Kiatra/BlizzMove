@@ -197,8 +197,7 @@ end
 
 local function OnEvent(self, event, arg1, arg2)
 	--Debug(event, arg1, arg2)
-	if event == "PLAYER_ENTERING_WORLD" then
-		frame:RegisterEvent("ADDON_LOADED") --for blizz lod addons
+	if event == "ADDON_LOADED" and arg1 == "BlizzMove" then
 		db = BlizzMoveDB or defaultDB
 		BlizzMoveDB = db
 		--SetMoveHandler(frameToMove, handlerFrame)
@@ -219,7 +218,7 @@ local function OnEvent(self, event, arg1, arg2)
 		end
 		
 		--SetMoveHandler(WatchFrame,WatchFrameHeader)
-		SetMoveHandler(LFGParentFrame)
+		SetMoveHandler(PVEFrame)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
 		SetMoveHandler(DressUpFrame)
@@ -292,7 +291,7 @@ local function OnEvent(self, event, arg1, arg2)
 end
 
 frame:SetScript("OnEvent", OnEvent)
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("ADDON_LOADED")
 
 
 ----------------------------------------------------------
