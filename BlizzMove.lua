@@ -196,9 +196,10 @@ local function createOptionPanel()
 end
 
 local function OnEvent(self, event, arg1, arg2)
-	--Debug(event, arg1, arg2)
-	if event == "ADDON_LOADED" and arg1 == "BlizzMove" then
+	if not db then
 		db = BlizzMoveDB or defaultDB
+	end
+	if event == "ADDON_LOADED" and arg1 == "BlizzMove" then
 		BlizzMoveDB = db
 		--SetMoveHandler(frameToMove, handlerFrame)
 		SetMoveHandler(CharacterFrame,PaperDollFrame)
