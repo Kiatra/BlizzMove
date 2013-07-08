@@ -236,6 +236,7 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(LFDParentFrame)
 		SetMoveHandler(LFRParentFrame)
 		SetMoveHandler(TradeFrame)
+		SetMoveHandler(ColorPickerFrame)
 		
 		if RaidParentFrame then SetMoveHandler(RaidParentFrame) end
 		
