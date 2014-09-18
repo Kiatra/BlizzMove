@@ -212,12 +212,6 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(FriendsFrame)
 		SetMoveHandler(WorldMapFrame,WorldMapTitleButton)
 		
-		if PVPParentFrame then
-			SetMoveHandler(PVPParentFrame,PVPFrame)
-		else
-			SetMoveHandler(PVPFrame)
-		end
-		
 		--SetMoveHandler(WatchFrame,WatchFrameHeader)
 		SetMoveHandler(PVEFrame)
 		SetMoveHandler(GameMenuFrame)
@@ -226,19 +220,14 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(QuestFrame)
 		SetMoveHandler(MerchantFrame)
 		SetMoveHandler(HelpFrame)
-		SetMoveHandler(PlayerTalentFrame)
-		SetMoveHandler(ClassTrainerFrame)
 		SetMoveHandler(MailFrame)
 		SetMoveHandler(BankFrame)
 		SetMoveHandler(VideoOptionsFrame)
 		SetMoveHandler(InterfaceOptionsFrame)
 		SetMoveHandler(LootFrame)
-		SetMoveHandler(LFDParentFrame)
-		SetMoveHandler(LFRParentFrame)
+		SetMoveHandler(RaidBrowserFrame)
 		SetMoveHandler(TradeFrame)
 		SetMoveHandler(ColorPickerFrame)
-		
-		if RaidParentFrame then SetMoveHandler(RaidParentFrame) end
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
 			if not optionPanel then
@@ -246,6 +235,7 @@ local function OnEvent(self, event, arg1, arg2)
 			end
 		end)
 		frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+
 	-- blizzard lod addons
 	elseif arg1 == "Blizzard_InspectUI" then
 		SetMoveHandler(InspectFrame)
@@ -274,7 +264,7 @@ local function OnEvent(self, event, arg1, arg2)
 	elseif arg1 == "Blizzard_AuctionUI" then
 		SetMoveHandler(AuctionFrame)
 	elseif arg1 == "Blizzard_GuildUI" then
-		SetMoveHandler(GuildFrame)
+		SetMoveHandler(GuildFrame, GuildFrame.TitleMouseover)
 	elseif arg1 == "Blizzard_LookingForGuildUI" then
 		SetMoveHandler(LookingForGuildFrame)
 	elseif arg1 == "Blizzard_ReforgingUI" then
@@ -289,6 +279,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(PetJournalParent)
 	elseif arg1 == "Blizzard_ArchaeologyUI" then
 		SetMoveHandler(ArchaeologyFrame)
+	elseif arg1 == "Blizzard_PVPUI" then
+        SetMoveHandler(PVPUIFrame)
 	end
 end
 
