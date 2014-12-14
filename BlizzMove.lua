@@ -243,6 +243,7 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(LootFrame)
 		SetMoveHandler(RaidBrowserFrame)
 		SetMoveHandler(TradeFrame)
+		SetMoveHandler(PVEFrame)
 		SetMoveHandler(ColorPickerFrame, createOwnHandlerFrame(ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame"))
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
