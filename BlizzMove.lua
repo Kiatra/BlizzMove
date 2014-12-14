@@ -19,24 +19,42 @@ local function Print(...)
 	DEFAULT_CHAT_FRAME:AddMessage(s)
 end
 
---@debug@
 local function Debug(...)
+--@debug@
 	local s = "Blizzmove Debug:"
 	for i=1,select("#", ...) do
 		local x = select(i, ...)
 		s = strjoin(" ",s,tostring(x))
 	end
 	DEFAULT_CHAT_FRAME:AddMessage(s)
-end
 --@end-debug@
+end
+
+local function createOwnHandlerFrame(frame, width, height, offX, offY, name)
+	local handler = CreateFrame("Frame", "BlizzMoveHandler"..name)
+	handler:SetWidth(width)
+	handler:SetHeight(height)
+	handler:SetParent(frame)
+	handler:EnableMouse(true)
+	handler:SetMovable(true) 
+	handler:SetPoint("TOPLEFT", frame ,"TOPLEFT", offX, offY)
+	--handler:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
+	--                                        edgeFile = nil, 
+	--                                        tile = true, tileSize = 16, edgeSize = 16, 
+	--                                        insets = { left = 0, right = 0, top = 0, bottom = 0 }})
+	--handler:SetBackdropColor(1,0,0,0.5)
+	return handler
+end
 
 local function OnShow(self, ...)
+	--Debug(self:GetName(), " settings:", settings)
 	local settings = self.settings
 	if settings and settings.point and settings.save then
 		self:ClearAllPoints()
 		self:SetPoint(settings.point,settings.relativeTo, settings.relativePoint, settings.xOfs,settings.yOfs)
 		local scale = settings.scale
 		if scale then 
+			--Debug("scale:", scale)
 			self:SetScale(scale)
 		end
 	end
@@ -211,9 +229,6 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(QuestLogFrame)
 		SetMoveHandler(FriendsFrame)
 		SetMoveHandler(WorldMapFrame,WorldMapTitleButton)
-		
-		--SetMoveHandler(WatchFrame,WatchFrameHeader)
-		SetMoveHandler(PVEFrame)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
 		SetMoveHandler(DressUpFrame)
@@ -221,13 +236,14 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(MerchantFrame)
 		SetMoveHandler(HelpFrame)
 		SetMoveHandler(MailFrame)
+		SetMoveHandler(MailFrame, SendMailFrame)
 		SetMoveHandler(BankFrame)
 		SetMoveHandler(VideoOptionsFrame)
 		SetMoveHandler(InterfaceOptionsFrame)
 		SetMoveHandler(LootFrame)
 		SetMoveHandler(RaidBrowserFrame)
 		SetMoveHandler(TradeFrame)
-		SetMoveHandler(ColorPickerFrame)
+		SetMoveHandler(ColorPickerFrame, createOwnHandlerFrame(ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame"))
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
 			if not optionPanel then
@@ -280,7 +296,9 @@ local function OnEvent(self, event, arg1, arg2)
 	elseif arg1 == "Blizzard_ArchaeologyUI" then
 		SetMoveHandler(ArchaeologyFrame)
 	elseif arg1 == "Blizzard_PVPUI" then
-        SetMoveHandler(PVPUIFrame)
+        SetMoveHandler(PVEFrame, PVPUIFrame)
+	elseif arg1 == "Blizzard_GarrisonUI" then
+        SetMoveHandler(GarrisonMissionFrame)
 	end
 end
 
