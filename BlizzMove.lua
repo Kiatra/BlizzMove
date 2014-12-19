@@ -300,6 +300,7 @@ local function OnEvent(self, event, arg1, arg2)
         SetMoveHandler(PVEFrame, PVPUIFrame)
 	elseif arg1 == "Blizzard_GarrisonUI" then
         SetMoveHandler(GarrisonMissionFrame)
+		SetMoveHandler(GarrisonCapacitiveDisplayFrame)
 	end
 end
 
