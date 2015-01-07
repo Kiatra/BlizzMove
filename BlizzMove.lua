@@ -40,7 +40,7 @@ local function createOwnHandlerFrame(frame, width, height, offX, offY, name)
 	handler:SetPoint("TOPLEFT", frame ,"TOPLEFT", offX, offY)
 	--handler:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", 
 	--                                        edgeFile = nil, 
-	--                                        tile = true, tileSize = 16, edgeSize = 16, 
+	--                                       tile = true, tileSize = 16, edgeSize = 16, 
 	--                                        insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	--handler:SetBackdropColor(1,0,0,0.5)
 	return handler
@@ -134,6 +134,15 @@ local function OnMouseUp(self, ...)
 		end
 	end
 end
+
+local function createQuestTrackerHandler()
+	local handler = CreateFrame("Frame", "BlizzMoveHandlerQuestTracker")
+	handler:SetParent(ObjectiveTrackerFrame)
+	handler:EnableMouse(true)
+	handler:SetMovable(true) 
+	handler:SetAllPoints(ObjectiveTrackerFrame.HeaderMenu.Title)
+	return handler
+end	
 
 local function SetMoveHandler(frameToMove, handler)
 	if not frameToMove then
@@ -244,7 +253,17 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(RaidBrowserFrame)
 		SetMoveHandler(TradeFrame)
 		SetMoveHandler(PVEFrame)
+		
 		SetMoveHandler(ColorPickerFrame, createOwnHandlerFrame(ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame"))
+		
+		SetMoveHandler(ObjectiveTrackerFrame, createQuestTrackerHandler())
+		ObjectiveTrackerFrame.BlocksFrame.QuestHeader:EnableMouse(true)
+		SetMoveHandler(ObjectiveTrackerFrame, ObjectiveTrackerFrame.BlocksFrame.QuestHeader)
+		ObjectiveTrackerFrame.BlocksFrame.AchievementHeader:EnableMouse(true)
+		SetMoveHandler(ObjectiveTrackerFrame, ObjectiveTrackerFrame.BlocksFrame.AchievementHeader)
+		ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader:EnableMouse(true)
+		SetMoveHandler(ObjectiveTrackerFrame, ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader)
+
 		
 		InterfaceOptionsFrame:HookScript("OnShow", function() 
 			if not optionPanel then
@@ -301,6 +320,7 @@ local function OnEvent(self, event, arg1, arg2)
 	elseif arg1 == "Blizzard_GarrisonUI" then
         SetMoveHandler(GarrisonMissionFrame)
 		SetMoveHandler(GarrisonCapacitiveDisplayFrame)
+		SetMoveHandler(GarrisonLandingPage)
 	end
 end
 
