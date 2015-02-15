@@ -162,7 +162,7 @@ local function SetMoveHandler(frameToMove, handler)
 	
 	if not frameToMove.EnableMouse then return end
 	
-	frameToMove:EnableMouse(true)
+	--frameToMove:EnableMouse(true)
 	frameToMove:SetMovable(true) 
 	handler:RegisterForDrag("LeftButton");
 	
