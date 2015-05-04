@@ -241,7 +241,7 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(GameMenuFrame)
 		SetMoveHandler(GossipFrame)
 		SetMoveHandler(DressUpFrame)
-		SetMoveHandler(QuestFrame)
+		--SetMoveHandler(QuestFrame)
 		SetMoveHandler(MerchantFrame)
 		SetMoveHandler(HelpFrame)
 		SetMoveHandler(MailFrame)
@@ -253,7 +253,7 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(RaidBrowserFrame)
 		SetMoveHandler(TradeFrame)
 		SetMoveHandler(PVEFrame)
-		
+		SetMoveHandler(QuestLogPopupDetailFrame)
 		SetMoveHandler(ColorPickerFrame, createOwnHandlerFrame(ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame"))
 		
 		SetMoveHandler(ObjectiveTrackerFrame, createQuestTrackerHandler())
@@ -311,8 +311,8 @@ local function OnEvent(self, event, arg1, arg2)
 		SetMoveHandler(TransmogrifyFrame)
 	elseif arg1 == "Blizzard_EncounterJournal" then
 		SetMoveHandler(EncounterJournal)
-	elseif arg1 == "Blizzard_PetJournal" then
-		SetMoveHandler(PetJournalParent)
+	elseif arg1 == "Blizzard_Collections" then
+		SetMoveHandler(CollectionsJournal)
 	elseif arg1 == "Blizzard_ArchaeologyUI" then
 		SetMoveHandler(ArchaeologyFrame)
 	elseif arg1 == "Blizzard_PVPUI" then
