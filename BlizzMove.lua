@@ -222,6 +222,8 @@ local function createOptionPanel()
 	InterfaceOptions_AddCategory(optionPanel);
 end
 
+createOptionPanel()
+
 local function OnEvent(self, event, arg1, arg2)
 	if not db then
 		db = BlizzMoveDB or defaultDB
