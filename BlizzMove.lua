@@ -11,7 +11,7 @@ movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpF
 movableFramesWithHandler = { ["CharacterFrame"] =  { PaperDollFrame, fff, ReputationFrame, TokenFrame , PetPaperDollFrameCompanionFrame, ReputationFrame } ,
 	["WorldMapFrame"] = { WorldMapTitleButton }, ["MailFrame"] = {SendMailFrame},
 	["ColorPickerFrame"] = { createOwnHandleFrame(self, ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame") },
-	["ObjectiveTrackerFrame"] = { createQuestTrackerHandle() , ObjectiveTrackerFrame.BlocksFrame.QuestHeader, ObjectiveTrackerFrame.BlocksFrame.AchievementHeader, ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader},
+	--["ObjectiveTrackerFrame"] = { createQuestTrackerHandle() , ObjectiveTrackerFrame.BlocksFrame.QuestHeader, ObjectiveTrackerFrame.BlocksFrame.AchievementHeader, ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader},
 }
 
 movableFramesLoD = {

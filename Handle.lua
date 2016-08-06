@@ -17,6 +17,7 @@ function BlizzMove:createOwnHandleFrame(frame, width, height, offX, offY, name)
 	                                        insets = { left = 0, right = 0, top = 0, bottom = 0 }})
 	handler:SetBackdropColor(1,0,0,0.5)
 	--]]
+	--handler:SetFrameStrata("MEDIUM")
 	return handler
 end
 
