@@ -1,7 +1,0 @@
-<!--@debug@-->
-<Bindings>
-	<Binding name="MOVEFRAME" description="Makes a frame moveable." header="BLIZZMOVE" category="ADDONS">
-		BlizzMove:Toggle()
-	</Binding>
-</Bindings>
-<!--@end-debug@-->
