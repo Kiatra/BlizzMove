@@ -14,7 +14,7 @@ movableFramesWithhandle = { ["CharacterFrame"] =  { PaperDollFrame, fff, Reputat
 }
 
 movableFramesLoD = {
-	["Blizzard_Collections"] = function() BlizzMove:SetMoveHandle(CollectionsJournal) end,
+	["Blizzard_Collections"] = function() BlizzMove:SetMoveHandle(CollectionsJournal); BlizzMove:SetMoveHandle(WardrobeFrame) end,
 	["Blizzard_InspectUI"] = function() BlizzMove:SetMoveHandle(InspectFrame) end,
 	["Blizzard_GuildBankUI"] = function() BlizzMove:SetMoveHandle(GuildBankFrame) end,
 	["Blizzard_TradeSkillUI"] = function() BlizzMove:SetMoveHandle(TradeSkillFrame) end,
@@ -51,7 +51,9 @@ function movableFramesLoD:BlizzMove()
 end
 
 local function ADDON_LOADED(self, event, addonName)
+--@debug@
 	--print(addonName)
+--@end-debug@
 	if movableFramesLoD[addonName] then movableFramesLoD[addonName]() end
 end
 
