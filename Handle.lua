@@ -35,6 +35,16 @@ local function OnDragStop(self)
 	frameToMove.isMoving = false
 end
 
+
+local function OnMouseWheel(self, vector, ...)
+	if not IsControlKeyDown() then return end
+	local scale = self.frameToMove:GetScale() or 1
+	scale = scale + .1 * vector
+	if scale > 1.5  then scale = 1.5
+	elseif scale < .5 then scale = .5 end
+	self.frameToMove:SetScale(scale)
+end
+
 function BlizzMove:CreateQuestTrackerHandle()
 	local handle = CreateFrame("Frame", "BlizzMovehandleQuestTracker")
 	handle:SetParent(ObjectiveTrackerFrame)
@@ -62,4 +72,6 @@ function BlizzMove:SetMoveHandle(frameToMove, handle)
 
 	handle:SetScript("OnDragStart", OnDragStart)
 	handle:SetScript("OnDragStop", OnDragStop)
+	handle:EnableMouseWheel(true)
+	handle:HookScript("OnMouseWheel",OnMouseWheel)
 end
