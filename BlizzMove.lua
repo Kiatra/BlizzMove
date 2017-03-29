@@ -36,6 +36,7 @@ movableFramesLoD = {
 	["Blizzard_ReforgingUI"] = function() BlizzMove:SetMoveHandle(ReforgingFrame, ReforgingFrameInvisibleButton) end,
 	["Blizzard_EncounterJournal"] = function() BlizzMove:SetMoveHandle(EncounterJournal, BlizzMove:CreateOwnHandleFrame(EncounterJournal, 775, 20, 0, 0, "EncounterJournal")) end,
 	["Blizzard_GarrisonUI"] = function() BlizzMove:SetMoveHandle(GarrisonMissionFrame); BlizzMove:SetMoveHandle(GarrisonCapacitiveDisplayFrame); BlizzMove:SetMoveHandle(GarrisonLandingPage) end,
+	["Blizzard_OrderHallUI"] = function() BlizzMove:SetMoveHandle(OrderHallMissionFrame) end,
 }
 
 function movableFramesLoD:BlizzMove()
@@ -52,7 +53,7 @@ end
 
 local function ADDON_LOADED(self, event, addonName)
 --@debug@
-	--print(addonName)
+	print(addonName)
 --@end-debug@
 	if movableFramesLoD[addonName] then movableFramesLoD[addonName]() end
 end
