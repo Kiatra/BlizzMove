@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 70200
 ## Title: Blizzmove
 ## Notes: Move those blizzard windows
 ## Author: yess
