@@ -54,7 +54,9 @@ function movableFramesLoD:BlizzMove()
 end
 
 local function ADDON_LOADED(self, event, addonName)
-	--print(addonName)
+	--@debug@
+ 	--print(addonName)
+  	--@end-debug@
 	if movableFramesLoD[addonName] then movableFramesLoD[addonName]() end
 end
 
