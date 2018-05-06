@@ -1,8 +1,8 @@
-﻿-- BlizzMmove, move the blizzard frames by yess
+-- BlizzMmove, move the blizzard frames by yess
 --if not _G.BlizzMove then BlizzMove = {} end
 local BlizzMove = _G.BlizzMove
 
-movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpFrame, SpellBookFrame,
+movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpFrame,
 	MerchantFrame, HelpFrame, MailFrame, BankFrame, VideoOptionsFrame, InterfaceOptionsFrame, PVEFrame,
 	LootFrame, RaidBrowserFrame, TradeFrame, TradeFrame, RaidBrowserFrame, QuestLogPopupDetailFrame, SUFWrapperFrame, TalkingHeadFrame
 }
@@ -10,6 +10,7 @@ movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpF
 movableFramesWithhandle = { ["CharacterFrame"] =  { PaperDollFrame, fff, ReputationFrame, TokenFrame , PetPaperDollFrameCompanionFrame, ReputationFrame } ,
 	["WorldMapFrame"] = { WorldMapTitleButton }, ["MailFrame"] = {SendMailFrame},
 	["ColorPickerFrame"] = { BlizzMove:CreateOwnHandleFrame(ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame") },
+	["SpellBookFrame"] = { BlizzMove:CreateOwnHandleFrame(SpellBookFrame, 445, 32, 85, 0, "SpellBookFrame") }
 	--["ObjectiveTrackerFrame"] = { createQuestTrackerHandle() , ObjectiveTrackerFrame.BlocksFrame.QuestHeader, ObjectiveTrackerFrame.BlocksFrame.AchievementHeader, ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader},
 }
 
@@ -30,13 +31,14 @@ movableFramesLoD = {
 	["Blizzard_AuctionUI"] = function() BlizzMove:SetMoveHandle(AuctionFrame) end,
 	["Blizzard_ArchaeologyUI"] = function() BlizzMove:SetMoveHandle(ArchaeologyFrame) end,
 	["Blizzard_LookingForGuildUI"] = function() BlizzMove:SetMoveHandle(LookingForGuildFrame) end,
-	["Blizzard_GlyphUI"] = function() BlizzMove:SetMoveHandle(SpellBookFrame, GlyphFrame) end,
+	--["Blizzard_GlyphUI"] = function() BlizzMove:SetMoveHandle(SpellBookFrame, BlizzMove:CreateOwnHandleFrame(SpellBookFrame, 775, 20, 0, 0, "SpellBookFrame")) end,
 	["Blizzard_AchievementUI"] = function() BlizzMove:SetMoveHandle(AchievementFrame, AchievementFrameHeader) end,
 	["Blizzard_GuildUI"] = function() BlizzMove:SetMoveHandle(GuildFrame, GuildFrame.TitleMouseover) end,
 	["Blizzard_ReforgingUI"] = function() BlizzMove:SetMoveHandle(ReforgingFrame, ReforgingFrameInvisibleButton) end,
 	["Blizzard_EncounterJournal"] = function() BlizzMove:SetMoveHandle(EncounterJournal, BlizzMove:CreateOwnHandleFrame(EncounterJournal, 775, 20, 0, 0, "EncounterJournal")) end,
 	["Blizzard_GarrisonUI"] = function() BlizzMove:SetMoveHandle(GarrisonMissionFrame); BlizzMove:SetMoveHandle(GarrisonCapacitiveDisplayFrame); BlizzMove:SetMoveHandle(GarrisonLandingPage) end,
 	["Blizzard_OrderHallUI"] = function() BlizzMove:SetMoveHandle(OrderHallMissionFrame) end,
+	["Blizzard_ArtifactUI"] = function() BlizzMove:SetMoveHandle(ArtifactRelicForgeFrame) end,
 }
 
 function movableFramesLoD:BlizzMove()
@@ -52,9 +54,7 @@ function movableFramesLoD:BlizzMove()
 end
 
 local function ADDON_LOADED(self, event, addonName)
---@debug@
 	print(addonName)
---@end-debug@
 	if movableFramesLoD[addonName] then movableFramesLoD[addonName]() end
 end
 
