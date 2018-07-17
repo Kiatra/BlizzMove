@@ -1,8 +1,7 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: Blizzmove
 ## Notes: Move those blizzard windows
 ## Author: yess
-## X-Email: yess@xan.de
 
 Handle.lua
 BlizzMove.lua
