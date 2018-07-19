@@ -4,13 +4,13 @@ local BlizzMove = _G.BlizzMove
 
 movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpFrame,
 	MerchantFrame, HelpFrame, MailFrame, BankFrame, VideoOptionsFrame, InterfaceOptionsFrame, PVEFrame,
-	LootFrame, RaidBrowserFrame, TradeFrame, TradeFrame, RaidBrowserFrame, QuestLogPopupDetailFrame, SUFWrapperFrame, TalkingHeadFrame
+	LootFrame, RaidBrowserFrame, TradeFrame, TradeFrame, RaidBrowserFrame, QuestLogPopupDetailFrame, SUFWrapperFrame, TalkingHeadFramem, WorldMapFrame
 }
 
 movableFramesWithhandle = { ["CharacterFrame"] =  { PaperDollFrame, fff, ReputationFrame, TokenFrame , PetPaperDollFrameCompanionFrame, ReputationFrame } ,
 	["WorldMapFrame"] = { WorldMapTitleButton }, ["MailFrame"] = {SendMailFrame},
 	["ColorPickerFrame"] = { BlizzMove:CreateOwnHandleFrame(ColorPickerFrame, 132, 32, 117, 8, "ColorPickerFrame") },
-	["SpellBookFrame"] = { BlizzMove:CreateOwnHandleFrame(SpellBookFrame, 445, 32, 85, 0, "SpellBookFrame") }
+	["SpellBookFrame"] = { BlizzMove:CreateOwnHandleFrame(SpellBookFrame, 445, 32, 85, 0, "SpellBookFrame") },
 	--["ObjectiveTrackerFrame"] = { createQuestTrackerHandle() , ObjectiveTrackerFrame.BlocksFrame.QuestHeader, ObjectiveTrackerFrame.BlocksFrame.AchievementHeader, ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader},
 }
 
