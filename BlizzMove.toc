@@ -2,6 +2,9 @@
 ## Title: Blizzmove
 ## Notes: Move those blizzard windows
 ## Author: yess
+## X-WoWI-ID: 23875
+## Version: @project-version@
+
 
 Handle.lua
 BlizzMove.lua
