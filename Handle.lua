@@ -59,8 +59,10 @@ function BlizzMove:CreateQuestTrackerHandle()
 end
 
 function BlizzMove:SetMoveHandle(frameToMove, handle)
-	if not frameToMove then
-		print("Expected frame got nil.")
+  if not frameToMove then
+		--@debug@
+	 	print("Expected frame got nil.")
+	  --@end-debug@
 		return
 	end
 	if not handle then handle = frameToMove end
