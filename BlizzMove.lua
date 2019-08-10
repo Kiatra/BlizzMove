@@ -1,11 +1,19 @@
 -- BlizzMmove, move the blizzard frames by yess
---if not _G.BlizzMove then BlizzMove = {} end
+
+-- Macrot to get the parent of a frame under the mouse curser:
+--/run f = GetMouseFocus(); if f then DEFAULT_CHAT_FRAME:AddMessage(f:GetParent():GetParent():GetName()) end
+--/run f = GetMouseFocus(); while f do DEFAULT_CHAT_FRAME:AddMessage(f:GetName()); f = f:GetParent() end
 local BlizzMove = _G.BlizzMove
 
-movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpFrame,
+movableFrames = { GameMenuFrame, QuestFrame, FriendsFrame, GossipFrame, DressUpFrame, AddonList,
 	MerchantFrame, HelpFrame, MailFrame, BankFrame, VideoOptionsFrame, InterfaceOptionsFrame, PVEFrame,
 	LootFrame, RaidBrowserFrame, TradeFrame, TradeFrame, RaidBrowserFrame, QuestLogPopupDetailFrame, SUFWrapperFrame, TalkingHeadFramem, WorldMapFrame
 }
+
+local _, _, _, tocversion = GetBuildInfo()
+if tocversion < 80200 then
+	table.insert(movableFrames, QuestLogFrame)
+end
 
 movableFramesWithhandle = { ["CharacterFrame"] =  { PaperDollFrame, fff, ReputationFrame, TokenFrame , PetPaperDollFrameCompanionFrame, ReputationFrame } ,
 	["WorldMapFrame"] = { WorldMapTitleButton }, ["MailFrame"] = {SendMailFrame},
@@ -15,6 +23,7 @@ movableFramesWithhandle = { ["CharacterFrame"] =  { PaperDollFrame, fff, Reputat
 }
 
 movableFramesLoD = {
+    ["Blizzard_AzeriteUI"] = function() BlizzMove:SetMoveHandle(AzeriteEmpoweredItemUI) end,
 	["Blizzard_Collections"] = function() BlizzMove:SetMoveHandle(CollectionsJournal); BlizzMove:SetMoveHandle(WardrobeFrame) end,
 	["Blizzard_InspectUI"] = function() BlizzMove:SetMoveHandle(InspectFrame) end,
 	["Blizzard_GuildBankUI"] = function() BlizzMove:SetMoveHandle(GuildBankFrame) end,
