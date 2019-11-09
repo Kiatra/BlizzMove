@@ -50,6 +50,8 @@ movableFramesLoD = {
   ["Blizzard_GarrisonUI"] = function() BlizzMove:SetMoveHandle(GarrisonMissionFrame); BlizzMove:SetMoveHandle(GarrisonCapacitiveDisplayFrame); BlizzMove:SetMoveHandle(GarrisonLandingPage) end,
   ["Blizzard_OrderHallUI"] = function() BlizzMove:SetMoveHandle(OrderHallMissionFrame) end,
   ["Blizzard_ArtifactUI"] = function() BlizzMove:SetMoveHandle(ArtifactRelicForgeFrame) end,
+  ["Blizzard_AzeriteUI"] = function() BlizzMove:SetMoveHandle(AzeriteEmpoweredItemUI) end,
+  ["Blizzard_AzeriteEssenceUI"] = function() BlizzMove:SetMoveHandle(AzeriteEssenceUI) end,
 }
 
 function movableFramesLoD:BlizzMove()
