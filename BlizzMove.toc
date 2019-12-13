@@ -3,7 +3,7 @@
 ## Notes: Move those blizzard windows
 ## Author: yess
 ## X-WoWI-ID: 23875
-## Version: @project-version@
+## Version: v1.9.2
 
 
 Handle.lua
