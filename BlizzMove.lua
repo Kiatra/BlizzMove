@@ -36,19 +36,16 @@ movableFrames = {
 }
 
 local tocversion = select(4, GetBuildInfo())
-if tocversion > 20000 then
+if tocversion >= 20000 then
 	table.insert(movableFrames, WorldMapFrame)
 end
 
 movableFramesWithHandle = {
 	["CharacterFrame"] =  { PaperDollFrame, PetPaperDollFrame, CompanionFrame, ReputationFrame, SkillFrame, HonorFrame, TokenFrame },
-	["ColorPickerFrame"] = { BlizzMove:CreateHandleFromPoints(ColorPickerFrame, ColorPickerFrame.Border.TopEdge) },
+	["ColorPickerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ColorPickerFrame, "CENTER", "TOPRIGHT", -8, -8) },
 	["MailFrame"] = { SendMailFrame },
-	["ObjectiveTrackerFrame"] = { BlizzMove:CreateHandleFromPoints(ObjectiveTrackerFrame, ObjectiveTrackerFrame.BlocksFrame) },
-}
-
-movableFramesCanMove = {
-	["ObjectiveTrackerFrame"] = function() return IsAltKeyDown() and IsShiftKeyDown() end,
+	["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
+	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
 }
 
 movableFramesLoadOnDemand = {
@@ -85,7 +82,7 @@ movableFramesLoadOnDemand = {
 	["Blizzard_ReforgingUI"] = function() BlizzMove:SetMoveHandle(ReforgingFrame) end,
 	["Blizzard_ScrappingMachineUI"] = function() BlizzMove:SetMoveHandle(ScrappingMachineFrame) end,
 --	["Blizzard_StoreUI"] = function() BlizzMove:SetMoveHandle(StoreFrame) end, -- Forbidden access.
-	["Blizzard_TalentUI"] = function() if tocversion > 20000 then BlizzMove:SetMoveHandle(PlayerTalentFrame) else BlizzMove:SetMoveHandle(TalentFrame) end end,
+	["Blizzard_TalentUI"] = function() if tocversion >= 50001 then BlizzMove:SetMoveHandle(PlayerTalentFrame) else BlizzMove:SetMoveHandle(TalentFrame) end end,
 	["Blizzard_TalkingHeadUI"] = function() BlizzMove:SetMoveHandle(TalkingHeadFrame) end,
 	["Blizzard_TradeSkillUI"] = function() BlizzMove:SetMoveHandle(TradeSkillFrame) end,
 	["Blizzard_TrainerUI"] = function() BlizzMove:SetMoveHandle(ClassTrainerFrame) end,

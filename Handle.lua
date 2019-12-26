@@ -1,18 +1,25 @@
 -- BlizzMove, move the blizzard frames by yess
 _G.BlizzMove = _G.BlizzMove or {}
 
-function BlizzMove:CreateHandleFromPoints(parentFrame, pointsFrame)
-	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle"..parentFrame:GetName())
-	handleFrame:SetParent(parentFrame)
-	handleFrame:SetAllPoints(pointsFrame)
-	handleFrame:SetMovable(true)
+function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoint, offX, offY)
+	if not parentFrame then return nil end
+
+	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle"..parentFrame:GetName(), parentFrame)
 	handleFrame:EnableMouse(true)
+	handleFrame:SetPoint(anchorPoint, parentFrame, relativePoint, offX, offY)
+	handleFrame:SetHeight(16)
+	handleFrame:SetWidth(16)
+
+	handleFrame.texture = handleFrame:CreateTexture()
+	handleFrame.texture:SetTexture("Interface/Buttons/UI-Panel-BiggerButton-Up")
+	handleFrame.texture:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+	handleFrame.texture:SetAllPoints()
 
 	return handleFrame
 end
 
 local function OnDragStart(self, button)
-	if self.moveFrame:IsMovable() and BlizzMove:CanFrameMove(self.moveFrame:GetName()) then
+	if self.moveFrame:IsMovable() then
 		self.moveFrame:StartMoving()
 	end
 end
@@ -41,23 +48,16 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	end
 
 	moveFrame:SetMovable(true)
+	moveFrame:SetClampedToScreen(true)
 
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
-	handleFrame:RegisterForDrag("LeftButton");
+	handleFrame:RegisterForDrag("LeftButton")
 
 	handleFrame:HookScript("OnDragStart", OnDragStart)
 	handleFrame:HookScript("OnDragStop", OnDragStop)
 	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
 
 	handleFrame:EnableMouseWheel(true)
-end
-
-function BlizzMove:CanFrameMove(moveFrameName)
-	if movableFramesCanMove[moveFrameName] then
-		return movableFramesCanMove[moveFrameName]()
-	end
-
-	return true
 end
