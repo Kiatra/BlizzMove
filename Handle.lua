@@ -1,82 +1,63 @@
 -- BlizzMove, move the blizzard frames by yess
-if not _G.BlizzMove then BlizzMove = {} end
-local BlizzMove = BlizzMove
+_G.BlizzMove = _G.BlizzMove or {}
 
-function BlizzMove:CreateOwnHandleFrame(frame, width, height, offX, offY, name)
-	local handle = CreateFrame("Frame", "BlizzMoveHandle"..name)
-	handle:SetWidth(width)
-	handle:SetHeight(height)
-	handle:SetParent(frame)
-	handle:EnableMouse(true)
-	handle:SetMovable(true)
-	handle:SetPoint("TOPLEFT", frame, "TOPLEFT", offX, offY)
-	--[[
-	handle:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-						tile = true,
-						tileSize = 16,
-						edgeSize = 16,
-						insets = { left = 0, right = 0, top = 0, bottom = 0 }})
-	handle:SetBackdropColor(1,0,0,0.5)
-	handle:SetFrameStrata("MEDIUM")
-	--]]
-	return handle
+function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoint, offX, offY)
+	if not parentFrame then return nil end
+
+	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle"..parentFrame:GetName(), parentFrame)
+	handleFrame:EnableMouse(true)
+	handleFrame:SetPoint(anchorPoint, parentFrame, relativePoint, offX, offY)
+	handleFrame:SetHeight(16)
+	handleFrame:SetWidth(16)
+
+	handleFrame.texture = handleFrame:CreateTexture()
+	handleFrame.texture:SetTexture("Interface/Buttons/UI-Panel-BiggerButton-Up")
+	handleFrame.texture:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+	handleFrame.texture:SetAllPoints()
+
+	return handleFrame
 end
 
-function BlizzMove:CreateQuestTrackerHandle()
-	local handle = CreateFrame("Frame", "BlizzMoveHandleQuestTracker")
-	handle:SetParent(ObjectiveTrackerFrame)
-	handle:EnableMouse(true)
-	handle:SetMovable(true)
-	handle:SetAllPoints(ObjectiveTrackerFrame.HeaderMenu.Title)
-
-	ObjectiveTrackerFrame.BlocksFrame.QuestHeader:EnableMouse(true)
-	ObjectiveTrackerFrame.BlocksFrame.AchievementHeader:EnableMouse(true)
-	ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader:EnableMouse(true)
-
-	return handle
-end
-
-local function OnDragStart(self)
-	if self.frameToMove:IsMovable() then
-		self.frameToMove:StartMoving()
-		self.frameToMove.isMoving = true
+local function OnDragStart(self, button)
+	if self.moveFrame:IsMovable() then
+		self.moveFrame:StartMoving()
 	end
 end
 
 local function OnDragStop(self)
-	self.frameToMove:StopMovingOrSizing()
-	self.frameToMove.isMoving = false
+	self.moveFrame:StopMovingOrSizing()
 end
 
-local function OnMouseWheel(self, vector, ...)
+local function OnMouseWheel(self, delta)
 	if not IsControlKeyDown() then return end
 
-	local scale = self.frameToMove:GetScale() or 1
+	local scale = self.moveFrame:GetScale() or 1
 
-	scale = scale + .1 * vector
+	scale = scale + .1 * delta
 
 	if scale > 1.5 then scale = 1.5 end
 	if scale < 0.5 then scale = 0.5 end
 
-	self.frameToMove:SetScale(scale)
+	self.moveFrame:SetScale(scale)
 end
 
-function BlizzMove:SetMoveHandle(frameToMove, handle)
-	if not frameToMove or not frameToMove.EnableMouse then
+function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
+	if not moveFrame or not moveFrame.EnableMouse then
 		print("Expected frame got nil, or has mouse disabled.")
 		return
 	end
 
-	frameToMove:SetMovable(true)
+	moveFrame:SetMovable(true)
+	moveFrame:SetClampedToScreen(true)
 
-	if not handle then handle = frameToMove end
+	if not handleFrame then handleFrame = moveFrame end
 
-	handle.frameToMove = frameToMove
-	handle:RegisterForDrag("LeftButton");
+	handleFrame.moveFrame = moveFrame
+	handleFrame:RegisterForDrag("LeftButton")
 
-	handle:HookScript("OnDragStart", OnDragStart)
-	handle:HookScript("OnDragStop", OnDragStop)
-	handle:HookScript("OnMouseWheel", OnMouseWheel)
+	handleFrame:HookScript("OnDragStart", OnDragStart)
+	handleFrame:HookScript("OnDragStop", OnDragStop)
+	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
 
-	handle:EnableMouseWheel(true)
+	handleFrame:EnableMouseWheel(true)
 end
