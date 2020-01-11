@@ -28,24 +28,38 @@ local function OnDragStop(self)
 	self.moveFrame:StopMovingOrSizing()
 end
 
+local function OnMouseWheelChildren(self, delta)
+	local childFrames, returnValue = { self:GetChildren() }, false
+
+	for _, childFrame in pairs(childFrames) do
+		local OnMouseWheel = childFrame:GetScript("OnMouseWheel")
+
+		if OnMouseWheel and MouseIsOver(childFrame) then
+			OnMouseWheel(childFrame, delta)
+			returnValue = true
+		end
+
+		OnMouseWheelChildren(childFrame, delta)
+	end
+
+	return returnValue
+end
+
 local function OnMouseWheel(self, delta)
-	if not IsControlKeyDown() then return end
+	if not OnMouseWheelChildren(self, delta) and IsControlKeyDown() then
+		local scale = self.moveFrame:GetScale() or 1
 
-	local scale = self.moveFrame:GetScale() or 1
+		scale = scale + .1 * delta
 
-	scale = scale + .1 * delta
+		if scale > 1.5 then scale = 1.5 end
+		if scale < 0.5 then scale = 0.5 end
 
-	if scale > 1.5 then scale = 1.5 end
-	if scale < 0.5 then scale = 0.5 end
-
-	self.moveFrame:SetScale(scale)
+		self.moveFrame:SetScale(scale)
+	end
 end
 
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
-	if not moveFrame or not moveFrame.EnableMouse then
-		print("Expected frame got nil, or has mouse disabled.")
-		return
-	end
+	if not moveFrame then print("Expected frame is nil") return end
 
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
