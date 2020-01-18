@@ -47,6 +47,9 @@ movableFrames = {
 local tocversion = select(4, GetBuildInfo())
 if tocversion >= 20000 then
 	table.insert(movableFrames, WorldMapFrame)
+else
+	table.insert(movableFrames, BattlefieldFrame)
+	table.insert(movableFrames, WorldStateScoreFrame)
 end
 
 movableFramesWithHandle = {
@@ -59,9 +62,11 @@ movableFramesWithHandle = {
 
 movableFramesLoadOnDemand = {
 	["Blizzard_AchievementUI"] = function() BlizzMove:SetMoveHandle(AchievementFrame, AchievementFrameHeader) end,
+	["Blizzard_AdventureMap"] = function() BlizzMove:SetMoveHandle(AdventureMapFrame) end,
 	["Blizzard_AlliedRacesUI"] = function() BlizzMove:SetMoveHandle(AlliedRacesFrame) end,
 	["Blizzard_ArchaeologyUI"] = function() BlizzMove:SetMoveHandle(ArchaeologyFrame) end,
 	["Blizzard_ArtifactUI"] = function() BlizzMove:SetMoveHandle(ArtifactFrame); BlizzMove:SetMoveHandle(ArtifactRelicForgeFrame) end,
+	["Blizzard_AuctionHouseUI"] = function() BlizzMove:SetMoveHandle(AuctionHouseFrame) end,
 	["Blizzard_AuctionUI"] = function() BlizzMove:SetMoveHandle(AuctionFrame) end,
 	["Blizzard_AzeriteEssenceUI"] = function() BlizzMove:SetMoveHandle(AzeriteEssenceUI) end,
 	["Blizzard_AzeriteRespecUI"] = function() BlizzMove:SetMoveHandle(AzeriteRespecFrame) end,
@@ -71,19 +76,23 @@ movableFramesLoadOnDemand = {
 	["Blizzard_BlackMarketUI"] = function() BlizzMove:SetMoveHandle(BlackMarketFrame) end,
 	["Blizzard_Calendar"] = function() BlizzMove:SetMoveHandle(CalendarFrame) end,
 	["Blizzard_ChallengesUI"] = function() BlizzMove:SetMoveHandle(ChallengesKeystoneFrame) end,
+	["Blizzard_Channels"] = function() BlizzMove:SetMoveHandle(ChannelFrame) end,
 	["Blizzard_Collections"] = function() BlizzMove:SetMoveHandle(CollectionsJournal); BlizzMove:SetMoveHandle(WardrobeFrame) end,
 	["Blizzard_Communities"] = function() BlizzMove:SetMoveHandle(ClubFinderGuildFinderFrame.RequestToJoinFrame); BlizzMove:SetMoveHandle(CommunitiesFrame); BlizzMove:SetMoveHandle(CommunitiesFrame.RecruitmentDialog); BlizzMove:SetMoveHandle(CommunitiesGuildLogFrame); BlizzMove:SetMoveHandle(CommunitiesGuildNewsFiltersFrame); BlizzMove:SetMoveHandle(CommunitiesGuildTextEditFrame) end,
+	["Blizzard_Contribution"] = function() BlizzMove:SetMoveHandle(ContributionCollectionFrame) end,
 	["Blizzard_DeathRecap"] = function() BlizzMove:SetMoveHandle(DeathRecapFrame) end,
 	["Blizzard_EncounterJournal"] = function() BlizzMove:SetMoveHandle(EncounterJournal) end,
 	["Blizzard_FlightMap"] = function() BlizzMove:SetMoveHandle(FlightMapFrame) end,
 	["Blizzard_GarrisonUI"] = function() BlizzMove:SetMoveHandle(GarrisonBuildingFrame); BlizzMove:SetMoveHandle(GarrisonCapacitiveDisplayFrame); BlizzMove:SetMoveHandle(GarrisonLandingPage); BlizzMove:SetMoveHandle(GarrisonMissionFrame); BlizzMove:SetMoveHandle(GarrisonMonumentFrame); BlizzMove:SetMoveHandle(GarrisonRecruiterFrame); BlizzMove:SetMoveHandle(GarrisonRecruitSelectFrame); BlizzMove:SetMoveHandle(GarrisonShipyardFrame); BlizzMove:SetMoveHandle(OrderHallMissionFrame); BlizzMove:SetMoveHandle(BFAMissionFrame); end,
 	["Blizzard_GlyphUI"] = function() BlizzMove:SetMoveHandle(GlyphFrame) end,
+	["Blizzard_GMSurveyUI"] = function() BlizzMove:SetMoveHandle(GMSurveyFrame) end,
 	["Blizzard_GuildBankUI"] = function() BlizzMove:SetMoveHandle(GuildBankFrame) end,
 	["Blizzard_GuildControlUI"] = function() BlizzMove:SetMoveHandle(GuildControlUI) end,
 	["Blizzard_GuildUI"] = function() BlizzMove:SetMoveHandle(GuildFrame) end,
 	["Blizzard_InspectUI"] = function() BlizzMove:SetMoveHandle(InspectFrame) end,
 	["Blizzard_IslandsQueueUI"] = function() BlizzMove:SetMoveHandle(IslandsQueueFrame) end,
 	["Blizzard_ItemAlterationUI"] = function() BlizzMove:SetMoveHandle(TransmogrifyFrame) end,
+	["Blizzard_ItemInteractionUI"] = function() BlizzMove:SetMoveHandle(ItemInteractionFrame) end,
 	["Blizzard_ItemSocketingUI"] = function() BlizzMove:SetMoveHandle(ItemSocketingFrame) end,
 	["Blizzard_ItemUpgradeUI"] = function() BlizzMove:SetMoveHandle(ItemUpgradeFrame) end,
 	["Blizzard_LookingForGuildUI"] = function() BlizzMove:SetMoveHandle(LookingForGuildFrame) end,
@@ -92,7 +101,7 @@ movableFramesLoadOnDemand = {
 	["Blizzard_OrderHallUI"] = function() BlizzMove:SetMoveHandle(OrderHallTalentFrame) end,
 	["Blizzard_PartyPoseUI"] = function() BlizzMove:SetMoveHandle(PartyPoseFrame) end,
 	["Blizzard_PVPMatch"] = function() BlizzMove:SetMoveHandle(PVPMatchResults) end,
-	["Blizzard_PVPUI"] = function() BlizzMove:SetMoveHandle(PVPMatchScoreboard); BlizzMove:SetMoveHandle(PVPUIFrame) end,
+	["Blizzard_PVPUI"] = function() BlizzMove:SetMoveHandle(PVPMatchScoreboard) end,
 	["Blizzard_ReforgingUI"] = function() BlizzMove:SetMoveHandle(ReforgingFrame) end,
 	["Blizzard_ScrappingMachineUI"] = function() BlizzMove:SetMoveHandle(ScrappingMachineFrame) end,
 --	["Blizzard_StoreUI"] = function() BlizzMove:SetMoveHandle(StoreFrame) end, -- Forbidden access.
