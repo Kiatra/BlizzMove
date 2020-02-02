@@ -19,25 +19,25 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 end
 
 function BlizzMove:GetFrameToMove(moveFrame)
-    local frameToMove = moveFrame
-    if IsAddOnLoaded("MoveAnything") then
-        local moverFrame = _G[moveFrame:GetName() .. 'Mover']
-        if moverFrame then
-            frameToMove = moverFrame
-        end
-    end
-    return frameToMove
+	local frameToMove = moveFrame
+	if IsAddOnLoaded("MoveAnything") then
+		local moverFrame = _G[moveFrame:GetName() .. 'Mover']
+		if moverFrame then
+			frameToMove = moverFrame
+		end
+	end
+	return frameToMove
 end
 
 local function OnDragStart(self, button)
-    local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 	if frameToMove:IsMovable() then
 		frameToMove:StartMoving()
 	end
 end
 
 local function OnDragStop(self)
-    local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 	frameToMove:StopMovingOrSizing()
 end
 
@@ -60,7 +60,7 @@ end
 
 local function OnMouseWheel(self, delta)
 	if not OnMouseWheelChildren(self, delta) and IsControlKeyDown() then
-        local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+		local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 		local scale = self.moveFrame:GetScale() or 1
 
 		scale = scale + 0.1 * delta
@@ -68,7 +68,7 @@ local function OnMouseWheel(self, delta)
 		if scale > 1.5 then scale = 1.5 end
 		if scale < 0.5 then scale = 0.5 end
 
-        self.moveFrame:SetScale(scale)
+		self.moveFrame:SetScale(scale)
 		frameToMove:SetScale(scale)
 	end
 end
