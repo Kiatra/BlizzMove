@@ -18,14 +18,27 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	return handleFrame
 end
 
+function BlizzMove:GetFrameToMove(moveFrame)
+	local frameToMove = moveFrame
+	if IsAddOnLoaded("MoveAnything") then
+		local moverFrame = _G[moveFrame:GetName() .. 'Mover']
+		if moverFrame then
+			frameToMove = moverFrame
+		end
+	end
+	return frameToMove
+end
+
 local function OnDragStart(self, button)
-	if self.moveFrame:IsMovable() then
-		self.moveFrame:StartMoving()
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	if frameToMove:IsMovable() then
+		frameToMove:StartMoving()
 	end
 end
 
 local function OnDragStop(self)
-	self.moveFrame:StopMovingOrSizing()
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	frameToMove:StopMovingOrSizing()
 end
 
 local function OnMouseWheelChildren(self, delta)
@@ -47,14 +60,16 @@ end
 
 local function OnMouseWheel(self, delta)
 	if not OnMouseWheelChildren(self, delta) and IsControlKeyDown() then
+		local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 		local scale = self.moveFrame:GetScale() or 1
 
-		scale = scale + .1 * delta
+		scale = scale + 0.1 * delta
 
 		if scale > 1.5 then scale = 1.5 end
 		if scale < 0.5 then scale = 0.5 end
 
 		self.moveFrame:SetScale(scale)
+		frameToMove:SetScale(scale)
 	end
 end
 
