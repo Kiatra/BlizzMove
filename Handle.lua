@@ -62,8 +62,7 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not moveFrame then print("Expected frame is nil") return end
 
 	moveFrame:SetMovable(true)
-	moveFrame:SetClampedToScreen(true)
-
+	
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
