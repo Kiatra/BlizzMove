@@ -56,9 +56,9 @@ movableFramesWithHandle = {
 	["CharacterFrame"] =  { PaperDollFrame, PetPaperDollFrame, CompanionFrame, ReputationFrame, SkillFrame, HonorFrame, TokenFrame },
 	["ColorPickerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ColorPickerFrame, "CENTER", "TOPRIGHT", -8, -8) },
 	["MailFrame"] = { SendMailFrame },
-	-- enabling ObjectiveTrackerFrame causes glitches see issue #15 
+	-- enabling ObjectiveTrackerFrame and QuestWatchFrame causes glitches see issue #15 
 	--["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
-	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
+	--["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
 }
 
 movableFramesLoadOnDemand = {
