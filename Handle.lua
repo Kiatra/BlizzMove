@@ -39,6 +39,9 @@ end
 local function OnDragStop(self)
 	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 	frameToMove:StopMovingOrSizing()
+	if self.moveFrame:GetName() == 'ObjectiveTrackerFrame' and WorldQuestTrackerAddon and WorldQuestTrackerAddon.RefreshTrackerAnchor then
+		WorldQuestTrackerAddon.RefreshTrackerAnchor()
+	end
 end
 
 local function OnMouseWheelChildren(self, delta)
