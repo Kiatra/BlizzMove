@@ -1,3 +1,5 @@
+[![BlizzMove on Discord](https://img.shields.io/badge/Discord-BlizzMove-blue.svg?style=flat)](https://discord.gg/CNgj8Ug)
+
 # BlizzMove
 World of Warcraft add-on to make certain windows movable via drag & drop.
 
@@ -9,6 +11,5 @@ World of Warcraft add-on to make certain windows movable via drag & drop.
 ## WoWInterface
 [https://www.wowinterface.com/downloads/info23875-BlizzMove.html](https://www.wowinterface.com/downloads/info23875-BlizzMove.html)
 
-## License
 
 
