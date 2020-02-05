@@ -1,7 +1,12 @@
-# BlizzMove
-World of Warcraft add-on to make certain windows movable via drag & drop.
+[![BlizzMove on Discord](https://img.shields.io/badge/Discord-BlizzMove-blue.svg?style=flat)](https://discord.gg/CNgj8Ug)
 
-<img src="https://github.com/zanony/BlizzMove/blob/master/header.gif" width="307" height="480">
+# BlizzMove
+World of Warcraft add-on to make the default windows movable via drag & drop.
+
+To temporarily move a window just click title of the window and drag it to where you want it.
+Use ctrl + scroll wheel over a window title to adjust the scale of the window for the current game session.
+
+[![Watch the video](https://img.youtube.com/vi/jPcpkQjCTZU/hqdefault.jpg)](https://youtu.be/jPcpkQjCTZU)
 
 ## CurseForge:
 [https://www.wowace.com/projects/blizzmove](https://www.wowace.com/projects/blizzmove)
@@ -9,6 +14,5 @@ World of Warcraft add-on to make certain windows movable via drag & drop.
 ## WoWInterface
 [https://www.wowinterface.com/downloads/info23875-BlizzMove.html](https://www.wowinterface.com/downloads/info23875-BlizzMove.html)
 
-## License
 
 
