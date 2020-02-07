@@ -84,18 +84,23 @@ local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX,
 end
 
 local function OnMouseDown(self, button)
-	if self.moveFrame:IsMovable() then
-		self.moveFrame:StartMoving()
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	if frameToMove:IsMovable() then
+		-- 'clamp' the cursor to the screen
+		SetCVar('ClipCursor', 1)
+		frameToMove:StartMoving()
 	end
 end
 
 local function OnMouseUp(self)
-	self.moveFrame:StopMovingOrSizing()
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	SetCVar('ClipCursor', 0)
+	frameToMove:StopMovingOrSizing()
 
 	if IsShiftKeyDown() then
-		BlizzMove:ResetFramePoints(self.moveFrame, self.moveFrame:GetName())
+		BlizzMove:ResetFramePoints(frameToMove, self.moveFrame:GetName())
 	else
-		BlizzMove:StoreFramePoints(self.moveFrame, self.moveFrame:GetName())
+		BlizzMove:StoreFramePoints(frameToMove, self.moveFrame:GetName())
 	end
 end
 
@@ -117,6 +122,7 @@ local function OnMouseWheelChildren(self, delta)
 end
 
 local function OnMouseWheel(self, delta)
+	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 	if not OnMouseWheelChildren(self, delta) and IsControlKeyDown() then
 		local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 		local scale = self.moveFrame:GetScale() or 1
@@ -141,7 +147,7 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 
 	handleFrame.moveFrame = moveFrame
 	handleFrame:HookScript("OnMouseDown",  OnMouseDown)
-	handleFrame:HookScript("OnMouseUp",    OnMouseUp)
+	handleFrame:HookScript("OnMouseUp",	OnMouseUp)
 	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
 
 	handleFrame:EnableMouse(true)
