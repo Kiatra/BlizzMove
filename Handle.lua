@@ -18,20 +18,20 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	return handleFrame
 end
 
-local function OnDragStart(self, button)
+local function OnMouseDown(self, button)
 	if self.moveFrame:IsMovable() then
 		self.moveFrame:StartMoving()
 	end
 end
 
-local function OnDragStop(self)
+local function OnMouseUp(self)
 	self.moveFrame:StopMovingOrSizing()
 end
 
 local function OnMouseWheelChildren(self, delta)
-	local childFrames, returnValue = { self:GetChildren() }, false
+	local returnValue = false
 
-	for _, childFrame in pairs(childFrames) do
+	for _, childFrame in pairs({ self:GetChildren() }) do
 		local OnMouseWheel = childFrame:GetScript("OnMouseWheel")
 
 		if OnMouseWheel and MouseIsOver(childFrame) then
@@ -49,7 +49,7 @@ local function OnMouseWheel(self, delta)
 	if not OnMouseWheelChildren(self, delta) and IsControlKeyDown() then
 		local scale = self.moveFrame:GetScale() or 1
 
-		scale = scale + .1 * delta
+		scale = scale + 0.1 * delta
 
 		if scale > 1.5 then scale = 1.5 end
 		if scale < 0.5 then scale = 0.5 end
@@ -62,16 +62,14 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not moveFrame then print("Expected frame is nil") return end
 
 	moveFrame:SetMovable(true)
-	moveFrame:SetClampedToScreen(true)
 
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
-	handleFrame:RegisterForDrag("LeftButton")
-
-	handleFrame:HookScript("OnDragStart", OnDragStart)
-	handleFrame:HookScript("OnDragStop", OnDragStop)
+	handleFrame:HookScript("OnMouseDown",  OnMouseDown)
+	handleFrame:HookScript("OnMouseUp",    OnMouseUp)
 	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
 
+	handleFrame:EnableMouse(true)
 	handleFrame:EnableMouseWheel(true)
 end

@@ -56,13 +56,14 @@ movableFramesWithHandle = {
 	["CharacterFrame"] =  { PaperDollFrame, PetPaperDollFrame, CompanionFrame, ReputationFrame, SkillFrame, HonorFrame, TokenFrame },
 	["ColorPickerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ColorPickerFrame, "CENTER", "TOPRIGHT", -8, -8) },
 	["MailFrame"] = { SendMailFrame },
-	["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
-	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
+
+	-- These frames work, but its better to use something like MoveAnything. Since this way causes wierd unwanted behavior.
+--	["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
+--	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
 }
 
 movableFramesLoadOnDemand = {
 	["Blizzard_AchievementUI"] = function() BlizzMove:SetMoveHandle(AchievementFrame, AchievementFrameHeader) end,
-	["Blizzard_AdventureMap"] = function() BlizzMove:SetMoveHandle(AdventureMapFrame) end,
 	["Blizzard_AlliedRacesUI"] = function() BlizzMove:SetMoveHandle(AlliedRacesFrame) end,
 	["Blizzard_ArchaeologyUI"] = function() BlizzMove:SetMoveHandle(ArchaeologyFrame) end,
 	["Blizzard_ArtifactUI"] = function() BlizzMove:SetMoveHandle(ArtifactFrame); BlizzMove:SetMoveHandle(ArtifactRelicForgeFrame) end,
