@@ -13,6 +13,3 @@ Use ctrl + scroll wheel over a window title to adjust the scale of the window fo
 
 ## WoWInterface
 [https://www.wowinterface.com/downloads/info23875-BlizzMove.html](https://www.wowinterface.com/downloads/info23875-BlizzMove.html)
-
-
-
