@@ -1,36 +1,27 @@
 -- BlizzMove, move the blizzard frames by yess
 _G.BlizzMove = _G.BlizzMove or {}
 
+local CVarBackup = GetCVar('ClipCursor')
 BlizzMovePointsDB = BlizzMovePointsDB or {}
 
 function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoint, offX, offY)
 	if not parentFrame then return nil end
 
-	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle"..parentFrame:GetName(), parentFrame)
+	local handleFrame = CreateFrame('Frame', 'BlizzMoveHandle' .. parentFrame:GetName(), parentFrame)
 	handleFrame:EnableMouse(true)
 	handleFrame:SetPoint(anchorPoint, parentFrame, relativePoint, offX, offY)
 	handleFrame:SetHeight(16)
 	handleFrame:SetWidth(16)
 
 	handleFrame.texture = handleFrame:CreateTexture()
-	handleFrame.texture:SetTexture("Interface/Buttons/UI-Panel-BiggerButton-Up")
+	handleFrame.texture:SetTexture('Interface/Buttons/UI-Panel-BiggerButton-Up')
 	handleFrame.texture:SetTexCoord(0.15, 0.85, 0.15, 0.85)
 	handleFrame.texture:SetAllPoints()
 
 	return handleFrame
 end
 
-function BlizzMove:GetFrameToMove(moveFrame)
-	local frameToMove = moveFrame
-	if IsAddOnLoaded("MoveAnything") then
-		local moverFrame = _G[moveFrame:GetName() .. 'Mover']
-		if moverFrame then
-			frameToMove = moverFrame
-		end
-	end
-	return frameToMove
-end
-
+-- resets the frame, and toggles it open/close to open it in the default position
 function BlizzMove:ResetFramePoints(frame, frameName)
 	if BlizzMovePointsDB[frameName] then
 		BlizzMovePointsDB[frameName] = nil
@@ -40,13 +31,14 @@ function BlizzMove:ResetFramePoints(frame, frameName)
 	end
 end
 
+-- places the frame into a previously saved position after closing and reopening it
 function BlizzMove:RestoreFramePoints(frame, frameName)
 	if BlizzMovePointsDB[frameName] and BlizzMovePointsDB[frameName][1] then
 		frame:ClearAllPoints()
 
 		for curPoint = 1, #BlizzMovePointsDB[frameName] do
 			if BlizzMovePointsDB[frameName][curPoint] then
-				frame.bypassSetPointHook = true -- Used to block SetPoint hook from causing an infinite loop.
+				frame.BlizzMoveBypassHook = true -- Used to block SetPoint hook from causing an infinite loop.
 				frame:SetPoint(
 					BlizzMovePointsDB[frameName][curPoint].anchorPoint,
 					BlizzMovePointsDB[frameName][curPoint].relativeFrame,
@@ -54,7 +46,7 @@ function BlizzMove:RestoreFramePoints(frame, frameName)
 					BlizzMovePointsDB[frameName][curPoint].offX,
 					BlizzMovePointsDB[frameName][curPoint].offY
 				)
-				frame.bypassSetPointHook = nil
+				frame.BlizzMoveBypassHook = nil
 			end
 		end
 	end
@@ -78,13 +70,14 @@ function BlizzMove:StoreFramePoints(frame, frameName)
 end
 
 local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX, offY)
-	if self.bypassSetPointHook then return end
+	if self.BlizzMoveBypassHook then return end
 
 	BlizzMove:RestoreFramePoints(self, self:GetName())
 end
 
 local function OnMouseDown(self, button)
-	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
+	if button ~= 'LeftButton' then return end
+	local frameToMove = self.moveFrame
 	if frameToMove:IsMovable() then
 		-- 'clamp' the cursor to the screen
 		SetCVar('ClipCursor', 1)
@@ -92,15 +85,17 @@ local function OnMouseDown(self, button)
 	end
 end
 
-local function OnMouseUp(self)
-	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
-	SetCVar('ClipCursor', 0)
+local function OnMouseUp(self, button)
+	if button ~= 'LeftButton' then return end
+	local frameToMove = self.moveFrame
+	-- unclamp the cursor
+	SetCVar('ClipCursor', CVarBackup or 0)
 	frameToMove:StopMovingOrSizing()
 
 	if IsShiftKeyDown() then
-		BlizzMove:ResetFramePoints(frameToMove, self.moveFrame:GetName())
+		BlizzMove:ResetFramePoints(frameToMove, frameToMove:GetName())
 	else
-		BlizzMove:StoreFramePoints(frameToMove, self.moveFrame:GetName())
+		BlizzMove:StoreFramePoints(frameToMove, frameToMove:GetName())
 	end
 end
 
@@ -108,7 +103,7 @@ local function OnMouseWheelChildren(self, delta)
 	local returnValue = false
 
 	for _, childFrame in pairs({ self:GetChildren() }) do
-		local OnMouseWheel = childFrame:GetScript("OnMouseWheel")
+		local OnMouseWheel = childFrame:GetScript('OnMouseWheel')
 
 		if OnMouseWheel and MouseIsOver(childFrame) then
 			OnMouseWheel(childFrame, delta)
@@ -122,33 +117,31 @@ local function OnMouseWheelChildren(self, delta)
 end
 
 local function OnMouseWheel(self, delta)
-	local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
 	if not OnMouseWheelChildren(self, delta) and IsControlKeyDown() then
-		local frameToMove = BlizzMove:GetFrameToMove(self.moveFrame)
-		local scale = self.moveFrame:GetScale() or 1
+		local frameToMove = self.moveFrame
+		local scale = frameToMove:GetScale() or 1
 
 		scale = scale + 0.1 * delta
 
 		if scale > 1.5 then scale = 1.5 end
 		if scale < 0.5 then scale = 0.5 end
 
-		self.moveFrame:SetScale(scale)
 		frameToMove:SetScale(scale)
 	end
 end
 
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
-	if not moveFrame then print("Expected frame is nil") return end
+	if not moveFrame then print('Expected frame is nil') return end
 
 	moveFrame:SetMovable(true)
-	hooksecurefunc(moveFrame, "SetPoint", OnSetPoint)
+	hooksecurefunc(moveFrame, 'SetPoint', OnSetPoint)
 
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
-	handleFrame:HookScript("OnMouseDown",  OnMouseDown)
-	handleFrame:HookScript("OnMouseUp",	OnMouseUp)
-	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
+	handleFrame:HookScript('OnMouseDown',  OnMouseDown)
+	handleFrame:HookScript('OnMouseUp',	OnMouseUp)
+	handleFrame:HookScript('OnMouseWheel', OnMouseWheel)
 
 	handleFrame:EnableMouse(true)
 	handleFrame:EnableMouseWheel(true)
