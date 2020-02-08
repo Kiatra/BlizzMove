@@ -9,6 +9,7 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	if not parentFrame then return nil end
 
 	local handleFrame = CreateFrame('Frame', 'BlizzMoveHandle' .. parentFrame:GetName(), parentFrame)
+	handleFrame:SetClampedToScreen(true)
 	handleFrame:EnableMouse(true)
 	handleFrame:SetPoint(anchorPoint, parentFrame, relativePoint, offX, offY)
 	handleFrame:SetHeight(16)
@@ -84,6 +85,14 @@ local function OnSetPoint(self)
 	BlizzMove:RestoreFramePoints(self, self:GetName())
 end
 
+local function OnSizeUpdate(self)
+	local clampDistance = 40
+	local clampWidth  = (self:GetWidth() - clampDistance) or 0
+	local clampHeight = (self:GetHeight() - clampDistance) or 0
+
+	self:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
+end
+
 local function OnMouseDown(self, button)
 	if button ~= 'LeftButton' then return end
 	local frameToMove = self.moveFrame
@@ -116,7 +125,7 @@ local function OnMouseWheelChildren(self, delta)
 			returnValue = true
 		end
 
-		OnMouseWheelChildren(childFrame, delta)
+		returnValue = returnValue or OnMouseWheelChildren(childFrame, delta)
 	end
 
 	return returnValue
@@ -137,25 +146,22 @@ local function OnMouseWheel(self, delta)
 	end
 end
 
-
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not moveFrame then print('Expected frame is nil') return end
 
-	local clampDistance = 40
-	local clampWidth  = moveFrame:GetWidth() - clampDistance
-	local clampHeight = moveFrame:GetHeight() - clampDistance
-
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
-	moveFrame:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
+	OnSizeUpdate(moveFrame)
 
-	hooksecurefunc(moveFrame, 'SetPoint', OnSetPoint)
+	hooksecurefunc(moveFrame, "SetPoint",  OnSetPoint)
+	hooksecurefunc(moveFrame, "SetWidth",  OnSizeUpdate)
+	hooksecurefunc(moveFrame, "SetHeight", OnSizeUpdate)
 
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
-	handleFrame:HookScript('OnMouseDown',  OnMouseDown)
-	handleFrame:HookScript('OnMouseUp',	OnMouseUp)
+	handleFrame:HookScript('OnMouseDown', OnMouseDown)
+	handleFrame:HookScript('OnMouseUp', OnMouseUp)
 	handleFrame:HookScript('OnMouseWheel', OnMouseWheel)
 
 	handleFrame:EnableMouse(true)
