@@ -72,6 +72,14 @@ local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX,
 	BlizzMove:RestoreFramePoints(self, self:GetName())
 end
 
+local function OnSizeUpdate(self, size)
+	local clampScale  = 0.8
+	local clampWidth  = clampScale * self:GetWidth()
+	local clampHeight = clampScale * self:GetHeight()
+
+	self:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
+end
+
 local function OnMouseDown(self, button)
 	if button ~= "LeftButton" then return end
 
@@ -125,15 +133,14 @@ end
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not moveFrame then print("Expected frame is nil") return end
 
-	local clampScale  = 0.8
-	local clampWidth  = clampScale * moveFrame:GetWidth()
-	local clampHeight = clampScale * moveFrame:GetHeight()
-
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
-	moveFrame:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
 
-	hooksecurefunc(moveFrame, "SetPoint", OnSetPoint)
+	OnSizeUpdate(moveFrame)
+
+	hooksecurefunc(moveFrame, "SetPoint",  OnSetPoint)
+	hooksecurefunc(moveFrame, "SetWidth",  OnSizeUpdate)
+	hooksecurefunc(moveFrame, "SetHeight", OnSizeUpdate)
 
 	if not handleFrame then handleFrame = moveFrame end
 
