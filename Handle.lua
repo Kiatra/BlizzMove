@@ -103,7 +103,7 @@ local function OnMouseWheelChildren(self, delta)
 			returnValue = true
 		end
 
-		OnMouseWheelChildren(childFrame, delta)
+		returnValue = OnMouseWheelChildren(childFrame, delta) or returnValue
 	end
 
 	return returnValue
