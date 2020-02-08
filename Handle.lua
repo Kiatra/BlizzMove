@@ -154,8 +154,8 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
-	handleFrame:HookScript('OnMouseDown',  OnMouseDown)
-	handleFrame:HookScript('OnMouseUp',	OnMouseUp)
+	handleFrame:HookScript('OnMouseDown', OnMouseDown)
+	handleFrame:HookScript('OnMouseUp', OnMouseUp)
 	handleFrame:HookScript('OnMouseWheel', OnMouseWheel)
 
 	handleFrame:EnableMouse(true)
