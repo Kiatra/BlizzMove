@@ -73,12 +73,16 @@ local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX,
 end
 
 local function OnMouseDown(self, button)
+	if button ~= "LeftButton" then return end
+
 	if self.moveFrame:IsMovable() then
 		self.moveFrame:StartMoving()
 	end
 end
 
-local function OnMouseUp(self)
+local function OnMouseUp(self, button)
+	if button ~= "LeftButton" then return end
+
 	self.moveFrame:StopMovingOrSizing()
 
 	if IsShiftKeyDown() then
