@@ -35,7 +35,7 @@ function BlizzMove:RestoreFramePoints(frame, frameName)
 
 		for curPoint = 1, #BlizzMovePointsDB[frameName] do
 			if BlizzMovePointsDB[frameName][curPoint] then
-				frame.bypassSetPointHook = true -- Used to block SetPoint hook from causing an infinite loop.
+				frame.BlizzMoveBypassHook = true -- Used to block SetPoint hook from causing an infinite loop.
 				frame:SetPoint(
 					BlizzMovePointsDB[frameName][curPoint].anchorPoint,
 					BlizzMovePointsDB[frameName][curPoint].relativeFrame,
@@ -43,7 +43,7 @@ function BlizzMove:RestoreFramePoints(frame, frameName)
 					BlizzMovePointsDB[frameName][curPoint].offX,
 					BlizzMovePointsDB[frameName][curPoint].offY
 				)
-				frame.bypassSetPointHook = nil
+				frame.BlizzMoveBypassHook = nil
 			end
 		end
 	end
@@ -67,7 +67,7 @@ function BlizzMove:StoreFramePoints(frame, frameName)
 end
 
 local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX, offY)
-	if self.bypassSetPointHook then return end
+	if self.BlizzMoveBypassHook then return end
 
 	BlizzMove:RestoreFramePoints(self, self:GetName())
 end
@@ -121,8 +121,13 @@ end
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not moveFrame then print("Expected frame is nil") return end
 
+	local clampScale  = 0.8
+	local clampWidth  = clampScale * moveFrame:GetWidth()
+	local clampHeight = clampScale * moveFrame:GetHeight()
+
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
+	moveFrame:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
 
 	hooksecurefunc(moveFrame, "SetPoint", OnSetPoint)
 

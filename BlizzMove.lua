@@ -5,7 +5,7 @@
 --/run f = GetMouseFocus(); while f do DEFAULT_CHAT_FRAME:AddMessage(f:GetName()); f = f:GetParent() end
 _G.BlizzMove = _G.BlizzMove or {}
 
-movableFrames = {
+local movableFrames = {
 	AddonList,
 	AudioOptionsFrame,
 	BankFrame,
@@ -52,7 +52,7 @@ else
 	table.insert(movableFrames, WorldStateScoreFrame)
 end
 
-movableFramesWithHandle = {
+local movableFramesWithHandle = {
 	["CharacterFrame"] =  { PaperDollFrame, PetPaperDollFrame, CompanionFrame, ReputationFrame, SkillFrame, HonorFrame, TokenFrame },
 	["ColorPickerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ColorPickerFrame, "CENTER", "TOPRIGHT", -8, -8) },
 	["MailFrame"] = { SendMailFrame },
@@ -62,7 +62,7 @@ movableFramesWithHandle = {
 --	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
 }
 
-movableFramesLoadOnDemand = {
+local movableFramesLoadOnDemand = {
 	["Blizzard_AchievementUI"] = function() BlizzMove:SetMoveHandle(AchievementFrame, AchievementFrameHeader) end,
 	["Blizzard_AlliedRacesUI"] = function() BlizzMove:SetMoveHandle(AlliedRacesFrame) end,
 	["Blizzard_ArchaeologyUI"] = function() BlizzMove:SetMoveHandle(ArchaeologyFrame) end,
