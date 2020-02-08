@@ -1,4 +1,4 @@
-## Interface: 11303
+## Interface: 80300
 ## Title: BlizzMove
 ## Notes: Move those blizzard windows
 ## Author: the-rebel-Mermaid
