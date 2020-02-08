@@ -1,7 +1,8 @@
 -- BlizzMove, move the blizzard frames by yess
 _G.BlizzMove = _G.BlizzMove or {}
+BlizzMove.informedUser = false
+BlizzMove.informationText = 'BlizzMove has just helped you to move/rescale a frame. SHIFT+click the frame to reset the scale and position.'
 
-local CVarBackup = GetCVar('ClipCursor')
 BlizzMovePointsDB = BlizzMovePointsDB or {}
 
 function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoint, offX, offY)
@@ -21,8 +22,16 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	return handleFrame
 end
 
--- resets the frame, and toggles it open/close to open it in the default position
+function BlizzMove:InformUserOnce()
+		if not BlizzMove.informedUser then
+			print(BlizzMove.informationText)
+			BlizzMove.informedUser = true;
+		end
+end
+
+-- resets the frame scale, and toggles it open/close to open it in the default position
 function BlizzMove:ResetFramePoints(frame, frameName)
+	frame:SetScale(1)
 	if BlizzMovePointsDB[frameName] then
 		BlizzMovePointsDB[frameName] = nil
 
@@ -69,7 +78,7 @@ function BlizzMove:StoreFramePoints(frame, frameName)
 	end
 end
 
-local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX, offY)
+local function OnSetPoint(self)
 	if self.BlizzMoveBypassHook then return end
 
 	BlizzMove:RestoreFramePoints(self, self:GetName())
@@ -79,8 +88,6 @@ local function OnMouseDown(self, button)
 	if button ~= 'LeftButton' then return end
 	local frameToMove = self.moveFrame
 	if frameToMove:IsMovable() then
-		-- 'clamp' the cursor to the screen
-		SetCVar('ClipCursor', 1)
 		frameToMove:StartMoving()
 	end
 end
@@ -88,13 +95,12 @@ end
 local function OnMouseUp(self, button)
 	if button ~= 'LeftButton' then return end
 	local frameToMove = self.moveFrame
-	-- unclamp the cursor
-	SetCVar('ClipCursor', CVarBackup or 0)
 	frameToMove:StopMovingOrSizing()
 
 	if IsShiftKeyDown() then
 		BlizzMove:ResetFramePoints(frameToMove, frameToMove:GetName())
 	else
+		BlizzMove:InformUserOnce()
 		BlizzMove:StoreFramePoints(frameToMove, frameToMove:GetName())
 	end
 end
@@ -126,14 +132,23 @@ local function OnMouseWheel(self, delta)
 		if scale > 1.5 then scale = 1.5 end
 		if scale < 0.5 then scale = 0.5 end
 
+		BlizzMove:InformUserOnce()
 		frameToMove:SetScale(scale)
 	end
 end
 
+
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not moveFrame then print('Expected frame is nil') return end
 
+	local clampDistance = 40
+	local clampWidth  = moveFrame:GetWidth() - clampDistance
+	local clampHeight = moveFrame:GetHeight() - clampDistance
+
 	moveFrame:SetMovable(true)
+	moveFrame:SetClampedToScreen(true)
+	moveFrame:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
+
 	hooksecurefunc(moveFrame, 'SetPoint', OnSetPoint)
 
 	if not handleFrame then handleFrame = moveFrame end
