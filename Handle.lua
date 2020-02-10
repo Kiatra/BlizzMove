@@ -21,6 +21,8 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 end
 
 function BlizzMove:ResetFramePoints(frame, frameName)
+	if InCombatLockdown() then return end -- Cancel function in combat, can't use protected functions.
+
 	if BlizzMovePointsDB[frameName] then
 		BlizzMovePointsDB[frameName] = nil
 
@@ -30,6 +32,8 @@ function BlizzMove:ResetFramePoints(frame, frameName)
 end
 
 function BlizzMove:RestoreFramePoints(frame, frameName)
+	if InCombatLockdown() then return end -- Cancel function in combat, can't use protected functions.
+
 	if BlizzMovePointsDB[frameName] and BlizzMovePointsDB[frameName][1] then
 		frame:ClearAllPoints()
 
