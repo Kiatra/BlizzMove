@@ -8,6 +8,7 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 
 	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle"..parentFrame:GetName(), parentFrame)
 	handleFrame:EnableMouse(true)
+	handleFrame:SetClampedToScreen(true)
 	handleFrame:SetPoint(anchorPoint, parentFrame, relativePoint, offX, offY)
 	handleFrame:SetHeight(16)
 	handleFrame:SetWidth(16)
