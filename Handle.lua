@@ -1,7 +1,8 @@
 -- BlizzMove, move the blizzard frames by yess
 _G.BlizzMove = _G.BlizzMove or {}
+BlizzMove.printPrefix = '|cFF33FF99[BlizzMove]|r: '
 BlizzMove.informedUser = false
-BlizzMove.informationText = 'BlizzMove has just helped you to move/rescale a frame. SHIFT+click the frame to reset the scale and position.'
+BlizzMove.informationText = BlizzMove.printPrefix .. 'Has just helped you to move/rescale a frame. SHIFT+Click the frame to reset the scale and position.'
 
 BlizzMovePointsDB = BlizzMovePointsDB or {}
 
@@ -147,7 +148,7 @@ local function OnMouseWheel(self, delta)
 end
 
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
-	if not moveFrame then print('Expected frame is nil') return end
+	if not moveFrame then print(BlizzMove.printPrefix .. 'Expected frame is nil') return end
 
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
