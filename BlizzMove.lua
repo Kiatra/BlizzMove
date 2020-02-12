@@ -79,7 +79,7 @@ local movableFramesLoadOnDemand = {
 	["Blizzard_ChallengesUI"] = function() BlizzMove:SetMoveHandle(ChallengesKeystoneFrame) end,
 	["Blizzard_Channels"] = function() BlizzMove:SetMoveHandle(ChannelFrame) end,
 	["Blizzard_Collections"] = function() BlizzMove:SetMoveHandle(CollectionsJournal); BlizzMove:SetMoveHandle(WardrobeFrame) end,
-	["Blizzard_Communities"] = function() BlizzMove:SetMoveHandle(ClubFinderGuildFinderFrame.RequestToJoinFrame); BlizzMove:SetMoveHandle(CommunitiesFrame); BlizzMove:SetMoveHandle(CommunitiesFrame.RecruitmentDialog); BlizzMove:SetMoveHandle(CommunitiesGuildLogFrame); BlizzMove:SetMoveHandle(CommunitiesGuildNewsFiltersFrame); BlizzMove:SetMoveHandle(CommunitiesGuildTextEditFrame) end,
+	["Blizzard_Communities"] = function() BlizzMove:SetMoveHandle(CommunitiesFrame); if tocversion >= 20000 then BlizzMove:SetMoveHandle(ClubFinderGuildFinderFrame.RequestToJoinFrame); BlizzMove:SetMoveHandle(CommunitiesFrame.RecruitmentDialog); BlizzMove:SetMoveHandle(CommunitiesGuildLogFrame); BlizzMove:SetMoveHandle(CommunitiesGuildNewsFiltersFrame); BlizzMove:SetMoveHandle(CommunitiesGuildTextEditFrame) end end,
 	["Blizzard_Contribution"] = function() BlizzMove:SetMoveHandle(ContributionCollectionFrame) end,
 	["Blizzard_DeathRecap"] = function() BlizzMove:SetMoveHandle(DeathRecapFrame) end,
 	["Blizzard_EncounterJournal"] = function() BlizzMove:SetMoveHandle(EncounterJournal) end,
