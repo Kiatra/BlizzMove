@@ -21,14 +21,21 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	return handleFrame
 end
 
+function BlizzMove:InformUser()
+	if not BlizzMove.UserInformed then
+		BlizzMove.UserInformed = true
+
+		print("|cFF33FF99[BlizzMove]|r: Has just moved a frame. SHIFT+Click to reset the position.")
+	end
+end
+
 function BlizzMove:ResetFramePoints(frame, frameName)
 	if InCombatLockdown() then return end -- Cancel function in combat, can't use protected functions.
 
 	if BlizzMovePointsDB[frameName] then
 		BlizzMovePointsDB[frameName] = nil
 
-		HideUIPanel(frame)
-		ShowUIPanel(frame)
+		UpdateUIPanelPositions(frame)
 	end
 end
 
@@ -102,6 +109,7 @@ local function OnMouseUp(self, button)
 		BlizzMove:ResetFramePoints(self.moveFrame, self.moveFrame:GetName())
 	else
 		BlizzMove:StoreFramePoints(self.moveFrame, self.moveFrame:GetName())
+		BlizzMove:InformUser()
 	end
 end
 
@@ -136,7 +144,7 @@ local function OnMouseWheel(self, delta)
 end
 
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
-	if not moveFrame then print("Expected frame is nil") return end
+	if not moveFrame then print("|cFF33FF99[BlizzMove]|r: Expected frame is nil") return end
 
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
