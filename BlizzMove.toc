@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 11303
 ## Title: BlizzMove
 ## Notes: Move those blizzard windows
 ## Author: yess
