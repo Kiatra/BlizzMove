@@ -1,1 +1,4 @@
 package-as: BlizzMove
+
+ignore:
+	- README.md
