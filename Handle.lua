@@ -1,12 +1,15 @@
 -- BlizzMove, move the blizzard frames by yess
 _G.BlizzMove = _G.BlizzMove or {}
 
+local printPrefix = "|cFF33FF99[BlizzMove]|r: "
+
+BlizzMoveInformDB = BlizzMoveInformDB or {}
 BlizzMovePointsDB = BlizzMovePointsDB or {}
 
 function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoint, offX, offY)
 	if not parentFrame then return nil end
 
-	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle"..parentFrame:GetName(), parentFrame)
+	local handleFrame = CreateFrame("Frame", "BlizzMoveHandle" .. parentFrame:GetName(), parentFrame)
 	handleFrame:EnableMouse(true)
 	handleFrame:SetClampedToScreen(true)
 	handleFrame:SetPoint(anchorPoint, parentFrame, relativePoint, offX, offY)
@@ -21,16 +24,26 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	return handleFrame
 end
 
-function BlizzMove:InformUser()
-	if not BlizzMove.UserInformed then
-		BlizzMove.UserInformed = true
+function BlizzMove:InformUser(action)
+	if not BlizzMoveInformDB[action] then
+		BlizzMoveInformDB[action] = true
 
-		print("|cFF33FF99[BlizzMove]|r: Has just moved a frame. SHIFT+Click to reset the position.")
+		if action == "move" then
+			print(printPrefix .. "Has just moved a frame. SHIFT+Click to reset the position.")
+		else
+			print(printPrefix .. "Has just resized a frame. CTRL+Click to reset the scale.")
+		end
 	end
 end
 
+function BlizzMove:ResetFrameScale(frame)
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
+
+	frame:SetScale(1)
+end
+
 function BlizzMove:ResetFramePoints(frame, frameName)
-	if InCombatLockdown() then return end -- Cancel function in combat, can't use protected functions.
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
 
 	if BlizzMovePointsDB[frameName] then
 		BlizzMovePointsDB[frameName] = nil
@@ -40,7 +53,7 @@ function BlizzMove:ResetFramePoints(frame, frameName)
 end
 
 function BlizzMove:RestoreFramePoints(frame, frameName)
-	if InCombatLockdown() then return end -- Cancel function in combat, can't use protected functions.
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
 
 	if BlizzMovePointsDB[frameName] and BlizzMovePointsDB[frameName][1] then
 		frame:ClearAllPoints()
@@ -78,16 +91,16 @@ function BlizzMove:StoreFramePoints(frame, frameName)
 	end
 end
 
-local function OnSetPoint(self, anchorPoint, relativeFrame, relativePoint, offX, offY)
+local function OnSetPoint(self)
 	if self.BlizzMoveBypassHook then return end
 
 	BlizzMove:RestoreFramePoints(self, self:GetName())
 end
 
-local function OnSizeUpdate(self, size)
-	local clampScale  = 0.8
-	local clampWidth  = clampScale * self:GetWidth()
-	local clampHeight = clampScale * self:GetHeight()
+local function OnSizeUpdate(self)
+	local clampDistance = 40
+	local clampWidth = (self:GetWidth() - clampDistance) or 0
+	local clampHeight = (self:GetHeight() - clampDistance) or 0
 
 	self:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
 end
@@ -105,11 +118,20 @@ local function OnMouseUp(self, button)
 
 	self.moveFrame:StopMovingOrSizing()
 
+	local storePoints = true
 	if IsShiftKeyDown() then
 		BlizzMove:ResetFramePoints(self.moveFrame, self.moveFrame:GetName())
-	else
+		storePoints = false
+	end
+
+	if IsControlKeyDown() then
+		BlizzMove:ResetFrameScale(self.moveFrame)
+		storePoints = false
+	end
+
+	if storePoints then
 		BlizzMove:StoreFramePoints(self.moveFrame, self.moveFrame:GetName())
-		BlizzMove:InformUser()
+		BlizzMove:InformUser("move")
 	end
 end
 
@@ -140,11 +162,13 @@ local function OnMouseWheel(self, delta)
 		if scale < 0.5 then scale = 0.5 end
 
 		self.moveFrame:SetScale(scale)
+
+		BlizzMove:InformUser("scale")
 	end
 end
 
 function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
-	if not moveFrame then print("|cFF33FF99[BlizzMove]|r: Expected frame is nil") return end
+	if not moveFrame then print(printPrefix .. "Expected frame is nil") return end
 
 	moveFrame:SetMovable(true)
 	moveFrame:SetClampedToScreen(true)
@@ -158,8 +182,8 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 	if not handleFrame then handleFrame = moveFrame end
 
 	handleFrame.moveFrame = moveFrame
-	handleFrame:HookScript("OnMouseDown",  OnMouseDown)
-	handleFrame:HookScript("OnMouseUp",    OnMouseUp)
+	handleFrame:HookScript("OnMouseDown", OnMouseDown)
+	handleFrame:HookScript("OnMouseUp", OnMouseUp)
 	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
 
 	handleFrame:EnableMouse(true)

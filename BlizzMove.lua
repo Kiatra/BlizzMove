@@ -56,10 +56,8 @@ local movableFramesWithHandle = {
 	["CharacterFrame"] =  { PaperDollFrame, PetPaperDollFrame, CompanionFrame, ReputationFrame, SkillFrame, HonorFrame, TokenFrame },
 	["ColorPickerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ColorPickerFrame, "CENTER", "TOPRIGHT", -8, -8) },
 	["MailFrame"] = { SendMailFrame },
-
-	-- These frames work, but its better to use something like MoveAnything. Since this way causes wierd unwanted behavior.
---	["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
---	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
+	["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
+	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
 }
 
 local movableFramesLoadOnDemand = {
