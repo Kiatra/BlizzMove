@@ -162,6 +162,7 @@ local function OnMouseWheel(self, delta)
 		if scale < 0.5 then scale = 0.5 end
 
 		self.moveFrame:SetScale(scale)
+
 		BlizzMove:InformUser("scale")
 	end
 end
