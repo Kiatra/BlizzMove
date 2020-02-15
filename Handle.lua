@@ -27,17 +27,17 @@ function BlizzMove:InformUser(action)
 	if not BlizzMove.UserInformed[action] then
 		BlizzMove.UserInformed[action] = true
 
-        if action == 'move' then
-            print(printPrefix .. "Has just moved a frame. SHIFT+Click to reset the position.")
-        else
-            print(printPrefix .. "Has just resized a frame. CTRL+Click to reset the scale.")
-        end
+		if action == 'move' then
+			print(printPrefix .. "Has just moved a frame. SHIFT+Click to reset the position.")
+		else
+			print(printPrefix .. "Has just resized a frame. CTRL+Click to reset the scale.")
+		end
 	end
 end
 
 function BlizzMove:ResetFrameScale(frame)
-    if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
-    frame:SetScale(1)
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
+	frame:SetScale(1)
 end
 
 function BlizzMove:ResetFramePoints(frame, frameName)
@@ -116,16 +116,16 @@ local function OnMouseUp(self, button)
 
 	self.moveFrame:StopMovingOrSizing()
 
-    local storePoints = true
+	local storePoints = true
 	if IsShiftKeyDown() then
 		BlizzMove:ResetFramePoints(self.moveFrame, self.moveFrame:GetName())
-        storePoints = false
+		storePoints = false
 	end
-    if IsControlKeyDown() then
-        BlizzMove:ResetFrameScale(self.moveFrame)
-        storePoints = false
-    end
-    if storePoints then
+	if IsControlKeyDown() then
+		BlizzMove:ResetFrameScale(self.moveFrame)
+		storePoints = false
+	end
+	if storePoints then
 		BlizzMove:StoreFramePoints(self.moveFrame, self.moveFrame:GetName())
 		BlizzMove:InformUser('move')
 	end
@@ -158,7 +158,7 @@ local function OnMouseWheel(self, delta)
 		if scale < 0.5 then scale = 0.5 end
 
 		self.moveFrame:SetScale(scale)
-        BlizzMove:InformUser('scale')
+		BlizzMove:InformUser('scale')
 	end
 end
 
@@ -178,7 +178,7 @@ function BlizzMove:SetMoveHandle(moveFrame, handleFrame)
 
 	handleFrame.moveFrame = moveFrame
 	handleFrame:HookScript("OnMouseDown",  OnMouseDown)
-	handleFrame:HookScript("OnMouseUp",    OnMouseUp)
+	handleFrame:HookScript("OnMouseUp",	OnMouseUp)
 	handleFrame:HookScript("OnMouseWheel", OnMouseWheel)
 
 	handleFrame:EnableMouse(true)
