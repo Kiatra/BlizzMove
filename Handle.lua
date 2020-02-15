@@ -97,7 +97,7 @@ end
 
 local function OnSizeUpdate(self)
 	local clampDistance = 40
-	local clampWidth  = (self:GetWidth() - clampDistance) or 0
+	local clampWidth = (self:GetWidth() - clampDistance) or 0
 	local clampHeight = (self:GetHeight() - clampDistance) or 0
 
 	self:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight)
