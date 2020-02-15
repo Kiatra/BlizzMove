@@ -37,13 +37,13 @@ function BlizzMove:InformUser(action)
 end
 
 function BlizzMove:ResetFrameScale(frame)
-	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can"t use protected functions.
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
 
 	frame:SetScale(1)
 end
 
 function BlizzMove:ResetFramePoints(frame, frameName)
-	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can"t use protected functions.
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
 
 	if BlizzMovePointsDB[frameName] then
 		BlizzMovePointsDB[frameName] = nil
@@ -53,7 +53,7 @@ function BlizzMove:ResetFramePoints(frame, frameName)
 end
 
 function BlizzMove:RestoreFramePoints(frame, frameName)
-	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can"t use protected functions.
+	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
 
 	if BlizzMovePointsDB[frameName] and BlizzMovePointsDB[frameName][1] then
 		frame:ClearAllPoints()
