@@ -1,4 +1,5 @@
--- BlizzMove, move the blizzard frames by yess
+-- BlizzMove, move the blizzard frames. Originally created by the-rebel-Mermaid.
+-- Maintained on github: github.com/the-rebel-Mermaid/BlizzMove/
 
 -- Macro to get the parent of a frame under the mouse cursor:
 --/run f = GetMouseFocus(); if f then DEFAULT_CHAT_FRAME:AddMessage(f:GetParent():GetParent():GetName()) end

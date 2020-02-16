@@ -1,4 +1,5 @@
--- BlizzMove, move the blizzard frames by yess
+-- BlizzMove, move the blizzard frames. Originally created by the-rebel-Mermaid.
+-- Maintained on github: github.com/the-rebel-Mermaid/BlizzMove/
 _G.BlizzMove = _G.BlizzMove or {}
 
 local printPrefix = "|cFF33FF99[BlizzMove]|r: "
