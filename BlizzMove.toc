@@ -1,0 +1,8 @@
+## Interface: 80300
+## Title: BlizzMove
+## Notes: Makes blizzard frames movable
+## Author: yess
+## Version: @project-version@
+
+Frames.lua
+BlizzMove.lua
