@@ -1,3 +1,4 @@
+[![Build Status](https://github.com/the-rebel-Mermaid/BlizzMove/workflows/CI/badge.svg)](https://github.com/the-rebel-Mermaid/BlizzMove/actions?workflow=CI)
 [![BlizzMove on Discord](https://img.shields.io/badge/Discord-BlizzMove-blue.svg?style=flat)](https://discord.gg/CNgj8Ug)
 
 # BlizzMove
