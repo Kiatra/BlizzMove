@@ -57,8 +57,8 @@ local movableFramesWithHandle = {
 	["CharacterFrame"] =  { PaperDollFrame, PetPaperDollFrame, CompanionFrame, ReputationFrame, SkillFrame, HonorFrame, TokenFrame },
 	["ColorPickerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ColorPickerFrame, "CENTER", "TOPRIGHT", -8, -8) },
 	["MailFrame"] = { SendMailFrame },
-	["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
-	["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
+	--["ObjectiveTrackerFrame"] = { BlizzMove:CreateMoveHandleAtPoint(ObjectiveTrackerFrame, "CENTER", "TOPRIGHT", 8, -12) },
+	--["QuestWatchFrame"] = { BlizzMove:CreateMoveHandleAtPoint(QuestWatchFrame, "CENTER", "TOPRIGHT", -12, -20) },
 }
 
 local movableFramesLoadOnDemand = {
