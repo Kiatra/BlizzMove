@@ -46,7 +46,6 @@ local movableFrames = {
 
 local tocversion = select(4, GetBuildInfo())
 if tocversion >= 20000 then
-	table.insert(movableFrames, CraftFrame)
 	table.insert(movableFrames, WorldMapFrame)
 else
 	table.insert(movableFrames, BattlefieldFrame)
@@ -80,7 +79,7 @@ local movableFramesLoadOnDemand = {
 	["Blizzard_Collections"] = function() BlizzMove:SetMoveHandle(CollectionsJournal); BlizzMove:SetMoveHandle(WardrobeFrame) end,
 	["Blizzard_Communities"] = function() BlizzMove:SetMoveHandle(CommunitiesFrame); if tocversion >= 20000 then BlizzMove:SetMoveHandle(ClubFinderGuildFinderFrame.RequestToJoinFrame); BlizzMove:SetMoveHandle(CommunitiesFrame.RecruitmentDialog); BlizzMove:SetMoveHandle(CommunitiesGuildLogFrame); BlizzMove:SetMoveHandle(CommunitiesGuildNewsFiltersFrame); BlizzMove:SetMoveHandle(CommunitiesGuildTextEditFrame) end end,
 	["Blizzard_Contribution"] = function() BlizzMove:SetMoveHandle(ContributionCollectionFrame) end,
-	["Blizzard_CraftUI"] = function() if tocversion < 20000 then BlizzMove:SetMoveHandle(CraftFrame) end end,
+	["Blizzard_CraftUI"] = function() BlizzMove:SetMoveHandle(CraftFrame) end,
 	["Blizzard_DeathRecap"] = function() BlizzMove:SetMoveHandle(DeathRecapFrame) end,
 	["Blizzard_EncounterJournal"] = function() BlizzMove:SetMoveHandle(EncounterJournal) end,
 	["Blizzard_FlightMap"] = function() BlizzMove:SetMoveHandle(FlightMapFrame) end,
