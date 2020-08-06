@@ -127,12 +127,24 @@ function movableFramesLoadOnDemand:BlizzMove()
 	end
 end
 
-local function ADDON_LOADED(self, event, addonName)
+local frame, events = CreateFrame("Frame"), {}
+
+function events:ADDON_LOADED(addonName)
 	if movableFramesLoadOnDemand[addonName] then
 		movableFramesLoadOnDemand[addonName]()
 	end
 end
 
-local frame = CreateFrame("Frame")
-frame:HookScript("OnEvent", ADDON_LOADED)
+function events:PLAYER_ENTERING_WORLD(isInitialLogin, isReloadingUI)
+	BlizzMove:RegisterOptions()
+end
+
+local function EventHandler(self, event, ...)
+	if events[event] then
+		events[event](self, ...)
+	end
+end
+
+frame:HookScript("OnEvent", EventHandler)
 frame:RegisterEvent("ADDON_LOADED")
+frame:RegisterEvent("PLAYER_ENTERING_WORLD")

@@ -25,18 +25,6 @@ function BlizzMove:CreateMoveHandleAtPoint(parentFrame, anchorPoint, relativePoi
 	return handleFrame
 end
 
-function BlizzMove:InformUser(action)
-	if not BlizzMoveInformDB[action] then
-		BlizzMoveInformDB[action] = true
-
-		if action == "move" then
-			print(printPrefix .. "Has just moved a frame. SHIFT+Click to reset the position.")
-		else
-			print(printPrefix .. "Has just resized a frame. CTRL+Click to reset the scale.")
-		end
-	end
-end
-
 function BlizzMove:ResetFrameScale(frame)
 	if InCombatLockdown() and frame:IsProtected() then return end -- Cancel function in combat, can't use protected functions.
 
@@ -132,7 +120,6 @@ local function OnMouseUp(self, button)
 
 	if storePoints then
 		BlizzMove:StoreFramePoints(self.moveFrame, self.moveFrame:GetName())
-		BlizzMove:InformUser("move")
 	end
 end
 
@@ -163,8 +150,6 @@ local function OnMouseWheel(self, delta)
 		if scale < 0.5 then scale = 0.5 end
 
 		self.moveFrame:SetScale(scale)
-
-		BlizzMove:InformUser("scale")
 	end
 end
 

@@ -10,5 +10,10 @@
 ## X-WoWI-ID: 23875
 ## Version: @project-version@
 
+# Libraries
+Libs\Libs.xml
+
+# Add-On
 Handle.lua
 BlizzMove.lua
+Options.lua
