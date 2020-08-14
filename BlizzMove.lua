@@ -1,4 +1,4 @@
-BlizzMove = LibStub("AceAddon-3.0"):NewAddon("BlizzMove", "AceConsole-3.0", "AceEvent-3.0");
+local BlizzMove = LibStub("AceAddon-3.0"):NewAddon("BlizzMove", "AceConsole-3.0", "AceEvent-3.0");
 if not BlizzMove then return end
 
 BlizzMove.Frames = BlizzMove.Frames or {};
@@ -23,7 +23,11 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
 	self.Frames[addOnName][frameName] = frameData;
 
-	self:ProcessFrame(addOnName, frameName, frameData);
+	if IsAddOnLoaded(addOnName) then
+
+		self:ProcessFrame(addOnName, frameName, frameData);
+
+	end
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -93,11 +97,10 @@ end
 ------------------------------------------------------------------------------------------------------
 local function GetFrameScale(frame)
 	local frameData = frame.frameData;
-	local parentScale = (frameData.storage.parentFrame and GetFrameScale(frameData.storage.parentFrame)) or 1;
+	local parentScale = (frameData.storage.frameParent and GetFrameScale(frameData.storage.frameParent)) or 1;
 
 	return frame:GetScale() * parentScale;
 end
-
 
 local function SetFrameScaleSubs(frame, oldScale, newScale)
 	local frameData = frame.frameData;
@@ -105,14 +108,10 @@ local function SetFrameScaleSubs(frame, oldScale, newScale)
 	if frameData.SubFrames then
 		for subFrameName, subFrameData in pairs(frameData.SubFrames) do
 			if subFrameData.storage then
-				local subFrame = subFrameData.storage.frame or BlizzMove:GetFrameFromName(subFrameName);
+				local subFrame = subFrameData.storage.frame;
 
-				if subFrameData.storage.detached then
-
-					local subScale = subFrame:GetScale();
-
-					local newSubScale = (oldScale * subScale) / newScale;
-					subFrame:SetScale(newSubScale);
+				if subFrame and subFrameData.storage.detached then
+					subFrame:SetScale((oldScale * subFrame:GetScale()) / newScale);
 				else
 					SetFrameScaleSubs(subFrame, oldScale, newScale);
 				end
@@ -121,14 +120,13 @@ local function SetFrameScaleSubs(frame, oldScale, newScale)
 	end
 end
 
-
 local function SetFrameScale(frame, frameScale)
 	local frameData = frame.frameData;
 	local oldScale = GetFrameScale(frame)
 	local newScale = frameScale
 
 	if frameData.storage.detached then
-		local parentScale = GetFrameScale(frameData.storage.parentFrame)
+		local parentScale = GetFrameScale(frameData.storage.frameParent)
 
 		newScale = frameScale / parentScale
 	end
@@ -137,6 +135,8 @@ local function SetFrameScale(frame, frameScale)
 	SetFrameScaleSubs(frame, oldScale, newScale);
 
 	BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string.format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)))
+
+	return true;
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -163,10 +163,10 @@ local function OnMouseDown(frame, button)
 		end
 
 		if not frameData.storage.detached then
-			parentReturnValue = (frameData.storage.parentFrame and OnMouseDown(frameData.storage.parentFrame, button));
+			parentReturnValue = (frameData.storage.frameParent and OnMouseDown(frameData.storage.frameParent, button));
 		end
 
-		if (frameData.storage.detached or not parentReturnValue) then
+		if frameData.storage.detached or not parentReturnValue then
 
 			local userPlaced = frame:IsUserPlaced();
 
@@ -190,7 +190,7 @@ local function OnMouseUp(frame, button)
 	BlizzMove:DebugPrint("OnMouseUp:", frameData.storage.frameName, button);
 
 	if not frameData.storage.detached then
-		parentReturnValue = (frameData.storage.parentFrame and OnMouseUp(frameData.storage.parentFrame, button));
+		parentReturnValue = (frameData.storage.frameParent and OnMouseUp(frameData.storage.frameParent, button));
 	end
 
 	if frameData.storage.detached or not parentReturnValue then
@@ -224,8 +224,7 @@ local function OnMouseUp(frame, button)
 
 			if IsControlKeyDown() or fullReset then
 
-				SetFrameScale(frame, 1);
-				returnValue = true;
+				returnValue = SetFrameScale(frame, 1) or returnValue;
 
 			end
 
@@ -257,7 +256,7 @@ local function OnMouseWheel(frame, delta)
 	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta);
 
 	if not frameData.storage.detached then
-		parentReturnValue = (frameData.storage.parentFrame and OnMouseWheel(frameData.storage.parentFrame, delta));
+		parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta));
 	end
 
 	if frameData.storage.detached or not parentReturnValue then
@@ -271,8 +270,7 @@ local function OnMouseWheel(frame, delta)
 			if newScale > 1.5 then newScale = 1.5 end
 			if newScale < 0.5 then newScale = 0.5 end
 
-			SetFrameScale(frame, newScale);
-			returnValue = true;
+			returnValue = SetFrameScale(frame, newScale) or returnValue;
 
 		end
 
@@ -302,17 +300,19 @@ end
 ------------------------------------------------------------------------------------------------------
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
-function BlizzMove:MakeFrameMovable(frame, frameName, frameData, parentFrame)
+function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 	if InCombatLockdown() and frame:IsProtected() then return false end
 
 	if not frame or (frameData.storage and frameData.storage.hooked) then return false end
 
 	local clampFrame = false;
-	if not parentFrame or frameData.Detachable then
+	if not frameParent or frameData.Detachable then
 		clampFrame = true;
 	end
 
 	frame:SetMovable(true);
+	frame:SetClampedToScreen(clampFrame);
+
 	if not frameData.IgnoreMouse then
 		frame:EnableMouse(true);
 		frame:EnableMouseWheel(true);
@@ -321,7 +321,6 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, parentFrame)
 		frame:HookScript("OnMouseUp",    OnMouseUp);
 		frame:HookScript("OnMouseWheel", OnMouseWheel);
 	end
-	frame:SetClampedToScreen(clampFrame);
 
 	frame:HookScript("OnShow", function() end);
 	frame:HookScript("OnHide", function() end);
@@ -336,7 +335,7 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, parentFrame)
 	frameData.storage.hooked = true;
 	frameData.storage.frame = frame;
 	frameData.storage.frameName = frameName;
-	frameData.storage.parentFrame = parentFrame;
+	frameData.storage.frameParent = frameParent;
 
 	frame.frameData = frameData;
 
@@ -348,7 +347,7 @@ local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
 BlizzMove.gameBuild   = tonumber(buildNumber);
 BlizzMove.gameVersion = tonumber(gameVersion);
 
-function BlizzMove:ProcessFrame(addOnName, frameName, frameData, parentFrame)
+function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	-- Compare versus current build version.
 	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return end
@@ -360,17 +359,29 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, parentFrame)
 
 	local frame = self:GetFrameFromName(frameName);
 
-	if frame and self:MakeFrameMovable(frame, frameName, frameData, parentFrame) then
+	if frame then
 
-		if frameData.SubFrames then
+		if self:MakeFrameMovable(frame, frameName, frameData, frameParent) then
 
-			for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+			if frameData.SubFrames then
 
-				self:ProcessFrame(addOnName, subFrameName, subFrameData, frame);
+				for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+
+					self:ProcessFrame(addOnName, subFrameName, subFrameData, frame);
+
+				end
 
 			end
 
+		else
+
+			BlizzMove:Print("Failed to make frame movable:", frameName);
+
 		end
+
+	else
+
+		BlizzMove:Print("Could not find frame (Build: ", self.gameBuild, "|Version:", self.gameVersio, "):", frameName);
 
 	end
 

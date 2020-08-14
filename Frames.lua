@@ -57,7 +57,7 @@ BlizzMoveAPI:RegisterFrames(
 				MinVersion = 20000, -- Added when?
 				SubFrames =
 				{
-					["TokenFramePopup"] =	
+					["TokenFramePopup"] =
 					{
 						MinVersion = 20000,
 						Detachable = true,
@@ -83,11 +83,6 @@ BlizzMoveAPI:RegisterFrames(
 		MinVersion = 0,
 		Handles = { BlizzMove:CreateMoveHandleAtPoint("ColorPickerFrame", "CENTER", "TOPRIGHT", -8, -8) },
 	},]]
-	["CraftFrame"] =
-	{
-		MinVersion = 20000, -- Added when?
-		MaxVersion = 70300, -- Removed when?
-	},
 	["DestinyFrame"] =
 	{
 		MinVersion = 50000,
@@ -113,10 +108,6 @@ BlizzMoveAPI:RegisterFrames(
 		},
 	},
 	["GameMenuFrame"] =
-	{
-		MinVersion = 0,
-	},
-	["GossipFrame"] =
 	{
 		MinVersion = 0,
 	},
@@ -159,8 +150,8 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["OpenMailFrame"] =
 			{
-				Detachable = true,
 				MinVersion = 0,
+				Detachable = true,
 				SubFrames =
 				{
 					["OpenMailSender"] =
@@ -368,13 +359,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					MinVersion = 20000, -- Added when?
 					Detachable = true,
-                    SubFrames =
-                    {
-                        ["CalendarCreateEventInviteListScrollFrame"] =
-                        {
-                            MinVersion = 20000,
-                        }
-                    }
+					SubFrames =
+					{
+						["CalendarCreateEventInviteListScrollFrame"] =
+						{
+							MinVersion = 20000,
+						}
+					}
 				},
 				["CalendarViewEventFrame"] =
 				{
@@ -457,6 +448,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["ContributionCollectionFrame"] =
 		{
 			MinVersion = 20000, -- Added when?
+		},
+	},
+	["Blizzard_CraftUI"] =
+	{
+		["CraftFrame"] =
+		{
+			MaxVerrsion = 70300, -- When was this renamed to TradeSkillFrame?
 		},
 	},
 	["Blizzard_DeathRecap"] =
@@ -689,7 +687,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["TradeSkillFrame"] =
 		{
-			MinVersion = 0,
+			MinVersion = 20000, -- Was previously CraftFrame.
 		},
 	},
 	["Blizzard_TrainerUI"] =

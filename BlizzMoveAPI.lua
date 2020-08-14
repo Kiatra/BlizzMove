@@ -8,7 +8,7 @@ BlizzMoveAPI = BlizzMoveAPI or {}
 function BlizzMoveAPI:ToggleDebugPrints()
     BlizzMove.DebugPrints = not BlizzMove.DebugPrints
 
-	BlizzMove:Print("Debug prints have been: " .. ((BlizzMove.DebugPrints and "Enabled") or "Disabled"));
+	BlizzMove:Print("Debug prints have been:", ((BlizzMove.DebugPrints and "Enabled") or "Disabled"));
 end
 
 ------------------------------------------------------------------------------------------------------
