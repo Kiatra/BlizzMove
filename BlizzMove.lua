@@ -1,90 +1,410 @@
-_G.BlizzMove = _G.BlizzMove or {};
+BlizzMove = LibStub("AceAddon-3.0"):NewAddon("BlizzMove", "AceConsole-3.0", "AceEvent-3.0");
+if not BlizzMove then return end
 
-local version = select(4, GetBuildInfo());
+BlizzMove.Frames = BlizzMove.Frames or {};
 
+------------------------------------------------------------------------------------------------------
+-- Main: Debug Functions
+------------------------------------------------------------------------------------------------------
+function BlizzMove:DebugPrint(...)
+	if self.DebugPrints then self:Print("Debug message:\n", ...); end
+end
 
+------------------------------------------------------------------------------------------------------
+-- Main: Frame Functions
+------------------------------------------------------------------------------------------------------
+function BlizzMove:ValidateFrame(frameName, frameData)
+	return true;
+end
 
+function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
+	if not addOnName then addOnName = "BlizzMove" end
 
+	self.Frames[addOnName]            = self.Frames[addOnName] or {};
+	self.Frames[addOnName][frameName] = frameData;
 
-function pairsByKeys (t, f)
-	local a = {}
+	self:ProcessFrame(addOnName, frameName, frameData);
+end
 
-	for n in pairs(t) do table.insert(a, n) end
+------------------------------------------------------------------------------------------------------
+-- Main: Helper Functions
+------------------------------------------------------------------------------------------------------
+function BlizzMove:GetFrameFromName(frameName)
+	local frameTable = _G;
 
-	table.sort(a, f)
+	for keyName in string.gmatch(frameName, "([^.]+)") do
+		if not frameTable[keyName] then return nil end
 
-	local i = 0
-	local iter = function ()
-		i = i + 1
-		if a[i] then return a[i], t[a[i]] else return nil end
+		frameTable = frameTable[keyName];
 	end
 
-	return iter
+	return frameTable;
+end
+
+------------------------------------------------------------------------------------------------------
+-- Main: Helper Functions
+------------------------------------------------------------------------------------------------------
+local function GetFramePoints(frame)
+	local numPoints = frame:GetNumPoints();
+
+	if numPoints then
+		local framePoints = {};
+
+		for curPoint = 1, numPoints do
+			framePoints[curPoint] = {}
+			framePoints[curPoint].anchorPoint,
+			framePoints[curPoint].relativeFrame,
+			framePoints[curPoint].relativePoint,
+			framePoints[curPoint].offX,
+			framePoints[curPoint].offY = frame:GetPoint(curPoint);
+		end
+
+		return framePoints;
+	end
+
+	return false;
+end
+
+local function SetFramePoints(frame, framePoints)
+	if InCombatLockdown() and frame:IsProtected() then return false end
+
+	if framePoints and framePoints[1] then
+
+		frame:ClearAllPoints();
+
+		for curPoint = 1, #framePoints do
+			frame.ignoreSetPointHook = true;
+			frame:SetPoint(
+				framePoints[curPoint].anchorPoint,
+				framePoints[curPoint].relativeFrame,
+				framePoints[curPoint].relativePoint,
+				framePoints[curPoint].offX,
+				framePoints[curPoint].offY
+			);
+			frame.ignoreSetPointHook = nil;
+		end
+	end
+
+	return true;
+end
+
+------------------------------------------------------------------------------------------------------
+-- Main: Helper Functions
+------------------------------------------------------------------------------------------------------
+local function GetFrameScale(frame)
+	local frameData = frame.frameData;
+	local parentScale = (frameData.storage.parentFrame and GetFrameScale(frameData.storage.parentFrame)) or 1;
+
+	return frame:GetScale() * parentScale;
 end
 
 
+local function SetFrameScaleSubs(frame, oldScale, newScale)
+	local frameData = frame.frameData;
 
+	if frameData.SubFrames then
+		for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+			if subFrameData.storage then
+				local subFrame = subFrameData.storage.frame or BlizzMove:GetFrameFromName(subFrameName);
 
+				if subFrameData.storage.detached then
 
-function BlizzMove:FuckReturnBreaksLoop(frameName, frameData, addonName)
+					local subScale = subFrame:GetScale();
 
-	if frameData.MinVersion and frameData.MinVersion > version then return end
-	if frameData.MaxVersion and frameData.MaxVersion < version then return end
-
-	local frameHandle = _G[frameName];
-
-	if not frameHandle then
-
-		print("The frame '" .. frameName .. "' does not exist on version (" .. version .. ")[" .. addonName .. "], notify authors!");
-
-		return;
-
-	else
-
-		if frameData.SubFrames then
-
-			for subFrameName, subFrameData in pairsByKeys(frameData.SubFrames) do
-
-				BlizzMove:FuckReturnBreaksLoop(subFrameName, subFrameData, addonName);
-
+					local newSubScale = (oldScale * subScale) / newScale;
+					subFrame:SetScale(newSubScale);
+				else
+					SetFrameScaleSubs(subFrame, oldScale, newScale);
+				end
 			end
-
 		end
-
 	end
-
 end
 
-function BlizzMove:PrintHelloWorld()
 
-	if BlizzMove.Frames then
+local function SetFrameScale(frame, frameScale)
+	local frameData = frame.frameData;
+	local oldScale = GetFrameScale(frame)
+	local newScale = frameScale
 
-		for frameName, frameData in pairsByKeys(BlizzMove.Frames) do
+	if frameData.storage.detached then
+		local parentScale = GetFrameScale(frameData.storage.parentFrame)
 
-			BlizzMove:FuckReturnBreaksLoop(frameName, frameData, "UIParent");
+		newScale = frameScale / parentScale
+	end
+
+	frame:SetScale(newScale)
+	SetFrameScaleSubs(frame, oldScale, newScale);
+
+	BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string.format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)))
+end
+
+------------------------------------------------------------------------------------------------------
+-- Main: Hooks
+------------------------------------------------------------------------------------------------------
+local function OnMouseDown(frame, button)
+
+	local returnValue = false;
+	local parentReturnValue = false;
+	local frameData = frame.frameData;
+
+	BlizzMove:DebugPrint("OnMouseDown:", frameData.storage.frameName, button);
+
+	if button == "LeftButton" then
+
+		if IsAltKeyDown() and frameData.Detachable and not frameData.storage.detached then
+
+			frameData.storage.detachPoints = GetFramePoints(frame);
+			frameData.storage.detached = true;
+			returnValue = true;
+
+			PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+
+		end
+
+		if not frameData.storage.detached then
+			parentReturnValue = (frameData.storage.parentFrame and OnMouseDown(frameData.storage.parentFrame, button));
+		end
+
+		if (frameData.storage.detached or not parentReturnValue) then
+
+			local userPlaced = frame:IsUserPlaced();
+
+			frame:StartMoving();
+			frame:SetUserPlaced(userPlaced);
+			returnValue = true;
 
 		end
 
 	end
 
-	if BlizzMove.AddOnFrames then
+	return returnValue or parentReturnValue;
+end
 
-		for addonName, frameList in pairsByKeys(BlizzMove.AddOnFrames) do
+local function OnMouseUp(frame, button)
 
-			if not IsAddOnLoaded(addonName) then LoadAddOn(addonName); end
+	local returnValue = false;
+	local parentReturnValue = false;
+	local frameData = frame.frameData;
 
-			if frameList then
+	BlizzMove:DebugPrint("OnMouseUp:", frameData.storage.frameName, button);
 
-				for frameName, frameData in pairsByKeys(frameList) do
+	if not frameData.storage.detached then
+		parentReturnValue = (frameData.storage.parentFrame and OnMouseUp(frameData.storage.parentFrame, button));
+	end
 
-					BlizzMove:FuckReturnBreaksLoop(frameName, frameData, addonName);
+	if frameData.storage.detached or not parentReturnValue then
+
+		if button == "LeftButton" then
+
+			frame:StopMovingOrSizing();
+
+			frameData.storage.dragPoints = GetFramePoints(frame);
+			frameData.storage.dragged = true;
+			returnValue = true;
+
+		elseif button == "RightButton" then
+
+			local fullReset = false;
+
+			if IsAltKeyDown() and frameData.storage.detached then
+
+				if SetFramePoints(frame, frameData.storage.detachPoints) then
+
+					frameData.storage.detachPoints = nil;
+					frameData.storage.detached = nil;
+					returnValue = true;
+					fullReset = true;
+
+					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 
 				end
 
 			end
 
+			if IsControlKeyDown() or fullReset then
+
+				SetFrameScale(frame, 1);
+				returnValue = true;
+
+			end
+
+			if IsShiftKeyDown() or fullReset then
+
+				frameData.storage.dragPoints = nil;
+				frameData.storage.dragged = nil;
+				returnValue = true;
+
+				UpdateUIPanelPositions(frame);
+
+			end
+
+			returnValue = true;
+
 		end
 
 	end
+
+	return returnValue or parentReturnValue;
+end
+
+local function OnMouseWheel(frame, delta)
+
+	local returnValue = false;
+	local parentReturnValue = false;
+	local frameData = frame.frameData;
+
+	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta);
+
+	if not frameData.storage.detached then
+		parentReturnValue = (frameData.storage.parentFrame and OnMouseWheel(frameData.storage.parentFrame, delta));
+	end
+
+	if frameData.storage.detached or not parentReturnValue then
+
+		if IsControlKeyDown() then
+
+			local oldScale = GetFrameScale(frame) or 1;
+
+			local newScale = oldScale + 0.1 * delta;
+
+			if newScale > 1.5 then newScale = 1.5 end
+			if newScale < 0.5 then newScale = 0.5 end
+
+			SetFrameScale(frame, newScale);
+			returnValue = true;
+
+		end
+
+	end
+
+	return returnValue or parentReturnValue;
+end
+
+------------------------------------------------------------------------------------------------------
+-- Main: Secure Hooks
+------------------------------------------------------------------------------------------------------
+local function OnSetPoint(frame, anchorPoint, relativeFrame, relativePoint, offX, offY)
+	if frame.ignoreSetPointHook then return end
+
+	if frame.frameData.storage.dragged then
+		SetFramePoints(frame, frame.frameData.storage.dragPoints);
+	end
+end
+
+local function OnSizeUpdate(frame)
+	local clampDistance = 40;
+	local clampWidth = (frame:GetWidth() - clampDistance) or 0;
+	local clampHeight = (frame:GetHeight() - clampDistance) or 0;
+
+	frame:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight);
+end
+------------------------------------------------------------------------------------------------------
+-- Main: Frame Functions
+------------------------------------------------------------------------------------------------------
+function BlizzMove:MakeFrameMovable(frame, frameName, frameData, parentFrame)
+	if InCombatLockdown() and frame:IsProtected() then return false end
+
+	if not frame or (frameData.storage and frameData.storage.hooked) then return false end
+
+	local clampFrame = false;
+	if not parentFrame or frameData.Detachable then
+		clampFrame = true;
+	end
+
+	frame:SetMovable(true);
+	if not frameData.IgnoreMouse then
+		frame:EnableMouse(true);
+		frame:EnableMouseWheel(true);
+
+		frame:HookScript("OnMouseDown",  OnMouseDown);
+		frame:HookScript("OnMouseUp",    OnMouseUp);
+		frame:HookScript("OnMouseWheel", OnMouseWheel);
+	end
+	frame:SetClampedToScreen(clampFrame);
+
+	frame:HookScript("OnShow", function() end);
+	frame:HookScript("OnHide", function() end);
+
+	hooksecurefunc(frame, "SetPoint",  OnSetPoint);
+	hooksecurefunc(frame, "SetWidth",  OnSizeUpdate);
+	hooksecurefunc(frame, "SetHeight", OnSizeUpdate);
+
+	OnSizeUpdate(frame);
+
+	frameData.storage = {};
+	frameData.storage.hooked = true;
+	frameData.storage.frame = frame;
+	frameData.storage.frameName = frameName;
+	frameData.storage.parentFrame = parentFrame;
+
+	frame.frameData = frameData;
+
+	return true;
+end
+
+local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
+
+BlizzMove.gameBuild   = tonumber(buildNumber);
+BlizzMove.gameVersion = tonumber(gameVersion);
+
+function BlizzMove:ProcessFrame(addOnName, frameName, frameData, parentFrame)
+
+	-- Compare versus current build version.
+	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return end
+	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return end
+
+	-- Compare versus current interface version.
+	if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return end
+	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return end
+
+	local frame = self:GetFrameFromName(frameName);
+
+	if frame and self:MakeFrameMovable(frame, frameName, frameData, parentFrame) then
+
+		if frameData.SubFrames then
+
+			for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+
+				self:ProcessFrame(addOnName, subFrameName, subFrameData, frame);
+
+			end
+
+		end
+
+	end
+
+end
+
+function BlizzMove:ProcessFrames(addOnName)
+
+	if self.Frames and self.Frames[addOnName] then
+
+		for frameName, frameData in pairs(self.Frames[addOnName]) do
+
+			self:ProcessFrame(addOnName, frameName, frameData);
+
+		end
+
+	end
+
+end
+
+
+function BlizzMove:OnInitialize()
+
+	self:ProcessFrames("BlizzMove");
+
+end
+
+function BlizzMove:ADDON_LOADED(event, addOnName)
+
+	self:ProcessFrames(addOnName);
+
+end
+
+function BlizzMove:OnEnable()
+
+	self:RegisterEvent("ADDON_LOADED");
 
 end

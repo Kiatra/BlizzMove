@@ -1,8 +1,15 @@
 ## Interface: 80300
-## Title: BlizzMove
-## Notes: Makes blizzard frames movable
 ## Author: yess
+## Title: BlizzMoveBeta
+## Notes: Makes blizzard frames movable
 ## Version: @project-version@
+## OptionalDeps: Ace3
+## X-Embeds: Ace3
 
-Frames.lua
+# Libraries
+Libs\Libs.xml
+
+# Add-On
 BlizzMove.lua
+BlizzMoveAPI.lua
+Frames.lua
