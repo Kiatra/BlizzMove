@@ -544,6 +544,17 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["GarrisonLandingPage"] =
 		{
 			MinVersion = 60000,
+			SubFrames =
+			{
+				["GarrisonLandingPageReportListListScrollFrame"] =
+				{
+					MinVersion = 60000,
+				},
+				["GarrisonLandingPageFollowerListListScrollFrame"] =
+				{
+					MinVersion = 60000,
+				},
+			},
 		},
 		["GarrisonMissionFrame"] =
 		{
