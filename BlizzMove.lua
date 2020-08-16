@@ -403,7 +403,7 @@ end
 
 
 function BlizzMove:OnInitialize()
-
+	self.Config:RegisterOptions()
 	self:ProcessFrames("BlizzMove");
 
 end

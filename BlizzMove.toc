@@ -18,5 +18,6 @@ Libs\Libs.xml
 # Add-On
 BlizzMove.lua
 BlizzMoveAPI.lua
+BlizzMoveConfig.lua
 Frames.lua
 
