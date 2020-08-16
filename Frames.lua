@@ -105,9 +105,25 @@ BlizzMoveAPI:RegisterFrames(
 				MinVersion = 0,
 				Detachable = true,
 			},
+			["FriendsListFrameScrollFrame"] =
+			{
+				MinVersion = 0,
+			},
+			["QuickJoinScrollFrame"] =
+			{
+				MinVersion = 0,
+			},
+			["WhoListScrollFrame"] =
+			{
+				MinVersion = 0,
+			},
 		},
 	},
 	["GameMenuFrame"] =
+	{
+		MinVersion = 0,
+	},
+	["GossipFrame"] =
 	{
 		MinVersion = 0,
 	},
@@ -157,7 +173,7 @@ BlizzMoveAPI:RegisterFrames(
 					["OpenMailSender"] =
 					{
 						MinVersion = 0,
-					}
+					},
 				},
 			},
 		},
@@ -182,6 +198,21 @@ BlizzMoveAPI:RegisterFrames(
 	["PVEFrame"] =
 	{
 		MinVersion = 20000, -- Added when?
+		SubFrames =
+		{
+			["LFGListApplicationViewerScrollFrame"] =
+			{
+				MinVersion = 20000,
+			},
+			["LFGListSearchPanelScrollFrame"] =
+			{
+				MinVersion = 20000,
+			},
+			["ScenarioQueueFrameSpecific"] =
+			{
+				MinVersion = 20000,
+			},
+		},
 	},
 	["QuestFrame"] =
 	{
@@ -241,6 +272,13 @@ BlizzMoveAPI:RegisterFrames(
 	["WorldMapFrame"] =
 	{
 		MinVersion = 20000, -- No longer fullscreen when?
+		SubFrames =
+		{
+			["QuestMapFrame"] =
+			{
+				MinVersion = 20000,
+			},
+		},
 	},
 	["WorldStateScoreFrame"] =
 	{
@@ -259,6 +297,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			SubFrames =
 			{
 				["AchievementFrameHeader"] =
+				{
+					MinVersion = 30000,
+				},
+				["AchievementFrameCategoriesContainer"] =
+				{
+					MinVersion = 30000,
+				},
+				["AchievementFrameAchievementsContainer"] =
 				{
 					MinVersion = 30000,
 				},
@@ -364,8 +410,8 @@ BlizzMoveAPI:RegisterAddOnFrames(
 						["CalendarCreateEventInviteListScrollFrame"] =
 						{
 							MinVersion = 20000,
-						}
-					}
+						},
+					},
 				},
 				["CalendarViewEventFrame"] =
 				{
@@ -425,6 +471,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["CommunitiesFrame"] =
 		{
 			MinVersion = 0,
+			SubFrames =
+			{
+				["ClubFinderCommunityAndGuildFinderFrame.CommunityCards.ListScrollFrame"] =
+				{
+					MinVersion = 20000, -- Added when?
+				},
+			},
 		},
 		["CommunitiesFrame.RecruitmentDialog"] =
 		{
@@ -688,6 +741,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["TradeSkillFrame"] =
 		{
 			MinVersion = 20000, -- Was previously CraftFrame.
+			SubFrames =
+			{
+				["TradeSkillFrame.RecipeList"] =
+				{
+					MinVersion = 20000,
+				},
+			},
 		},
 	},
 	["Blizzard_TrainerUI"] =
