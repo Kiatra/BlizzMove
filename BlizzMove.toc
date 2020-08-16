@@ -1,7 +1,13 @@
+#@retail@
 ## Interface: 80300
-## Author: yess
-## Title: BlizzMoveBeta
+#@end-retail@
+#@non-retail@
+# ## Interface: 11304
+#@end-non-retail@
+## Title: BlizzMove
 ## Notes: Makes blizzard frames movable
+## Author: the-rebel-Mermaid - github.com/the-rebel-Mermaid/BlizzMove/
+## X-WoWI-ID: 23875
 ## Version: @project-version@
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
@@ -13,3 +19,4 @@ Libs\Libs.xml
 BlizzMove.lua
 BlizzMoveAPI.lua
 Frames.lua
+
