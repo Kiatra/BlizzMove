@@ -1,4 +1,5 @@
-local BlizzMove = LibStub("AceAddon-3.0"):GetAddon("BlizzMove");
+local name = ...
+local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return end
 
 BlizzMove.Config = BlizzMove.Config or {}
@@ -12,7 +13,7 @@ Config.options = {
 		version = {
 			order = 0,
 			type = "description",
-			name = "Version" .. ": " .. Config.version
+			name = "Version: " .. Config.version
 		},
 		des = {
 			order = 1,

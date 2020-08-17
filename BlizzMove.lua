@@ -1,4 +1,5 @@
-local BlizzMove = LibStub("AceAddon-3.0"):NewAddon("BlizzMove", "AceConsole-3.0", "AceEvent-3.0");
+local name = ...
+local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0");
 if not BlizzMove then return end
 
 BlizzMove.Frames = BlizzMove.Frames or {};
@@ -7,27 +8,111 @@ BlizzMove.Frames = BlizzMove.Frames or {};
 -- Main: Debug Functions
 ------------------------------------------------------------------------------------------------------
 function BlizzMove:DebugPrint(...)
-	if self.DebugPrints then self:Print("Debug message:\n", ...); end
+	if self.DB.DebugPrints then self:Print("Debug message:\n", ...); end
 end
 
 ------------------------------------------------------------------------------------------------------
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
-function BlizzMove:ValidateFrame(frameName, frameData)
+function BlizzMove:ValidateFrame(frameName, frameData, isSubFrame)
+
+	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameData, isSubFrame)
+
+end
+
+function BlizzMove:ValidateFrameName(frameName)
+
+	return #frameName > 0;
+
+end
+
+function BlizzMove:ValidateFrameData(frameData, isSubFrame)
+
+	if frameData.SubFrames then
+
+		for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+
+			if not self:ValidateFrame(subFrameName, subFrameData, true) then return false; end
+
+		end
+
+	end
+
+	if frameData.MinVersion and (type(frameData.MinVersion) ~= "number" or frameData.MinVersion < 0) then return false; end
+
+	if frameData.MaxVersion and (type(frameData.MaxVersion) ~= "number" or frameData.MaxVersion < 0) then return false; end
+
+	if frameData.MinBuild and (type(frameData.MinBuild) ~= "number" or frameData.MinBuild < 0) then return false; end
+
+	if frameData.MaxBuild and (type(frameData.MaxBuild) ~= "number" or frameData.MaxBuild < 0) then return false; end
+
+	if frameData.Detachable and (type(frameData.Detachable) ~= "boolean" or (frameData.Detachable and not isSubFrame)) then return false; end
+
 	return true;
 end
 
 function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
-	if not addOnName then addOnName = "BlizzMove" end
+	if not addOnName then addOnName = self.name end
+
+	if self:IsFrameDisabled(addOnName, frameName) then return false end
 
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
 	self.Frames[addOnName][frameName] = frameData;
 
-	if IsAddOnLoaded(addOnName) then
+	if IsAddOnLoaded(addOnName) and (addOnName ~= self.name or self.initialized) then
 
 		self:ProcessFrame(addOnName, frameName, frameData);
 
 	end
+end
+
+function BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
+	if not addOnName then addOnName = self.name end
+
+	if not self.Frames[addOnName][frameName] then return false; end
+
+	self.Frames[addOnName][frameName] = nil
+
+	if permanent then
+
+		self.DB.disabledFrames                       = self.DB.disabledFrames or {}
+		self.DB.disabledFrames[addOnName]            = self.DB.disabledFrames[addOnName] or {}
+		self.DB.disabledFrames[addOnName][frameName] = true
+
+	end
+
+	if IsAddOnLoaded(addOnName) then
+
+		self:UnprocessFrame(addOnName, frameName)
+
+	end
+
+	return true
+end
+
+function BlizzMove:DisableFrame(addOnName, frameName)
+
+	if self:IsFrameDisabled(addOnName, frameName) then return end
+
+	BlizzMove:UnregisterFrame(addOnName, frameName, true)
+
+end
+
+function BlizzMove:EnableFrame(addOnName, frameName)
+
+	if not self:IsFrameDisabled(addOnName, frameName) then return end
+
+	self.DB.disabledFrames[addOnName][frameName] = nil
+
+end
+
+function BlizzMove:IsFrameDisabled(addOnName, frameName)
+	if self.DB and self.DB.disabledFrames and self.DB.disabledFrames[addOnName] and self.DB.disabledFrames[addOnName][frameName] then
+		self:DebugPrint('Frame', frameName, 'is disabled')
+		return true
+	end
+
+	return false
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -349,6 +434,8 @@ BlizzMove.gameVersion = tonumber(gameVersion);
 
 function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
+	if self:IsFrameDisabled(addOnName, frameName) then return end
+
 	-- Compare versus current build version.
 	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return end
 	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return end
@@ -381,7 +468,7 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	else
 
-		BlizzMove:Print("Could not find frame (Build: ", self.gameBuild, "|Version:", self.gameVersio, "):", frameName);
+		BlizzMove:Print("Could not find frame (Build: ", self.gameBuild, "|Version:", self.gameVersion, "):", frameName);
 
 	end
 
@@ -401,16 +488,27 @@ function BlizzMove:ProcessFrames(addOnName)
 
 end
 
+function BlizzMove:UnprocessFrame(addOnName, frameName)
+
+	self:DebugPrint('placeholder function called')
+
+end
 
 function BlizzMove:OnInitialize()
 
+	self.initialized = true
+
+	BlizzMoveDB = BlizzMoveDB or {}
+	self.DB = BlizzMoveDB
+
 	self.Config:RegisterOptions()
+	self:ProcessFrames(self.name)
 
 end
 
 function BlizzMove:ADDON_LOADED(event, addOnName)
 
-	self:ProcessFrames(addOnName);
+	if addOnName ~= self.name then self:ProcessFrames(addOnName); end
 
 end
 

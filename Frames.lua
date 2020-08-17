@@ -6,10 +6,6 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
-	--[[["AudioOptionsFrame"] =
-	{
-		MinVersion = 0,
-	},]]
 	["BankFrame"] =
 	{
 		MinVersion = 0,
@@ -74,15 +70,6 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
-	--[[["CinematicFrame"] =
-	{
-		MinVersion = 0,
-	},]]
-	--[[["ColorPickerFrame"] =
-	{
-		MinVersion = 0,
-		Handles = { BlizzMove:CreateMoveHandleAtPoint("ColorPickerFrame", "CENTER", "TOPRIGHT", -8, -8) },
-	},]]
 	["DestinyFrame"] =
 	{
 		MinVersion = 50000,
@@ -91,10 +78,6 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
-	--[[["ExtraActionBarFrame"] =
-	{
-		MinVersion = 0,
-	},]]
 	["FriendsFrame"] =
 	{
 		MinVersion = 0,
@@ -147,10 +130,6 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
-	--[[["LevelUpDisplay"] =
-	{
-		MinVersion = 0,
-	},]]
 	["LootFrame"] =
 	{
 		MinVersion = 0,
@@ -164,17 +143,16 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 0,
 			},
-			["OpenMailFrame"] =
+		},
+	},
+	["OpenMailFrame"] =
+	{
+		MinVersion = 0,
+		SubFrames =
+		{
+			["OpenMailSender"] =
 			{
 				MinVersion = 0,
-				Detachable = true,
-				SubFrames =
-				{
-					["OpenMailSender"] =
-					{
-						MinVersion = 0,
-					},
-				},
 			},
 		},
 	},
@@ -182,11 +160,6 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
-	--[[["ObjectiveTrackerFrame"] =
-	{
-		MinVersion = 20000,
---		Handles = { BlizzMove:CreateMoveHandleAtPoint("ObjectiveTrackerFrame", "CENTER", "TOPRIGHT", 8, -12) },
-	},]]
 	["PetitionFrame"] =
 	{
 		MinVersion = 0,
@@ -227,20 +200,6 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 20000, -- Added when?
 	},
-	--[[["QuestWatchFrame"] =
-	{
-		MinVersion = 0,
-		MaxVersion = 20000,
---		Handles = { BlizzMove:CreateMoveHandleAtPoint("QuestWatchFrame", "CENTER", "TOPRIGHT", -12, -20) },
-	},]]
-	--[[["RaidBrowserFrame"] =
-	{
-		MinVersion = 20000,
-	},]]
-	--[[["RaidParentFrame"] =
-	{
-		MinVersion = 0,
-	},]]
 	["ReadyCheckFrame"] =
 	{
 		MinVersion = 0,
@@ -378,6 +337,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["BarberShopFrame"] =
 		{
 			MinVersion = 30000,
+			MaxVersion = 90000, -- still exists, but shouldn't be movable (fullscreen)
 		},
 	},
 	["Blizzard_BindingUI"] =
@@ -403,7 +363,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["CalendarCreateEventFrame"] =
 				{
-					MinVersion = 20000, -- Added when?
+					MinVersion = 20000,
 					Detachable = true,
 					SubFrames =
 					{
@@ -415,7 +375,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["CalendarViewEventFrame"] =
 				{
-					MinVersion = 20000, -- Added when?
+					MinVersion = 20000,
 					Detachable = true,
 					SubFrames =
 					{
@@ -431,7 +391,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["CalendarViewHolidayFrame"] =
 				{
-					MinVersion = 20000, -- Added when?
+					MinVersion = 20000,
 					Detachable = true,
 				},
 			},
