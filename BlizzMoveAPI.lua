@@ -58,3 +58,36 @@ function BlizzMoveAPI:UnregisterFrame(addOnName, frameName, permanent)
 	return BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
 
 end
+
+function BlizzMoveAPI:GetRegisteredAddOns()
+
+	return BlizzMove:GetRegisteredAddOns();
+
+end
+
+function BlizzMoveAPI:GetRegisteredFrames(addOnName)
+
+	return BlizzMove:GetRegisteredFrames(addOnName)
+
+end
+
+
+function BlizzMoveAPI:IsFrameDisabled(addOnName, frameName)
+
+	return BlizzMove:IsFrameDisabled(addOnName, frameName)
+
+end
+
+function BlizzMoveAPI:SetFrameDisabled(addOnName, frameName, disable)
+
+	if disable then
+
+		return BlizzMove:DisableFrame(addOnName, frameName);
+
+	else
+
+		return BlizzMove:EnableFrame(addOnName, frameName);
+
+	end
+
+end
