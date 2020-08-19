@@ -8,7 +8,7 @@ BlizzMove.Frames = BlizzMove.Frames or {};
 -- Main: Debug Functions
 ------------------------------------------------------------------------------------------------------
 function BlizzMove:DebugPrint(...)
-	if self.DB.DebugPrints then self:Print("Debug message:\n", ...); end
+	if self.DB and self.DB.DebugPrints then self:Print("Debug message:\n", ...); end
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ end
 ------------------------------------------------------------------------------------------------------
 function BlizzMove:ValidateFrame(frameName, frameData, isSubFrame)
 
-	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameData, isSubFrame)
+	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameName, frameData, isSubFrame)
 
 end
 
@@ -26,29 +26,46 @@ function BlizzMove:ValidateFrameName(frameName)
 
 end
 
-function BlizzMove:ValidateFrameData(frameData, isSubFrame)
+function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 
-	if frameData.SubFrames then
+	local key, value;
 
-		for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+	for key, value in pairs(frameData) do
 
-			if not self:ValidateFrame(subFrameName, subFrameData, true) then return false; end
+		if key == "SubFrames" then
+
+			if type(value) ~= "table" then return false; end
+
+			for subFrameName, subFrameData in pairs(value) do
+
+				if not self:ValidateFrame(subFrameName, subFrameData, true) then return false; end
+
+			end
+
+		elseif (
+			key == "MinVersion"
+			or key == "MaxVersion"
+			or key == "MinBuild"
+			or key == "MaxBuild"
+		) then
+
+			if (type(value) ~= "number" or value < 0) then return false; end
+
+		elseif key == "Detachable" then
+
+			if (type(frameData.Detachable) ~= "boolean" or (frameData.Detachable and not isSubFrame)) then return false; end
+
+		elseif key == "IgnoreMouse" then
+
+			if type(frameData.IgnoreMouse) ~= "boolean" then return false; end
+
+		else
+
+			self:Print("Unsupported key supplied in frameData for frame:", frameName, "; key:", key)
 
 		end
 
 	end
-
-	if frameData.MinVersion and (type(frameData.MinVersion) ~= "number" or frameData.MinVersion < 0) then return false; end
-
-	if frameData.MaxVersion and (type(frameData.MaxVersion) ~= "number" or frameData.MaxVersion < 0) then return false; end
-
-	if frameData.MinBuild and (type(frameData.MinBuild) ~= "number" or frameData.MinBuild < 0) then return false; end
-
-	if frameData.MaxBuild and (type(frameData.MaxBuild) ~= "number" or frameData.MaxBuild < 0) then return false; end
-
-	if frameData.Detachable and (type(frameData.Detachable) ~= "boolean" or (frameData.Detachable and not isSubFrame)) then return false; end
-
-	if frameData.IgnoreMouse and type(frameData.IgnoreMouse) ~= "boolean" then return false; end
 
 	return true;
 end
@@ -98,7 +115,11 @@ function BlizzMove:GetRegisteredAddOns()
 
 	for addOnName, _ in pairs(self.Frames) do
 
-		returnTable[addOnName] = addOnName;
+		if next(self:GetRegisteredFrames(addOnName)) ~= nil then
+
+			returnTable[addOnName] = addOnName;
+
+		end
 
 	end
 
@@ -113,9 +134,13 @@ function BlizzMove:GetRegisteredFrames(addOnName)
 
 	if not self.Frames[addOnName] then return returnTable; end
 
-	for frameName, _ in pairs(self.Frames[addOnName]) do
+	for frameName, frameData in pairs(self.Frames[addOnName]) do
 
-		returnTable[frameName] = frameName;
+		if self:MatchesCurrentBuild(frameData) then
+
+			returnTable[frameName] = frameName;
+
+		end
 
 	end
 
@@ -179,6 +204,24 @@ function BlizzMove:GetFrameFromName(frameName)
 	end
 
 	return frameTable;
+end
+
+local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
+
+BlizzMove.gameBuild   = tonumber(buildNumber);
+BlizzMove.gameVersion = tonumber(gameVersion);
+
+function BlizzMove:MatchesCurrentBuild(frameData)
+
+	-- Compare versus current build version.
+	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return false end
+	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return false end
+
+	-- Compare versus current interface version.
+	if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return false end
+	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return false end
+
+	return true;
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -520,22 +563,11 @@ function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
 	return true;
 end
 
-local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
-
-BlizzMove.gameBuild   = tonumber(buildNumber);
-BlizzMove.gameVersion = tonumber(gameVersion);
-
 function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	if self:IsFrameDisabled(addOnName, frameName) then return end
 
-	-- Compare versus current build version.
-	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return end
-	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return end
-
-	-- Compare versus current interface version.
-	if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return end
-	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return end
+	if not self:MatchesCurrentBuild(frameData) then return end
 
 	local frame = self:GetFrameFromName(frameName);
 
@@ -591,13 +623,7 @@ function BlizzMove:UnprocessFrame(frameName)
 
 		local frameData = frame.frameData
 
-		-- Compare versus current build version.
-		if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return end
-		if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return end
-
-		-- Compare versus current interface version.
-		if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return end
-		if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return end
+		if not self:MatchesCurrentBuild(frameData) then return end
 
 		self:MakeFrameUnmovable(frame, frameName, frame.frameData)
 
