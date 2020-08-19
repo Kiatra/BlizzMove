@@ -83,6 +83,9 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 		self:ProcessFrame(addOnName, frameName, frameData);
 
 	end
+
+	self:ScheduleOptionsUpdate()
+
 end
 
 function BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
@@ -222,6 +225,16 @@ function BlizzMove:MatchesCurrentBuild(frameData)
 	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return false end
 
 	return true;
+end
+
+function BlizzMove:ScheduleOptionsUpdate()
+
+	if not self.initialized or self.optionUpdateTimerActive then return end
+
+	self.optionUpdateTimerActive = true
+
+	C_Timer.After(2, function() self.optionUpdateTimerActive = false; self.Config:RegisterOptions() end)
+
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -648,7 +661,7 @@ function BlizzMove:OnInitialize()
 	BlizzMoveDB = BlizzMoveDB or {}
 	self.DB = BlizzMoveDB
 
-	self.Config:RegisterOptions()
+	self.Config:Initialize()
 
 	-- after a reload, you need to open to category twice to actually open the correct page
 	self:RegisterChatCommand('blizzmove', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);

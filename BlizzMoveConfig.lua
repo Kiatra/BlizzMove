@@ -50,6 +50,8 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 				name = "Enabled Frames",
 				type = "group",
 				childGroups = "select",
+				get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
+				set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
 				args = self.DisableFramesTable,
 			},
 		},
@@ -60,21 +62,19 @@ function Config:GetDisableFramesTable()
 	local tempTable = {}
 
 	for addOnName, _ in pairs(BlizzMoveAPI:GetRegisteredAddOns()) do
-		tempTable["AddOnGroup_" .. addOnName] = {
+		tempTable[addOnName] = {
 			name = addOnName,
 			type = "group",
-			order = function()
-				if addOnName == name then return 0 end
-				if string.match(addOnName, "Blizzard_") then return 5 end
+			order = function(info)
+				if info[#info] == name then return 0 end
+				if string.match(info[#info], "Blizzard_") then return 5 end
 				return 1
 			end,
 			args = {
-				["AddOn_" .. addOnName] = {
+				[addOnName] = {
 					name = "Movable frames for " .. addOnName,
 					type = "multiselect",
-					values = function() return BlizzMoveAPI:GetRegisteredFrames(addOnName); end,
-					get = function(_, frameName) return not BlizzMoveAPI:IsFrameDisabled(addOnName, frameName); end,
-					set = function(_, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(addOnName, frameName, not enabled); end,
+					values = function(info) return BlizzMoveAPI:GetRegisteredFrames(info[#info]); end,
 				},
 			},
 		}
@@ -83,13 +83,17 @@ function Config:GetDisableFramesTable()
 	return tempTable
 end
 
+function Config:Initialize()
+
+	self:RegisterOptions()
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove")
+
+end
 
 function Config:RegisterOptions()
-	if self.OptionsAdded then return end
-	self.OptionsAdded = true
 
 	self.DisableFramesTable = self:GetDisableFramesTable()
 
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("BlizzMove", self:GetOptions())
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove")
+
 end
