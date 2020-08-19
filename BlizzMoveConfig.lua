@@ -12,21 +12,20 @@ function Config:GetOptions()
 		type = "group",
 		childGroups = "tab",
 		args = {
-			mainTab = {
+			version = {
 				order = 0,
+				type = "description",
+				name = "Version: " .. self.version
+			},
+			mainTab = {
+				order = 1,
 				name = "Info",
 				type = "group",
 				args = {
-					version = {
-						order = 0,
-						type = "description",
-						name = "Version: " .. Config.version
-					},
 					des = {
 						order = 1,
 						type = "description",
 						name = [[
-
 This addon makes the Blizzard windows movable.
 
 To temporarily move a window just Left-Click the window and drag it to where you want it for the current game session.
@@ -47,7 +46,7 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 				},
 			},
 			disableFramesTab = {
-				order = 1,
+				order = 2,
 				name = "Enabled Frames",
 				type = "group",
 				childGroups = "select",
@@ -64,9 +63,14 @@ function Config:GetDisableFramesTable()
 		tempTable["AddOnGroup_" .. addOnName] = {
 			name = addOnName,
 			type = "group",
+			order = function()
+				if addOnName == name then return 0 end
+				if string.match(addOnName, "Blizzard_") then return 5 end
+				return 1
+			end,
 			args = {
 				["AddOn_" .. addOnName] = {
-					name = "AddOn frames for " .. addOnName,
+					name = "Movable frames for " .. addOnName,
 					type = "multiselect",
 					values = function() return BlizzMoveAPI:GetRegisteredFrames(addOnName); end,
 					get = function(_, frameName) return not BlizzMoveAPI:IsFrameDisabled(addOnName, frameName); end,

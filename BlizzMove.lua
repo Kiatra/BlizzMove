@@ -623,6 +623,11 @@ function BlizzMove:OnInitialize()
 	self.DB = BlizzMoveDB
 
 	self.Config:RegisterOptions()
+
+	-- after a reload, you need to open to category twice to actually open the correct page
+	self:RegisterChatCommand('blizzmove', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);
+	self:RegisterChatCommand('bm', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);
+
 	self:ProcessFrames(self.name)
 
 end
