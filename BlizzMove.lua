@@ -1,4 +1,5 @@
-local BlizzMove = LibStub("AceAddon-3.0"):NewAddon("BlizzMove", "AceConsole-3.0", "AceEvent-3.0");
+local name = ...
+local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0");
 if not BlizzMove then return end
 
 BlizzMove.Frames = BlizzMove.Frames or {};
@@ -7,27 +8,190 @@ BlizzMove.Frames = BlizzMove.Frames or {};
 -- Main: Debug Functions
 ------------------------------------------------------------------------------------------------------
 function BlizzMove:DebugPrint(...)
-	if self.DebugPrints then self:Print("Debug message:\n", ...); end
+	if self.DB and self.DB.DebugPrints then self:Print("Debug message:\n", ...); end
 end
 
 ------------------------------------------------------------------------------------------------------
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
-function BlizzMove:ValidateFrame(frameName, frameData)
+function BlizzMove:ValidateFrame(frameName, frameData, isSubFrame)
+
+	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameName, frameData, isSubFrame)
+
+end
+
+function BlizzMove:ValidateFrameName(frameName)
+
+	return #frameName > 0;
+
+end
+
+function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
+
+	local key, value;
+
+	for key, value in pairs(frameData) do
+
+		if key == "SubFrames" then
+
+			if type(value) ~= "table" then return false; end
+
+			for subFrameName, subFrameData in pairs(value) do
+
+				if not self:ValidateFrame(subFrameName, subFrameData, true) then return false; end
+
+			end
+
+		elseif (
+			key == "MinVersion"
+			or key == "MaxVersion"
+			or key == "MinBuild"
+			or key == "MaxBuild"
+		) then
+
+			if (type(value) ~= "number" or value < 0) then return false; end
+
+		elseif key == "Detachable" then
+
+			if (type(frameData.Detachable) ~= "boolean" or (frameData.Detachable and not isSubFrame)) then return false; end
+
+		elseif key == "IgnoreMouse" then
+
+			if type(frameData.IgnoreMouse) ~= "boolean" then return false; end
+
+		else
+
+			self:Print("Unsupported key supplied in frameData for frame:", frameName, "; key:", key)
+
+		end
+
+	end
+
 	return true;
 end
 
 function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
-	if not addOnName then addOnName = "BlizzMove" end
+	if not addOnName then addOnName = self.name end
+
+	if self:IsFrameDisabled(addOnName, frameName) then return false end
 
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
 	self.Frames[addOnName][frameName] = frameData;
 
-	if IsAddOnLoaded(addOnName) then
+	if IsAddOnLoaded(addOnName) and (addOnName ~= self.name or self.initialized) then
 
 		self:ProcessFrame(addOnName, frameName, frameData);
 
 	end
+
+	self:ScheduleOptionsUpdate()
+
+end
+
+function BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
+	if not addOnName then addOnName = self.name end
+
+	if self:IsFrameDisabled(addOnName, frameName) then return end
+
+	if not self.Frames[addOnName][frameName] then return false; end
+
+	if permanent then
+
+		self.DB.disabledFrames                       = self.DB.disabledFrames or {}
+		self.DB.disabledFrames[addOnName]            = self.DB.disabledFrames[addOnName] or {}
+		self.DB.disabledFrames[addOnName][frameName] = true
+
+	end
+
+	if IsAddOnLoaded(addOnName) then
+
+		self:UnprocessFrame(frameName)
+
+	end
+
+	return true
+end
+
+function BlizzMove:GetRegisteredAddOns()
+
+	local returnTable = {};
+
+	for addOnName, _ in pairs(self.Frames) do
+
+		if next(self:GetRegisteredFrames(addOnName)) ~= nil then
+
+			returnTable[addOnName] = addOnName;
+
+		end
+
+	end
+
+	return returnTable;
+
+end
+
+function BlizzMove:GetRegisteredFrames(addOnName)
+	if not addOnName then addOnName = self.name end
+
+	local returnTable = {};
+
+	if not self.Frames[addOnName] then return returnTable; end
+
+	for frameName, frameData in pairs(self.Frames[addOnName]) do
+
+		if self:MatchesCurrentBuild(frameData) then
+
+			returnTable[frameName] = frameName;
+
+		end
+
+	end
+
+	return returnTable;
+
+end
+
+function BlizzMove:DisableFrame(addOnName, frameName)
+	if not addOnName then addOnName = self.name end
+
+	if self:IsFrameDisabled(addOnName, frameName) then return end
+
+	BlizzMove:UnregisterFrame(addOnName, frameName, true)
+
+end
+
+function BlizzMove:EnableFrame(addOnName, frameName)
+	if not addOnName then addOnName = self.name end
+
+	if not self:IsFrameDisabled(addOnName, frameName) then return end
+
+	self.DB.disabledFrames[addOnName][frameName] = nil
+
+	local frame = self:GetFrameFromName(frameName)
+	local frameData = nil;
+
+	if frame and frame.frameData then
+		frameData = frame.frameData;
+	elseif self.Frames[addOnName] and self.Frames[addOnName][frameName] then
+		frameData = self.Frames[addOnName][frameName]
+	end
+
+	if frameData then
+		self:ProcessFrame(addOnName, frameName, frameData, (frameData.storage and frameData.storage.frameParent) or nil)
+	end
+
+end
+
+function BlizzMove:IsFrameDisabled(addOnName, frameName)
+	if not addOnName then addOnName = self.name end
+
+	if self.DB and self.DB.disabledFrames and self.DB.disabledFrames[addOnName] and self.DB.disabledFrames[addOnName][frameName] then
+
+		return true
+
+	end
+
+	return false
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -43,6 +207,34 @@ function BlizzMove:GetFrameFromName(frameName)
 	end
 
 	return frameTable;
+end
+
+local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
+
+BlizzMove.gameBuild   = tonumber(buildNumber);
+BlizzMove.gameVersion = tonumber(gameVersion);
+
+function BlizzMove:MatchesCurrentBuild(frameData)
+
+	-- Compare versus current build version.
+	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return false end
+	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return false end
+
+	-- Compare versus current interface version.
+	if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return false end
+	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return false end
+
+	return true;
+end
+
+function BlizzMove:ScheduleOptionsUpdate()
+
+	if not self.initialized or self.optionUpdateTimerActive then return end
+
+	self.optionUpdateTimerActive = true
+
+	C_Timer.After(2, function() self.optionUpdateTimerActive = false; self.Config:RegisterOptions() end)
+
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -144,6 +336,8 @@ end
 ------------------------------------------------------------------------------------------------------
 local function OnMouseDown(frame, button)
 
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+
 	local returnValue = false;
 	local parentReturnValue = false;
 	local frameData = frame.frameData;
@@ -182,6 +376,8 @@ local function OnMouseDown(frame, button)
 end
 
 local function OnMouseUp(frame, button)
+
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
 
 	local returnValue = false;
 	local parentReturnValue = false;
@@ -249,6 +445,8 @@ end
 
 local function OnMouseWheel(frame, delta)
 
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+
 	local returnValue = false;
 	local parentReturnValue = false;
 	local frameData = frame.frameData;
@@ -283,6 +481,8 @@ end
 -- Main: Secure Hooks
 ------------------------------------------------------------------------------------------------------
 local function OnSetPoint(frame, anchorPoint, relativeFrame, relativePoint, offX, offY)
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+
 	if frame.ignoreSetPointHook then return end
 
 	if frame.frameData.storage.dragged then
@@ -291,6 +491,8 @@ local function OnSetPoint(frame, anchorPoint, relativeFrame, relativePoint, offX
 end
 
 local function OnSizeUpdate(frame)
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+
 	local clampDistance = 40;
 	local clampWidth = (frame:GetWidth() - clampDistance) or 0;
 	local clampHeight = (frame:GetHeight() - clampDistance) or 0;
@@ -303,12 +505,26 @@ end
 function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 	if InCombatLockdown() and frame:IsProtected() then return false end
 
-	if not frame or (frameData.storage and frameData.storage.hooked) then return false end
-
 	local clampFrame = false;
 	if not frameParent or frameData.Detachable then
 		clampFrame = true;
 	end
+
+	if frame and frameData.storage and frameData.storage.disabled then
+		-- it's already hooked, don't hook twice
+		frameData.storage.disabled = false;
+
+		frame:SetMovable(true);
+		frame:SetClampedToScreen(clampFrame);
+
+		if not frameData.IgnoreMouse then
+			frame:EnableMouse(true);
+			frame:EnableMouseWheel(true);
+		end
+		return true;
+	end
+
+	if not frame or (frameData.storage and frameData.storage.hooked) then return false end
 
 	frame:SetMovable(true);
 	frame:SetClampedToScreen(clampFrame);
@@ -342,20 +558,29 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 	return true;
 end
 
-local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
+function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
+	if InCombatLockdown() and frame:IsProtected() then return false end
 
-BlizzMove.gameBuild   = tonumber(buildNumber);
-BlizzMove.gameVersion = tonumber(gameVersion);
+	if not frame or not frameData.storage or not frameData.storage.hooked then return false end
+
+	frame:SetMovable(false);
+	frame:SetClampedToScreen(false);
+
+	if not frameData.IgnoreMouse then
+		frame:EnableMouse(false);
+		frame:EnableMouseWheel(false);
+	end
+
+	frameData.storage.disabled = true;
+
+	return true;
+end
 
 function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
-	-- Compare versus current build version.
-	if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return end
-	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return end
+	if self:IsFrameDisabled(addOnName, frameName) then return end
 
-	-- Compare versus current interface version.
-	if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return end
-	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return end
+	if not self:MatchesCurrentBuild(frameData) then return end
 
 	local frame = self:GetFrameFromName(frameName);
 
@@ -381,7 +606,7 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	else
 
-		BlizzMove:Print("Could not find frame (Build: ", self.gameBuild, "|Version:", self.gameVersio, "):", frameName);
+		BlizzMove:Print("Could not find frame (Build: ", self.gameBuild, "|Version:", self.gameVersion, "):", frameName);
 
 	end
 
@@ -401,16 +626,54 @@ function BlizzMove:ProcessFrames(addOnName)
 
 end
 
+function BlizzMove:UnprocessFrame(frameName)
+
+	local frame = self:GetFrameFromName(frameName)
+
+	if frame then
+
+		if not frame.frameData then return end
+
+		local frameData = frame.frameData
+
+		if not self:MatchesCurrentBuild(frameData) then return end
+
+		self:MakeFrameUnmovable(frame, frameName, frame.frameData)
+
+		if frame.frameData.SubFrames then
+
+			for subFrameName, _ in pairs(frame.frameData.SubFrames) do
+
+				self:UnprocessFrame(subFrameName)
+
+			end
+
+		end
+
+	end
+
+end
 
 function BlizzMove:OnInitialize()
 
-	self.Config:RegisterOptions()
+	self.initialized = true
+
+	BlizzMoveDB = BlizzMoveDB or {}
+	self.DB = BlizzMoveDB
+
+	self.Config:Initialize()
+
+	-- after a reload, you need to open to category twice to actually open the correct page
+	self:RegisterChatCommand('blizzmove', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);
+	self:RegisterChatCommand('bm', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);
+
+	self:ProcessFrames(self.name)
 
 end
 
 function BlizzMove:ADDON_LOADED(event, addOnName)
 
-	self:ProcessFrames(addOnName);
+	if addOnName ~= self.name then self:ProcessFrames(addOnName); end
 
 end
 

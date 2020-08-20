@@ -1,4 +1,5 @@
-local BlizzMove = LibStub("AceAddon-3.0"):GetAddon("BlizzMove");
+local name = ...
+local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return end
 
 BlizzMoveAPI = BlizzMoveAPI or {}
@@ -6,9 +7,9 @@ BlizzMoveAPI = BlizzMoveAPI or {}
 -- API: Debug Functions
 ------------------------------------------------------------------------------------------------------
 function BlizzMoveAPI:ToggleDebugPrints()
-    BlizzMove.DebugPrints = not BlizzMove.DebugPrints
+    BlizzMove.DB.DebugPrints = not BlizzMove.DB.DebugPrints
 
-	BlizzMove:Print("Debug prints have been:", ((BlizzMove.DebugPrints and "Enabled") or "Disabled"));
+	BlizzMove:Print("Debug prints have been:", (BlizzMove.DB.DebugPrints and "Enabled") or "Disabled");
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ function BlizzMoveAPI:RegisterFrames(framesTable)
 		if not BlizzMove:ValidateFrame(frameName, frameData) then
 
 			BlizzMove:DebugPrint("Invalid frame data provided for frame: '", frameName, "'.");
-			return;
+			return false;
 
 		end
 
@@ -47,6 +48,45 @@ function BlizzMoveAPI:RegisterAddOnFrames(addOnFramesTable)
 			BlizzMove:RegisterFrame(addOnName, frameName, frameData);
 
 		end
+
+	end
+
+end
+
+function BlizzMoveAPI:UnregisterFrame(addOnName, frameName, permanent)
+
+	return BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
+
+end
+
+function BlizzMoveAPI:GetRegisteredAddOns()
+
+	return BlizzMove:GetRegisteredAddOns();
+
+end
+
+function BlizzMoveAPI:GetRegisteredFrames(addOnName)
+
+	return BlizzMove:GetRegisteredFrames(addOnName)
+
+end
+
+
+function BlizzMoveAPI:IsFrameDisabled(addOnName, frameName)
+
+	return BlizzMove:IsFrameDisabled(addOnName, frameName)
+
+end
+
+function BlizzMoveAPI:SetFrameDisabled(addOnName, frameName, disable)
+
+	if disable then
+
+		return BlizzMove:DisableFrame(addOnName, frameName);
+
+	else
+
+		return BlizzMove:EnableFrame(addOnName, frameName);
 
 	end
 

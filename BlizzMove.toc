@@ -11,6 +11,7 @@
 ## Version: @project-version@
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
+## SavedVariables: BlizzMoveDB
 
 # Libraries
 Libs\Libs.xml
