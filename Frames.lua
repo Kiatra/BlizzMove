@@ -148,14 +148,16 @@ BlizzMoveAPI:RegisterFrames(
 				MinVersion = 0,
 				Detachable = true,
 				ManuallyScaleWithParent = true,
-				OnShow = function(frame)
-					_G[frame:GetName() .. "Inset"]:SetParent(frame)
-				end,
 				SubFrames =
 				{
 					["OpenMailSender"] =
 					{
 						MinVersion = 0,
+					},
+					["OpenMailFrameInset"] =
+					{
+						MinVersion = 0,
+						ForceParentage = true,
 					},
 				},
 			},
