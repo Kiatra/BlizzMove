@@ -51,13 +51,19 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 
 			if (type(value) ~= "number" or value < 0) then return false; end
 
-		elseif key == "Detachable" then
+		elseif (
+			key == "Detachable"
+			or key == "ManuallyScaleWithParent"
+		) then
 
-			if (type(frameData.Detachable) ~= "boolean" or (frameData.Detachable and not isSubFrame)) then return false; end
+			if (type(value) ~= "boolean" or (value == true and not isSubFrame)) then return false; end
 
-		elseif key == "IgnoreMouse" then
+		elseif (
+			key == "IgnoreMouse"
+			or key == "ForceParentage"
+		) then
 
-			if type(frameData.IgnoreMouse) ~= "boolean" then return false; end
+			if type(value) ~= "boolean" then return false; end
 
 		else
 
@@ -289,7 +295,7 @@ end
 ------------------------------------------------------------------------------------------------------
 local function GetFrameScale(frame)
 	local frameData = frame.frameData;
-	local parentScale = (frameData.storage.frameParent and GetFrameScale(frameData.storage.frameParent)) or 1;
+	local parentScale = (frameData.storage.frameParent and not frameData.ManuallyScaleWithParent and GetFrameScale(frameData.storage.frameParent)) or 1;
 
 	return frame:GetScale() * parentScale;
 end
@@ -302,10 +308,24 @@ local function SetFrameScaleSubs(frame, oldScale, newScale)
 			if subFrameData.storage then
 				local subFrame = subFrameData.storage.frame;
 
-				if subFrame and subFrameData.storage.detached then
-					subFrame:SetScale((oldScale * subFrame:GetScale()) / newScale);
+				if subFrame then
+
+					if subFrameData.ManuallyScaleWithParent and not subFrameData.storage.detached then
+
+						subFrame:SetScale((subFrame:GetScale() / oldScale) * newScale)
+						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameData.storage.frameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
+
+					elseif not subFrameData.ManuallyScaleWithParent and subFrameData.storage.detached then
+
+						subFrame:SetScale((oldScale * subFrame:GetScale()) / newScale);
+						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameData.storage.frameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
+
+					end
+
 				else
+
 					SetFrameScaleSubs(subFrame, oldScale, newScale);
+
 				end
 			end
 		end
@@ -319,16 +339,55 @@ local function SetFrameScale(frame, frameScale)
 
 	if frameData.storage.detached then
 		local parentScale = GetFrameScale(frameData.storage.frameParent)
-
-		newScale = frameScale / parentScale
+		newScale = frameData.ManuallyScaleWithParent and frameScale or (frameScale / parentScale)
+	elseif frameData.ManuallyScaleWithParent then
+		-- not detached, but scaled directly => full reset
+		local parentScale = GetFrameScale(frameData.storage.frameParent)
+		newScale = parentScale
 	end
 
 	frame:SetScale(newScale)
-	SetFrameScaleSubs(frame, oldScale, newScale);
-
 	BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string.format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)))
 
+	SetFrameScaleSubs(frame, oldScale, newScale);
 	return true;
+end
+
+local function SetFrameParentSubs(frame)
+
+	local frameData = frame.frameData;
+	local returnValue = true
+
+	if not frameData.SubFrames then return returnValue end
+
+	for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+
+		local subFrame = BlizzMove:GetFrameFromName(subFrameName)
+
+		if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData) then
+
+			if subFrameData.ForceParentage and subFrame.GetParent and subFrame.SetParent and subFrame:GetParent() ~= frame then
+				subFrame:SetParent(frame)
+			elseif subFrameData.ForceParentage then
+				returnValue = false
+			end
+
+			returnValue = SetFrameParentSubs(subFrame) and returnValue
+
+		end
+
+	end
+
+	return returnValue
+
+end
+
+local function SetFrameParent(frame)
+
+	local frameData = frame.frameData;
+
+	return (frameData.storage.frameParent and SetFrameParent(frameData.storage.frameParent)) or SetFrameParentSubs(frame)
+
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -477,6 +536,16 @@ local function OnMouseWheel(frame, delta)
 	return returnValue or parentReturnValue;
 end
 
+local function OnShow(frame)
+
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+
+	BlizzMove:DebugPrint("OnShow:", frame.frameData.storage.frameName);
+
+	SetFrameParent(frame)
+
+end
+
 ------------------------------------------------------------------------------------------------------
 -- Main: Secure Hooks
 ------------------------------------------------------------------------------------------------------
@@ -538,7 +607,7 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 		frame:HookScript("OnMouseWheel", OnMouseWheel);
 	end
 
-	frame:HookScript("OnShow", function() end);
+	frame:HookScript("OnShow", OnShow);
 	frame:HookScript("OnHide", function() end);
 
 	hooksecurefunc(frame, "SetPoint",  OnSetPoint);

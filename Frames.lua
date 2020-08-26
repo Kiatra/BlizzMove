@@ -143,16 +143,23 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 0,
 			},
-		},
-	},
-	["OpenMailFrame"] =
-	{
-		MinVersion = 0,
-		SubFrames =
-		{
-			["OpenMailSender"] =
+			["OpenMailFrame"] =
 			{
 				MinVersion = 0,
+				Detachable = true,
+				ManuallyScaleWithParent = true,
+				SubFrames =
+				{
+					["OpenMailSender"] =
+					{
+						MinVersion = 0,
+					},
+					["OpenMailFrameInset"] =
+					{
+						MinVersion = 0,
+						ForceParentage = true,
+					},
+				},
 			},
 		},
 	},
