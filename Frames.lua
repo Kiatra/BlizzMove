@@ -192,7 +192,7 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 20000,
 				MaxVersion = 90000,
-			},,
+			},
 		},
 	},
 	["QuestFrame"] =
