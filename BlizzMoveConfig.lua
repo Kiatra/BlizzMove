@@ -49,7 +49,7 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 				order = 2,
 				name = "Enabled Frames",
 				type = "group",
-				childGroups = "select",
+				childGroups = "tree",
 				get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
 				set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
 				args = self.DisableFramesTable,

@@ -191,7 +191,8 @@ BlizzMoveAPI:RegisterFrames(
 			["ScenarioQueueFrameSpecific"] =
 			{
 				MinVersion = 20000,
-			},
+				MaxVersion = 90000,
+			},,
 		},
 	},
 	["QuestFrame"] =

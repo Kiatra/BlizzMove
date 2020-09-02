@@ -675,7 +675,7 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	else
 
-		BlizzMove:Print("Could not find frame (Build: ", self.gameBuild, "|Version:", self.gameVersion, "):", frameName);
+		BlizzMove:Print("Could not find frame ( Build:", self.gameBuild, "| Version:", self.gameVersion, "):", frameName);
 
 	end
 
