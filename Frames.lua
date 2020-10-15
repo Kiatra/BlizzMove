@@ -490,6 +490,34 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["EncounterJournal"] =
 		{
 			MinVersion = 20000, -- Added when?
+			SubFrames =
+			{
+				["EncounterJournalInstanceSelectScrollFrameScrollChild"] =
+				{
+					MinVersion = 20000,
+				},
+				["EncounterJournalEncounterFrameInstanceFrameLoreScrollFrameScrollChild"] =
+				{
+					MinVersion = 20000,
+				},
+				["EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild"] =
+				{
+					MinVersion = 20000,
+				},
+				["EncounterJournalEncounterFrameInfoLootScrollFrameScrollChild"] =
+				{
+					MinVersion = 20000,
+				},
+				["EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChild"] =
+				{
+					MinVersion = 20000,
+				},
+				["EncounterJournalEncounterFrameInfoModelFrame"] =
+				{
+					MinVersion = 20000,
+					NonDraggable = true,
+				},
+			}
 		},
 	},
 	["Blizzard_FlightMap"] =

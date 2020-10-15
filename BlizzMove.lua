@@ -61,6 +61,7 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 		elseif (
 			key == "IgnoreMouse"
 			or key == "ForceParentage"
+			or key == "NonDraggable"
 		) then
 
 			if type(value) ~= "boolean" then return false; end
@@ -502,7 +503,24 @@ local function OnMouseUp(frame, button)
 	return returnValue or parentReturnValue;
 end
 
-local function OnMouseWheel(frame, delta)
+local function OnMouseWheelChildren(frame, delta, scrollBar)
+	local returnValue = false
+
+	for _, childFrame in pairs({ frame:GetChildren() }) do
+		local OnMouseWheel = childFrame:GetScript("OnMouseWheel")
+
+		if OnMouseWheel and MouseIsOver(childFrame) then
+			OnMouseWheel(childFrame, delta, scrollBar, true)
+			returnValue = true
+		end
+
+		returnValue = OnMouseWheelChildren(childFrame, delta, scrollBar) or returnValue
+	end
+
+	return returnValue
+end
+
+local function OnMouseWheel(frame, delta, scrollBar, nestedCall)
 
 	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
 
@@ -510,13 +528,15 @@ local function OnMouseWheel(frame, delta)
 	local parentReturnValue = false;
 	local frameData = frame.frameData;
 
-	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta);
+	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta, nestedCall);
 
-	if not frameData.storage.detached then
-		parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta));
+	local onChildren = not IsControlKeyDown() and not nestedCall and OnMouseWheelChildren(frame, delta, scrollBar)
+
+	if not onChildren and not nestedCall and not frameData.storage.detached then
+		parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta, scrollBar));
 	end
 
-	if frameData.storage.detached or not parentReturnValue then
+	if not nestedCall and (frameData.storage.detached or not parentReturnValue) then
 
 		if IsControlKeyDown() then
 
@@ -587,9 +607,17 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 		frame:SetClampedToScreen(clampFrame);
 
 		if not frameData.IgnoreMouse then
-			frame:EnableMouse(true);
+
+			if not frameData.NonDraggable then
+
+				frame:EnableMouse(true);
+
+			end
+
 			frame:EnableMouseWheel(true);
+
 		end
+
 		return true;
 	end
 
@@ -599,12 +627,18 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 	frame:SetClampedToScreen(clampFrame);
 
 	if not frameData.IgnoreMouse then
-		frame:EnableMouse(true);
-		frame:EnableMouseWheel(true);
 
-		frame:HookScript("OnMouseDown",  OnMouseDown);
-		frame:HookScript("OnMouseUp",    OnMouseUp);
+		if not frameData.NonDraggable then
+
+			frame:EnableMouse(true);
+			frame:HookScript("OnMouseDown",  OnMouseDown);
+			frame:HookScript("OnMouseUp",    OnMouseUp);
+
+		end
+
+		frame:EnableMouseWheel(true);
 		frame:HookScript("OnMouseWheel", OnMouseWheel);
+
 	end
 
 	frame:HookScript("OnShow", OnShow);
