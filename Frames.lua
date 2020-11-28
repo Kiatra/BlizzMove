@@ -471,6 +471,27 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 20000, -- Added when?
 		},
 	},
+	["Blizzard_CovenantPreviewUI"] =
+	{
+		["CovenantPreviewFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
+	["Blizzard_CovenantRenown"] =
+	{
+		["CovenantRenownFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
+	["Blizzard_CovenantSanctum"] =
+	{
+		["CovenantSanctumFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
 	["Blizzard_CraftUI"] =
 	{
 		["CraftFrame"] =
@@ -693,6 +714,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["OrderHallTalentFrame"] =
 		{
 			MinVersion = 20000, -- Added when?
+		},
+	},
+	["Blizzard_PlayerChoiceUI"] =
+	{
+		["PlayerChoiceFrame"] =
+		{
+			MinVersion = 90000,
 		},
 	},
 	["Blizzard_PVPMatch"] =
