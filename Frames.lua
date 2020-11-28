@@ -285,6 +285,24 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 70300,
 		},
 	},
+	["Blizzard_AnimaDiversionUI"] =
+	{
+		["AnimaDiversionFrame"] =
+		{
+			MinVersion = 90000,
+			SubFrames =
+			{
+				["AnimaDiversionFrame.ScrollContainer"] =
+				{
+					MinVersion = 90000,
+				},
+				["AnimaDiversionFrame.ReinforceProgressFrame"] =
+				{
+					MinVersion = 90000,
+				},
+			}
+		},
+	},
 	["Blizzard_ArchaeologyUI"] =
 	{
 		["ArchaeologyFrame"] =
