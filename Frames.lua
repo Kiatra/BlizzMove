@@ -770,6 +770,20 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 80000,
 		},
 	},
+	["Blizzard_Soulbinds"] =
+	{
+		["SoulbindViewer"] =
+		{
+			MinVersion = 90000,
+			SubFrames =
+			{
+				["SoulbindViewer.ConduitList.Charges"] =
+				{
+					MinVersion = 90000,
+				},
+			},
+		},
+	},
 	["Blizzard_TalentUI"] =
 	{
 		["TalentFrame"] =
