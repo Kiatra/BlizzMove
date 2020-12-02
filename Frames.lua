@@ -763,6 +763,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MaxVersion = 70300, -- Removed when?
 		},
 	},
+	["Blizzard_RuneforgeUI"] =
+	{
+		["RuneforgeFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
 	["Blizzard_ScrappingMachineUI"] =
 	{
 		["ScrappingMachineFrame"] =
