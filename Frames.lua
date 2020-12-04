@@ -37,6 +37,14 @@ BlizzMoveAPI:RegisterFrames(
 			["ReputationFrame"] =
 			{
 				MinVersion = 0,
+				SubFrames =
+				{
+					["ReputationDetailFrame"] =
+					{
+						MinVersion = 0,
+						Detachable = true,
+					},
+				},
 			},
 			["SkillFrame"] =
 			{

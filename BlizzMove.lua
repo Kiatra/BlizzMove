@@ -339,19 +339,16 @@ local function SetFrameScaleSubs(frame, oldScale, newScale)
 					if subFrameData.ManuallyScaleWithParent and not subFrameData.storage.detached then
 
 						subFrame:SetScale((subFrame:GetScale() / oldScale) * newScale)
-						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameData.storage.frameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
+						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
 
 					elseif not subFrameData.ManuallyScaleWithParent and subFrameData.storage.detached then
 
 						subFrame:SetScale((oldScale * subFrame:GetScale()) / newScale);
-						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameData.storage.frameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
+						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
 
+					else
+						SetFrameScaleSubs(subFrame, oldScale, newScale);
 					end
-
-				else
-
-					SetFrameScaleSubs(subFrame, oldScale, newScale);
-
 				end
 			end
 		end
