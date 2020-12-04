@@ -627,6 +627,41 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		{
 			MinVersion = 80000,
 		},
+		["CovenantMissionFrame"] =
+		{
+			MinVersion = 90000,
+			SubFrames =
+			{
+				["CovenantMissionFrame.MissionTab"] =
+				{
+					MinVersion = 90000,
+				},
+				["CovenantMissionFrame.MissionTab.MissionPage"] =
+				{
+					MinVersion = 90000,
+				},
+				["CovenantMissionFrame.MissionTab.MissionPage.CostFrame"] =
+				{
+					MinVersion = 90000,
+				},
+				["CovenantMissionFrame.MissionTab.MissionPage.StartMissionFrame"] =
+				{
+					MinVersion = 90000,
+				},
+				["CovenantMissionFrameMissions.MaterialFrame"] =
+				{
+					MinVersion = 90000,
+				},
+				["CovenantMissionFrameFollowersListScrollFrameChild"] =
+				{
+					MinVersion = 90000,
+				},
+				["CovenantMissionFrameFollowers.MaterialFrame"] =
+				{
+					MinVersion = 90000,
+				},
+			},
+		},
 	},
 	["Blizzard_GlyphUI"] =
 	{
