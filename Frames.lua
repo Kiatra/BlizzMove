@@ -652,7 +652,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					MinVersion = 90000,
 				},
-				["CovenantMissionFrameFollowersListScrollFrameChild"] =
+				["CovenantMissionFrameFollowersListScrollFrameScrollChild"] =
 				{
 					MinVersion = 90000,
 				},
