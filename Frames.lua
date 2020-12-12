@@ -895,4 +895,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 80000,
 		},
 	},
+	["Blizzard_WeeklyRewards"] =
+	{
+		["WeeklyRewardsFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
 });
