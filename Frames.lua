@@ -91,9 +91,22 @@ BlizzMoveAPI:RegisterFrames(
 		MinVersion = 0,
 		SubFrames =
 		{
+			["IgnoreListFrameScrollFrame"] =
+			{
+				MinVersion = 0,
+			},
 			["RaidInfoFrame"] =
 			{
 				MinVersion = 0,
+				Detachable = true,
+			},
+			["RecruitAFriendFrame.RecruitList.ScrollFrame"] =
+			{
+				MinVersion = 90000, -- Added when?
+			},
+			["FriendsFrameBattlenetFrame.BroadcastFrame"] =
+			{
+				MinVersion = 70000, -- Added when?
 				Detachable = true,
 			},
 			["FriendsListFrameScrollFrame"] =
@@ -219,6 +232,14 @@ BlizzMoveAPI:RegisterFrames(
 	["ReadyCheckFrame"] =
 	{
 		MinVersion = 0,
+	},
+	["RecruitAFriendRecruitmentFrame"] =
+	{
+		MinVersion = 50000, -- Added when?
+	},
+	["RecruitAFriendRewardsFrame"] =
+	{
+		MinVersion = 82000, -- Added when?
 	},
 	["SpellBookFrame"] =
 	{
