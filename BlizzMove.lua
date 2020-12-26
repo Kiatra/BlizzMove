@@ -824,6 +824,16 @@ end
 
 function BlizzMove:OnEnable()
 
+	for addOnName, frameName in pairs(self.Frames) do
+
+		if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
+
+			self:ProcessFrames(addOnName);
+
+		end
+
+	end
+
 	self:RegisterEvent("ADDON_LOADED");
 
 end
