@@ -1,11 +1,11 @@
-local name = ...
+local name = ...;
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
-if not BlizzMove then return end
+if not BlizzMove then return; end
 
-BlizzMove.Config = BlizzMove.Config or {}
-local Config = BlizzMove.Config
+BlizzMove.Config = BlizzMove.Config or {};
+local Config = BlizzMove.Config;
 
-Config.version = GetAddOnMetadata(name, "Version") or ""
+Config.version = GetAddOnMetadata(name, "Version") or "";
 
 function Config:GetOptions()
 	return {
@@ -103,16 +103,16 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 end
 
 function Config:GetDisableFramesTable()
-	local tempTable = {}
+	local tempTable = {};
 
 	for addOnName, _ in pairs(BlizzMoveAPI:GetRegisteredAddOns()) do
 		tempTable[addOnName] = {
 			name = addOnName,
 			type = "group",
 			order = function(info)
-				if info[#info] == name then return 0 end
-				if string.match(info[#info], "Blizzard_") then return 5 end
-				return 1
+				if info[#info] == name then return 0; end
+				if string.match(info[#info], "Blizzard_") then return 5; end
+				return 1;
 			end,
 			args = {
 				[addOnName] = {
@@ -121,24 +121,24 @@ function Config:GetDisableFramesTable()
 					values = function(info) return BlizzMoveAPI:GetRegisteredFrames(info[#info]); end,
 				},
 			},
-		}
+		};
 	end
 
-	return tempTable
+	return tempTable;
 end
 
 function Config:Initialize()
 
-	self:RegisterOptions()
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove")
+	self:RegisterOptions();
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove");
 
 end
 
 function Config:RegisterOptions()
 
-	self.DisableFramesTable = self:GetDisableFramesTable()
+	self.DisableFramesTable = self:GetDisableFramesTable();
 
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("BlizzMove", self:GetOptions())
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("BlizzMove", self:GetOptions());
 
 end
 

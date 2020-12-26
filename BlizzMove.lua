@@ -1,6 +1,6 @@
-local name = ...
+local name = ...;
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0");
-if not BlizzMove then return end
+if not BlizzMove then return; end
 
 BlizzMove.Frames = BlizzMove.Frames or {};
 
@@ -16,7 +16,7 @@ end
 ------------------------------------------------------------------------------------------------------
 function BlizzMove:ValidateFrame(frameName, frameData, isSubFrame)
 
-	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameName, frameData, isSubFrame)
+	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameName, frameData, isSubFrame);
 
 end
 
@@ -68,7 +68,7 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 
 		else
 
-			self:Print("Unsupported key supplied in frameData for frame:", frameName, "; key:", key)
+			self:Print("Unsupported key supplied in frameData for frame:", frameName, "; key:", key);
 
 		end
 
@@ -78,9 +78,9 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 end
 
 function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
-	if not addOnName then addOnName = self.name end
+	if not addOnName then addOnName = self.name; end
 
-	if self:IsFrameDisabled(addOnName, frameName) then return false end
+	if self:IsFrameDisabled(addOnName, frameName) then return false; end
 
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
 	self.Frames[addOnName][frameName] = frameData;
@@ -91,32 +91,32 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 
 	end
 
-	self:ScheduleOptionsUpdate()
+	self:ScheduleOptionsUpdate();
 
 end
 
 function BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
-	if not addOnName then addOnName = self.name end
+	if not addOnName then addOnName = self.name; end
 
-	if self:IsFrameDisabled(addOnName, frameName) then return end
+	if self:IsFrameDisabled(addOnName, frameName) then return; end
 
 	if not self.Frames[addOnName][frameName] then return false; end
 
 	if permanent then
 
-		self.DB.disabledFrames                       = self.DB.disabledFrames or {}
-		self.DB.disabledFrames[addOnName]            = self.DB.disabledFrames[addOnName] or {}
-		self.DB.disabledFrames[addOnName][frameName] = true
+		self.DB.disabledFrames                       = self.DB.disabledFrames or {};
+		self.DB.disabledFrames[addOnName]            = self.DB.disabledFrames[addOnName] or {};
+		self.DB.disabledFrames[addOnName][frameName] = true;
 
 	end
 
 	if IsAddOnLoaded(addOnName) then
 
-		self:UnprocessFrame(frameName)
+		self:UnprocessFrame(frameName);
 
 	end
 
-	return true
+	return true;
 end
 
 function BlizzMove:GetRegisteredAddOns()
@@ -138,7 +138,7 @@ function BlizzMove:GetRegisteredAddOns()
 end
 
 function BlizzMove:GetRegisteredFrames(addOnName)
-	if not addOnName then addOnName = self.name end
+	if not addOnName then addOnName = self.name; end
 
 	local returnTable = {};
 
@@ -159,20 +159,20 @@ function BlizzMove:GetRegisteredFrames(addOnName)
 end
 
 function BlizzMove:DisableFrame(addOnName, frameName)
-	if not addOnName then addOnName = self.name end
+	if not addOnName then addOnName = self.name; end
 
-	if self:IsFrameDisabled(addOnName, frameName) then return end
+	if self:IsFrameDisabled(addOnName, frameName) then return; end
 
-	BlizzMove:UnregisterFrame(addOnName, frameName, true)
+	BlizzMove:UnregisterFrame(addOnName, frameName, true);
 
 end
 
 function BlizzMove:EnableFrame(addOnName, frameName)
-	if not addOnName then addOnName = self.name end
+	if not addOnName then addOnName = self.name; end
 
-	if not self:IsFrameDisabled(addOnName, frameName) then return end
+	if not self:IsFrameDisabled(addOnName, frameName) then return; end
 
-	self.DB.disabledFrames[addOnName][frameName] = nil
+	self.DB.disabledFrames[addOnName][frameName] = nil;
 
 	local frame = self:GetFrameFromName(frameName)
 	local frameData = nil;
@@ -180,25 +180,25 @@ function BlizzMove:EnableFrame(addOnName, frameName)
 	if frame and frame.frameData then
 		frameData = frame.frameData;
 	elseif self.Frames[addOnName] and self.Frames[addOnName][frameName] then
-		frameData = self.Frames[addOnName][frameName]
+		frameData = self.Frames[addOnName][frameName];
 	end
 
 	if frameData then
-		self:ProcessFrame(addOnName, frameName, frameData, (frameData.storage and frameData.storage.frameParent) or nil)
+		self:ProcessFrame(addOnName, frameName, frameData, (frameData.storage and frameData.storage.frameParent) or nil);
 	end
 
 end
 
 function BlizzMove:IsFrameDisabled(addOnName, frameName)
-	if not addOnName then addOnName = self.name end
+	if not addOnName then addOnName = self.name; end
 
 	if self.DB and self.DB.disabledFrames and self.DB.disabledFrames[addOnName] and self.DB.disabledFrames[addOnName][frameName] then
 
-		return true
+		return true;
 
 	end
 
-	return false
+	return false;
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ function BlizzMove:GetFrameFromName(frameName)
 	local frameTable = _G;
 
 	for keyName in string.gmatch(frameName, "([^.]+)") do
-		if not frameTable[keyName] then return nil end
+		if not frameTable[keyName] then return nil; end
 
 		frameTable = frameTable[keyName];
 	end
@@ -217,28 +217,28 @@ function BlizzMove:GetFrameFromName(frameName)
 end
 
 function BlizzMove:ResetPointStorage()
-	self.DB.points = {}
+	self.DB.points = {};
 end
 
 function BlizzMove:SetupPointStorage(frame)
-	if not frame or not frame.frameData or not frame.frameData.storage or not frame.frameData.storage.frameName then return false end
+	if not frame or not frame.frameData or not frame.frameData.storage or not frame.frameData.storage.frameName then return false; end
 
 	if self.DB.savePosStrategy ~= "permanent" then
 		if not frame.frameData.storage.points then
-			frame.frameData.storage.points = {}
+			frame.frameData.storage.points = {};
 		end
-		return true
+		return true;
 	end
 
-	local frameName = frame.frameData.storage.frameName
+	local frameName = frame.frameData.storage.frameName;
 
-	if frame.frameData.storage.points and frame.frameData.storage.points == self.DB.points[frameName] then return true end
+	if frame.frameData.storage.points and frame.frameData.storage.points == self.DB.points[frameName] then return true; end
 	if self.DB.points[frameName] == nil then
 		self.DB.points[frameName] = {};
 	end
-	frame.frameData.storage.points = self.DB.points[frameName]
+	frame.frameData.storage.points = self.DB.points[frameName];
 
-	return true
+	return true;
 end
 
 local buildVersion, buildNumber, buildDate, gameVersion = GetBuildInfo();
@@ -249,23 +249,23 @@ BlizzMove.gameVersion = tonumber(gameVersion);
 function BlizzMove:MatchesCurrentBuild(frameData)
 
 	-- Compare versus current build version.
-	if frameData.MinBuild and frameData.MinBuild >= self.gameBuild then return false end
-	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return false end
+	if frameData.MinBuild and frameData.MinBuild >= self.gameBuild then return false; end
+	if frameData.MaxBuild and frameData.MaxBuild < self.gameBuild then return false; end
 
 	-- Compare versus current interface version.
-	if frameData.MinVersion and frameData.MinVersion >= self.gameVersion then return false end
-	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return false end
+	if frameData.MinVersion and frameData.MinVersion >= self.gameVersion then return false; end
+	if frameData.MaxVersion and frameData.MaxVersion < self.gameVersion then return false; end
 
 	return true;
 end
 
 function BlizzMove:ScheduleOptionsUpdate()
 
-	if not self.initialized or self.optionUpdateTimerActive then return end
+	if not self.initialized or self.optionUpdateTimerActive then return; end
 
-	self.optionUpdateTimerActive = true
+	self.optionUpdateTimerActive = true;
 
-	C_Timer.After(2, function() self.optionUpdateTimerActive = false; self.Config:RegisterOptions() end)
+	C_Timer.After(2, function() self.optionUpdateTimerActive = false; self.Config:RegisterOptions(); end);
 
 end
 
@@ -279,7 +279,7 @@ local function GetFramePoints(frame)
 		local framePoints = {};
 
 		for curPoint = 1, numPoints do
-			framePoints[curPoint] = {}
+			framePoints[curPoint] = {};
 			framePoints[curPoint].anchorPoint,
 			framePoints[curPoint].relativeFrame,
 			framePoints[curPoint].relativePoint,
@@ -294,7 +294,7 @@ local function GetFramePoints(frame)
 end
 
 local function SetFramePoints(frame, framePoints)
-	if InCombatLockdown() and frame:IsProtected() then return false end
+	if InCombatLockdown() and frame:IsProtected() then return false; end
 
 	if framePoints and framePoints[1] then
 
@@ -338,13 +338,13 @@ local function SetFrameScaleSubs(frame, oldScale, newScale)
 
 					if subFrameData.ManuallyScaleWithParent and not subFrameData.storage.detached then
 
-						subFrame:SetScale((subFrame:GetScale() / oldScale) * newScale)
-						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
+						subFrame:SetScale((subFrame:GetScale() / oldScale) * newScale);
+						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)));
 
 					elseif not subFrameData.ManuallyScaleWithParent and subFrameData.storage.detached then
 
 						subFrame:SetScale((oldScale * subFrame:GetScale()) / newScale);
-						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)))
+						BlizzMove:DebugPrint("SetSubFrameScale:", subFrameName, string.format("%.2f %.2f %.2f %.2f", oldScale, newScale, subFrame:GetScale(), GetFrameScale(subFrame)));
 
 					else
 						SetFrameScaleSubs(subFrame, oldScale, newScale);
@@ -357,20 +357,20 @@ end
 
 local function SetFrameScale(frame, frameScale)
 	local frameData = frame.frameData;
-	local oldScale = GetFrameScale(frame)
-	local newScale = frameScale
+	local oldScale = GetFrameScale(frame);
+	local newScale = frameScale;
 
 	if frameData.storage.detached then
-		local parentScale = GetFrameScale(frameData.storage.frameParent)
-		newScale = frameData.ManuallyScaleWithParent and frameScale or (frameScale / parentScale)
+		local parentScale = GetFrameScale(frameData.storage.frameParent);
+		newScale = frameData.ManuallyScaleWithParent and frameScale or (frameScale / parentScale);
 	elseif frameData.ManuallyScaleWithParent then
 		-- not detached, but scaled directly => full reset
-		local parentScale = GetFrameScale(frameData.storage.frameParent)
-		newScale = parentScale
+		local parentScale = GetFrameScale(frameData.storage.frameParent);
+		newScale = parentScale;
 	end
 
-	frame:SetScale(newScale)
-	BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string.format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)))
+	frame:SetScale(newScale);
+	BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string.format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)));
 
 	SetFrameScaleSubs(frame, oldScale, newScale);
 	return true;
@@ -379,29 +379,29 @@ end
 local function SetFrameParentSubs(frame)
 
 	local frameData = frame.frameData;
-	local returnValue = true
+	local returnValue = true;
 
 	if not frameData.SubFrames then return returnValue end
 
 	for subFrameName, subFrameData in pairs(frameData.SubFrames) do
 
-		local subFrame = BlizzMove:GetFrameFromName(subFrameName)
+		local subFrame = BlizzMove:GetFrameFromName(subFrameName);
 
 		if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData) then
 
 			if subFrameData.ForceParentage and subFrame.GetParent and subFrame.SetParent and subFrame:GetParent() ~= frame then
-				subFrame:SetParent(frame)
+				subFrame:SetParent(frame);
 			elseif subFrameData.ForceParentage then
-				returnValue = false
+				returnValue = false;
 			end
 
-			returnValue = SetFrameParentSubs(subFrame) and returnValue
+			returnValue = SetFrameParentSubs(subFrame) and returnValue;
 
 		end
 
 	end
 
-	return returnValue
+	return returnValue;
 
 end
 
@@ -409,7 +409,7 @@ local function SetFrameParent(frame)
 
 	local frameData = frame.frameData;
 
-	return (frameData.storage.frameParent and SetFrameParent(frameData.storage.frameParent)) or SetFrameParentSubs(frame)
+	return (frameData.storage.frameParent and SetFrameParent(frameData.storage.frameParent)) or SetFrameParentSubs(frame);
 
 end
 
@@ -418,7 +418,7 @@ end
 ------------------------------------------------------------------------------------------------------
 local function OnMouseDown(frame, button)
 
-	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
 	local returnValue = false;
 	local parentReturnValue = false;
@@ -459,12 +459,12 @@ end
 
 local function OnMouseUp(frame, button)
 
-	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
 	local returnValue = false;
 	local parentReturnValue = false;
 	local frameData = frame.frameData;
-	BlizzMove:SetupPointStorage(frame)
+	BlizzMove:SetupPointStorage(frame);
 
 	BlizzMove:DebugPrint("OnMouseUp:", frameData.storage.frameName, button);
 
@@ -527,25 +527,25 @@ local function OnMouseUp(frame, button)
 end
 
 local function OnMouseWheelChildren(frame, delta, scrollBar)
-	local returnValue = false
+	local returnValue = false;
 
 	for _, childFrame in pairs({ frame:GetChildren() }) do
-		local OnMouseWheel = childFrame:GetScript("OnMouseWheel")
+		local OnMouseWheel = childFrame:GetScript("OnMouseWheel");
 
 		if OnMouseWheel and MouseIsOver(childFrame) then
-			OnMouseWheel(childFrame, delta, scrollBar, true)
-			returnValue = true
+			OnMouseWheel(childFrame, delta, scrollBar, true);
+			returnValue = true;
 		end
 
-		returnValue = OnMouseWheelChildren(childFrame, delta, scrollBar) or returnValue
+		returnValue = OnMouseWheelChildren(childFrame, delta, scrollBar) or returnValue;
 	end
 
-	return returnValue
+	return returnValue;
 end
 
 local function OnMouseWheel(frame, delta, scrollBar, nestedCall)
 
-	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
 	local returnValue = false;
 	local parentReturnValue = false;
@@ -553,7 +553,7 @@ local function OnMouseWheel(frame, delta, scrollBar, nestedCall)
 
 	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta, nestedCall);
 
-	local onChildren = not IsControlKeyDown() and not nestedCall and OnMouseWheelChildren(frame, delta, scrollBar)
+	local onChildren = not IsControlKeyDown() and not nestedCall and OnMouseWheelChildren(frame, delta, scrollBar);
 
 	if not onChildren and not nestedCall and not frameData.storage.detached then
 		parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta, scrollBar));
@@ -567,8 +567,8 @@ local function OnMouseWheel(frame, delta, scrollBar, nestedCall)
 
 			local newScale = oldScale + 0.1 * delta;
 
-			if newScale > 1.5 then newScale = 1.5 end
-			if newScale < 0.5 then newScale = 0.5 end
+			if newScale > 1.5 then newScale = 1.5; end
+			if newScale < 0.5 then newScale = 0.5; end
 
 			returnValue = SetFrameScale(frame, newScale) or returnValue;
 
@@ -581,11 +581,11 @@ end
 
 local function OnShow(frame)
 
-	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
 	BlizzMove:DebugPrint("OnShow:", frame.frameData.storage.frameName);
 
-	SetFrameParent(frame)
+	SetFrameParent(frame);
 
 end
 
@@ -593,11 +593,11 @@ end
 -- Main: Secure Hooks
 ------------------------------------------------------------------------------------------------------
 local function OnSetPoint(frame, anchorPoint, relativeFrame, relativePoint, offX, offY)
-	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
-	if BlizzMove.DB.savePosStrategy == "off" then return end
+	if BlizzMove.DB.savePosStrategy == "off" then return; end
 
-	if frame.ignoreSetPointHook then return end
+	if frame.ignoreSetPointHook then return; end
 
 	BlizzMove:SetupPointStorage(frame);
 
@@ -607,7 +607,7 @@ local function OnSetPoint(frame, anchorPoint, relativeFrame, relativePoint, offX
 end
 
 local function OnSizeUpdate(frame)
-	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return end
+	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
 	local clampDistance = 40;
 	local clampWidth = (frame:GetWidth() - clampDistance) or 0;
@@ -619,7 +619,7 @@ end
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
 function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
-	if InCombatLockdown() and frame:IsProtected() then return false end
+	if InCombatLockdown() and frame:IsProtected() then return false; end
 
 	local clampFrame = false;
 	if not frameParent or frameData.Detachable then
@@ -648,7 +648,7 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 		return true;
 	end
 
-	if not frame or (frameData.storage and frameData.storage.hooked) then return false end
+	if not frame or (frameData.storage and frameData.storage.hooked) then return false; end
 
 	frame:SetMovable(true);
 	frame:SetClampedToScreen(clampFrame);
@@ -689,9 +689,9 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 end
 
 function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
-	if InCombatLockdown() and frame:IsProtected() then return false end
+	if InCombatLockdown() and frame:IsProtected() then return false; end
 
-	if not frame or not frameData.storage or not frameData.storage.hooked then return false end
+	if not frame or not frameData.storage or not frameData.storage.hooked then return false; end
 
 	frame:SetMovable(false);
 	frame:SetClampedToScreen(false);
@@ -708,9 +708,9 @@ end
 
 function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
-	if self:IsFrameDisabled(addOnName, frameName) then return end
+	if self:IsFrameDisabled(addOnName, frameName) then return; end
 
-	if not self:MatchesCurrentBuild(frameData) then return end
+	if not self:MatchesCurrentBuild(frameData) then return; end
 
 	local frame = self:GetFrameFromName(frameName);
 
@@ -762,19 +762,19 @@ function BlizzMove:UnprocessFrame(frameName)
 
 	if frame then
 
-		if not frame.frameData then return end
+		if not frame.frameData then return; end
 
-		local frameData = frame.frameData
+		local frameData = frame.frameData;
 
-		if not self:MatchesCurrentBuild(frameData) then return end
+		if not self:MatchesCurrentBuild(frameData) then return; end
 
-		self:MakeFrameUnmovable(frame, frameName, frame.frameData)
+		self:MakeFrameUnmovable(frame, frameName, frame.frameData);
 
 		if frame.frameData.SubFrames then
 
 			for subFrameName, _ in pairs(frame.frameData.SubFrames) do
 
-				self:UnprocessFrame(subFrameName)
+				self:UnprocessFrame(subFrameName);
 
 			end
 
@@ -786,19 +786,19 @@ end
 
 function BlizzMove:OnInitialize()
 
-	self.initialized = true
+	self.initialized = true;
 
-	BlizzMoveDB = BlizzMoveDB or {}
-	self.DB = BlizzMoveDB
-	self:InitDefaults()
+	BlizzMoveDB = BlizzMoveDB or {};
+	self.DB = BlizzMoveDB;
+	self:InitDefaults();
 
-	self.Config:Initialize()
+	self.Config:Initialize();
 
 	-- after a reload, you need to open to category twice to actually open the correct page
-	self:RegisterChatCommand('blizzmove', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);
-	self:RegisterChatCommand('bm', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove') end);
+	self:RegisterChatCommand('blizzmove', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove'); end);
+	self:RegisterChatCommand('bm', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove'); end);
 
-	self:ProcessFrames(self.name)
+	self:ProcessFrames(self.name);
 
 end
 
@@ -806,11 +806,11 @@ function BlizzMove:InitDefaults()
 	local defaults = {
 		savePosStrategy = "session",
 		points = {},
-	}
+	};
 
 	for property, value in pairs(defaults) do
 		if self.DB[property] == nil then
-			self.DB[property] = value
+			self.DB[property] = value;
 		end
 	end
 

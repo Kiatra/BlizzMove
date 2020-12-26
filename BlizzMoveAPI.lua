@@ -1,13 +1,13 @@
-local name = ...
+local name = ...;
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
-if not BlizzMove then return end
+if not BlizzMove then return; end
 
-BlizzMoveAPI = BlizzMoveAPI or {}
+BlizzMoveAPI = BlizzMoveAPI or {};
 ------------------------------------------------------------------------------------------------------
 -- API: Debug Functions
 ------------------------------------------------------------------------------------------------------
 function BlizzMoveAPI:ToggleDebugPrints()
-    BlizzMove.DB.DebugPrints = not BlizzMove.DB.DebugPrints
+    BlizzMove.DB.DebugPrints = not BlizzMove.DB.DebugPrints;
 
 	BlizzMove:Print("Debug prints have been:", (BlizzMove.DB.DebugPrints and "Enabled") or "Disabled");
 end
@@ -55,7 +55,7 @@ end
 
 function BlizzMoveAPI:UnregisterFrame(addOnName, frameName, permanent)
 
-	return BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
+	return BlizzMove:UnregisterFrame(addOnName, frameName, permanent);
 
 end
 
@@ -67,14 +67,14 @@ end
 
 function BlizzMoveAPI:GetRegisteredFrames(addOnName)
 
-	return BlizzMove:GetRegisteredFrames(addOnName)
+	return BlizzMove:GetRegisteredFrames(addOnName);
 
 end
 
 
 function BlizzMoveAPI:IsFrameDisabled(addOnName, frameName)
 
-	return BlizzMove:IsFrameDisabled(addOnName, frameName)
+	return BlizzMove:IsFrameDisabled(addOnName, frameName);
 
 end
 

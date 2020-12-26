@@ -1,4 +1,4 @@
-if not BlizzMoveAPI then return end
+if not BlizzMoveAPI then return; end
 
 BlizzMoveAPI:RegisterFrames(
 {
