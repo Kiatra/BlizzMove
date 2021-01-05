@@ -85,7 +85,7 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
 	self.Frames[addOnName][frameName] = frameData;
 
-	if IsAddOnLoaded(addOnName) and (addOnName ~= self.name or self.initialized) then
+	if IsAddOnLoaded(addOnName) and (addOnName ~= self.name and self.enabled or self.initialized) then
 
 		self:ProcessFrame(addOnName, frameName, frameData);
 
@@ -824,7 +824,9 @@ end
 
 function BlizzMove:OnEnable()
 
-	for addOnName, frameName in pairs(self.Frames) do
+	self.enabled = true;
+
+    for addOnName, frameName in pairs(self.Frames) do
 
 		if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
 
