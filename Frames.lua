@@ -205,6 +205,10 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 20000,
 			},
+			["LFGListFrame.ApplicationViewer.UnempoweredCover"] =
+			{
+				MinVersion = 20000,
+			},
 			["LFGListSearchPanelScrollFrame"] =
 			{
 				MinVersion = 20000,
