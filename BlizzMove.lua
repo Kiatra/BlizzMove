@@ -826,7 +826,7 @@ function BlizzMove:OnEnable()
 
 	self.enabled = true;
 
-    for addOnName, frameName in pairs(self.Frames) do
+	for addOnName, frameName in pairs(self.Frames) do
 
 		if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
 
