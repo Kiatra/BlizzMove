@@ -878,6 +878,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 20000, -- Added when?
 		},
 	},
+	["Blizzard_TorghastLevelPicker"] =
+	{
+		["TorghastLevelPickerFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
 	["Blizzard_TradeSkillUI"] =
 	{
 		["TradeSkillFrame"] =
