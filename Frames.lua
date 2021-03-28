@@ -543,6 +543,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 90000,
 		},
 	},
+	["Blizzard_CraftUI"] =
+	{
+		["CraftFrame"] =
+		{
+			MaxVersion = 11305,
+		},
+	},
 	["Blizzard_DeathRecap"] =
 	{
 		["DeathRecapFrame"] =
@@ -882,12 +889,12 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["TradeSkillFrame"] =
 		{
-			MinVersion = 0,
+			MinVersion = 11306,
 			SubFrames =
 			{
 				["TradeSkillFrame.RecipeList"] =
 				{
-					MinVersion = 0,
+					MinVersion = 20000,
 				},
 			},
 		},
