@@ -6,7 +6,7 @@
 #@end-non-retail@
 ## Title: BlizzMove
 ## Notes: Makes blizzard frames movable
-## Author: the-rebel-Mermaid - github.com/the-rebel-Mermaid/BlizzMove/
+## Author: Kiatra - github.com/Kiatra/BlizzMove/
 ## X-WoWI-ID: 23875
 ## Version: @project-version@
 ## OptionalDeps: Ace3
