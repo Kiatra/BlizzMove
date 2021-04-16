@@ -75,9 +75,6 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 							session = "In Session, until you reload",
 							permanent = "Remember permanently",
 						},
-						sorting = {
-							"off", "session", "permanent"
-						},
 						confirm = function(_, value)
 							if value ~= "permanent" then return false end
 							return "Permanently saving frame positions is not fully supported, use at your own risk, and expect there to be bugs!"
