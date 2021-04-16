@@ -1,4 +1,4 @@
-local name = ...;
+local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0");
 if not BlizzMove then return; end
 
