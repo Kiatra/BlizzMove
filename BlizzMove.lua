@@ -618,7 +618,7 @@ end
 ------------------------------------------------------------------------------------------------------
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
-function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
+local function MakeFrameMovable(frame, frameName, frameData, frameParent)
 	if InCombatLockdown() and frame:IsProtected() then return false; end
 
 	local clampFrame = false;
@@ -688,7 +688,7 @@ function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
 	return true;
 end
 
-function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
+local function MakeFrameUnmovable(frame, frameName, frameData)
 	if InCombatLockdown() and frame:IsProtected() then return false; end
 
 	if not frame or not frameData.storage or not frameData.storage.hooked then return false; end
@@ -704,6 +704,14 @@ function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
 	frameData.storage.disabled = true;
 
 	return true;
+end
+
+function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
+	return pcall(MakeFrameMovable, frame, frameName, frameData, frameParent);
+end
+
+function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
+	return pcall(MakeFrameUnmovable, frame, frameName, frameData);
 end
 
 function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
