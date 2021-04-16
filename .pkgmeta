@@ -16,6 +16,9 @@ externals:
     Libs/AceEvent-3.0:
         url: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
 
+    Libs/AceHook-3.0:
+        url: https://repos.wowace.com/wow/ace3/trunk/AceHook-3.0
+
     Libs/AceGUI-3.0:
         url: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
 

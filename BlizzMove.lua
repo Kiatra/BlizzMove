@@ -1,5 +1,5 @@
 local name = ... or "BlizzMove";
-local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0");
+local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
 if not BlizzMove then return; end
 
 BlizzMove.Frames = BlizzMove.Frames or {};
@@ -658,18 +658,18 @@ local function MakeFrameMovable(frame, frameName, frameData, frameParent)
 		if not frameData.NonDraggable then
 
 			frame:EnableMouse(true);
-			frame:HookScript("OnMouseDown",  OnMouseDown);
-			frame:HookScript("OnMouseUp",    OnMouseUp);
+			BlizzMove:HookScript(frame, "OnMouseDown", OnMouseDown);
+			BlizzMove:HookScript(frame, "OnMouseUp",   OnMouseUp);
 
 		end
 
 		frame:EnableMouseWheel(true);
-		frame:HookScript("OnMouseWheel", OnMouseWheel);
+		BlizzMove:HookScript(frame, "OnMouseWheel", OnMouseWheel);
 
 	end
 
-	frame:HookScript("OnShow", OnShow);
-	frame:HookScript("OnHide", function() end);
+	BlizzMove:HookScript(frame, "OnShow", OnShow);
+	BlizzMove:HookScript(frame, "OnHide", function() end);
 
 	hooksecurefunc(frame, "SetPoint",  OnSetPoint);
 	hooksecurefunc(frame, "SetWidth",  OnSizeUpdate);
