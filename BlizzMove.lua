@@ -381,7 +381,7 @@ local function SetFrameParentSubs(frame)
 	local frameData = frame.frameData;
 	local returnValue = true;
 
-	if not frameData.SubFrames then return returnValue end
+	if not frameData or not frameData.SubFrames then return returnValue end
 
 	for subFrameName, subFrameData in pairs(frameData.SubFrames) do
 
