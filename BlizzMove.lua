@@ -434,7 +434,7 @@ local function OnMouseDown(frame, button)
 			frameData.storage.detached = true;
 			returnValue = true;
 
-			PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+			PlaySound((SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_OPEN) or 839);
 
 		end
 
@@ -495,7 +495,7 @@ local function OnMouseUp(frame, button)
 					returnValue = true;
 					fullReset = true;
 
-					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+					PlaySound((SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_CLOSE) or 840);
 
 				end
 
