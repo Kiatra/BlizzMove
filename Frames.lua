@@ -26,12 +26,12 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["PetPaperDollFrame"] =
 			{
-				MinVersion = 20000, -- Added when?
+				MinVersion = 20000, -- Added pre 20400
 				MaxVersion = 70300, -- Removed when?
 			},
 			["CompanionFrame"] =
 			{
-				MinVersion = 20000, -- Added when?
+				MinVersion = 40000, -- Added when?
 				MaxVersion = 70300, -- Removed when?
 			},
 			["ReputationFrame"] =
@@ -58,17 +58,17 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["TokenFrame"] =
 			{
-				MinVersion = 20000, -- Added when?
+				MinVersion = 30000, -- Added pre 30300
 				SubFrames =
 				{
 					["TokenFramePopup"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 						Detachable = true,
 					},
 					["TokenFrameContainer"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 					},
 				},
 			},
@@ -133,7 +133,7 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["GuildInviteFrame"] =
 	{
-		MinVersion = 20000, -- Added when?
+		MinVersion = 40000, -- Added when?
 	},
 	["GuildRegistrarFrame"] =
 	{
@@ -198,24 +198,24 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["PVEFrame"] =
 	{
-		MinVersion = 20000, -- Added when?
+		MinVersion = 40000, -- Added when?
 		SubFrames =
 		{
 			["LFGListApplicationViewerScrollFrame"] =
 			{
-				MinVersion = 20000,
+				MinVersion = 40000,
 			},
 			["LFGListFrame.ApplicationViewer.UnempoweredCover"] =
 			{
-				MinVersion = 20000,
+				MinVersion = 40000,
 			},
 			["LFGListSearchPanelScrollFrame"] =
 			{
-				MinVersion = 20000,
+				MinVersion = 40000,
 			},
 			["ScenarioQueueFrameSpecific"] =
 			{
-				MinVersion = 20000,
+				MinVersion = 40000,
 				MaxVersion = 90000,
 			},
 		},
@@ -231,7 +231,7 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["QuestLogPopupDetailFrame"] =
 	{
-		MinVersion = 20000, -- Added when?
+		MinVersion = 40000, -- Added when?
 	},
 	["ReadyCheckFrame"] =
 	{
@@ -251,7 +251,7 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["SplashFrame"] =
 	{
-		MinVersion = 20000, -- Added when?
+		MinVersion = 40000, -- Added when?
 	},
 	["TabardFrame"] =
 	{
@@ -271,12 +271,12 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["WorldMapFrame"] =
 	{
-		MinVersion = 20000, -- No longer fullscreen when?
+		MinVersion = 40000, -- No longer fullscreen when?
 		SubFrames =
 		{
 			["QuestMapFrame"] =
 			{
-				MinVersion = 20000,
+				MinVersion = 40000, -- Added when?
 			},
 		},
 	},
@@ -293,7 +293,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["AchievementFrame"] =
 		{
-			MinVersion = 30000,
+			MinVersion = 30000, -- Added pre 30300
 			SubFrames =
 			{
 				["AchievementFrameHeader"] =
@@ -367,7 +367,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["AuctionFrame"] =
 		{
 			MinVersion = 0,
-			MaxVersion = 80200,
+			MaxVersion = 80300,
 		},
 	},
 	["Blizzard_AzeriteEssenceUI"] =
@@ -395,7 +395,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["BarberShopFrame"] =
 		{
-			MinVersion = 30000,
+			MinVersion = 30000, -- Added pre 30300
 			MaxVersion = 90000, -- still exists, but shouldn't be movable (fullscreen)
 		},
 	},
@@ -417,40 +417,40 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["CalendarFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 30000, -- Added pre 30300
 			SubFrames =
 			{
 				["CalendarCreateEventFrame"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 30000,
 					Detachable = true,
 					SubFrames =
 					{
 						["CalendarCreateEventInviteListScrollFrame"] =
 						{
-							MinVersion = 20000,
+							MinVersion = 30000,
 						},
 					},
 				},
 				["CalendarViewEventFrame"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 30000,
 					Detachable = true,
 					SubFrames =
 					{
 						["CalendarViewEventFrame.HeaderFrame"] =
 						{
-							MinVersion = 20000,
+							MinVersion = 40000, -- Added when?
 						},
 						["CalendarViewEventInviteListScrollFrame"] =
 						{
-							MinVersion = 20000,
+							MinVersion = 30000,
 						},
 					},
 				},
 				["CalendarViewHolidayFrame"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 30000,
 					Detachable = true,
 				},
 			},
@@ -474,18 +474,18 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["CollectionsJournal"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 		["WardrobeFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_Communities"] =
 	{
 		["ClubFinderGuildFinderFrame.RequestToJoinFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 		["CommunitiesFrame"] =
 		{
@@ -494,32 +494,32 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["ClubFinderCommunityAndGuildFinderFrame.CommunityCards.ListScrollFrame"] =
 				{
-					MinVersion = 20000, -- Added when?
+					MinVersion = 40000, -- Added when?
 				},
 			},
 		},
 		["CommunitiesFrame.RecruitmentDialog"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 		["CommunitiesGuildLogFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 		["CommunitiesGuildNewsFiltersFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 		["CommunitiesGuildTextEditFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_Contribution"] =
 	{
 		["ContributionCollectionFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_CovenantPreviewUI"] =
@@ -547,46 +547,46 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["CraftFrame"] =
 		{
-			MaxVersion = 11305,
+			MaxVersion = 11306,
 		},
 	},
 	["Blizzard_DeathRecap"] =
 	{
 		["DeathRecapFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_EncounterJournal"] =
 	{
 		["EncounterJournal"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 			SubFrames =
 			{
 				["EncounterJournalInstanceSelectScrollFrameScrollChild"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000,
 				},
 				["EncounterJournalEncounterFrameInstanceFrameLoreScrollFrameScrollChild"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000,
 				},
 				["EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000,
 				},
 				["EncounterJournalEncounterFrameInfoLootScrollFrameScrollChild"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000,
 				},
 				["EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChild"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000,
 				},
 				["EncounterJournalEncounterFrameInfoModelFrame"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000,
 					NonDraggable = true,
 				},
 			}
@@ -688,14 +688,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
-	["Blizzard_GlyphUI"] =
-	{
-		["GlyphFrame"] =
-		{
-			MinVersion = 30000,
-			MaxVersion = 60200,
-		},
-	},
+--	["Blizzard_GlyphUI"] =
+--	{
+--		["GlyphFrame"] =
+--		{
+--			MinVersion = 30000, -- Added pre 30300, but overlaps talentframe
+--			MaxVersion = 60200,
+--		},
+--	},
 	["Blizzard_GMSurveyUI"] =
 	{
 		["GMSurveyFrame"] =
@@ -707,14 +707,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["GuildBankFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 30000, -- Added pre 30300
 		},
 	},
 	["Blizzard_GuildControlUI"] =
 	{
 		["GuildControlUI"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_GuildUI"] =
@@ -764,21 +764,21 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ItemSocketingFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 20000, -- Added pre 20400
 		},
 	},
 	["Blizzard_ItemUpgradeUI"] =
 	{
 		["ItemUpgradeFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_LookingForGuildUI"] =
 	{
 		["LookingForGuildFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_MacroUI"] =
@@ -792,14 +792,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ObliterumForgeFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_OrderHallUI"] =
 	{
 		["OrderHallTalentFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 70000, -- Added when?
 		},
 	},
 	["Blizzard_PlayerChoiceUI"] =
@@ -813,21 +813,21 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["PVPMatchResults"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_PVPUI"] =
 	{
 		["PVPMatchScoreboard"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_ReforgingUI"] =
 	{
 		["ReforgingFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 			MaxVersion = 70300, -- Removed when?
 		},
 	},
@@ -864,18 +864,18 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["TalentFrame"] =
 		{
 			MinVersion = 0,
-			MaxVersion = 40300,
+			MaxVersion = 20000,
 		},
 		["PlayerTalentFrame"] =
 		{
-			MinVersion = 50000,
+			MinVersion = 20000,
 		},
 	},
 	["Blizzard_TalkingHeadUI"] =
 	{
 		["TalkingHeadFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_TorghastLevelPicker"] =
@@ -894,7 +894,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["TradeSkillFrame.RecipeList"] =
 				{
-					MinVersion = 20000,
+					MinVersion = 40000, -- Added when?
 				},
 			},
 		},
@@ -910,14 +910,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["VoidStorageFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_WarboardUI"] =
 	{
 		["WarboardQuestChoiceFrame"] =
 		{
-			MinVersion = 20000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_WarfrontsPartyPoseUI"] =
