@@ -1,8 +1,14 @@
+-- upvalue the globals
+local _G = getfenv(0);
+local LibStub = _G.LibStub;
+local pairs = _G.pairs;
+
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
-BlizzMoveAPI = BlizzMoveAPI or {};
+_G.BlizzMoveAPI = _G.BlizzMoveAPI or {};
+local BlizzMoveAPI = _G.BlizzMoveAPI;
 ------------------------------------------------------------------------------------------------------
 -- API: Debug Functions
 ------------------------------------------------------------------------------------------------------

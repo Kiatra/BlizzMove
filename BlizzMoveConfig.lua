@@ -1,9 +1,18 @@
+-- upvalue the globals
+local _G = getfenv(0);
+local LibStub = _G.LibStub;
+local pairs = _G.pairs;
+local GetAddOnMetadata = _G.GetAddOnMetadata;
+local ReloadUI = _G.ReloadUI;
+local string__match = _G.string.match;
+
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
 BlizzMove.Config = BlizzMove.Config or {};
 local Config = BlizzMove.Config;
+local BlizzMoveAPI = _G.BlizzMoveAPI;
 
 Config.version = GetAddOnMetadata(name, "Version") or "";
 
@@ -108,7 +117,7 @@ function Config:GetDisableFramesTable()
 			type = "group",
 			order = function(info)
 				if info[#info] == name then return 0; end
-				if string.match(info[#info], "Blizzard_") then return 5; end
+				if string__match(info[#info], "Blizzard_") then return 5; end
 				return 1;
 			end,
 			args = {

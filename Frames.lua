@@ -496,6 +496,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					MinVersion = 40000, -- Added when?
 				},
+				["CommunitiesFrame.GuildMemberDetailFrame"] =
+				{
+					Detachable = true,
+					MinVersion = 40000, -- Added when?
+				},
 			},
 		},
 		["CommunitiesFrame.RecruitmentDialog"] =

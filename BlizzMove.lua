@@ -639,6 +639,8 @@ end
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
 local function MakeFrameMovable(frame, frameName, frameData, frameParent)
+	if not frame then return false; end
+
 	if InCombatLockdown() and frame:IsProtected() then return false; end
 
 	local clampFrame = false;
@@ -709,9 +711,9 @@ local function MakeFrameMovable(frame, frameName, frameData, frameParent)
 end
 
 local function MakeFrameUnmovable(frame, frameName, frameData)
-	if InCombatLockdown() and frame:IsProtected() then return false; end
-
 	if not frame or not frameData.storage or not frameData.storage.hooked then return false; end
+
+	if InCombatLockdown() and frame:IsProtected() then return false; end
 
 	frame:SetMovable(false);
 	frame:SetClampedToScreen(false);
