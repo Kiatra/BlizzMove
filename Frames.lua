@@ -93,7 +93,7 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["IgnoreListFrameScrollFrame"] =
 			{
-				MinVersion = 0,
+				MinVersion = 40000, -- Added when?
 			},
 			["RaidInfoFrame"] =
 			{
@@ -111,11 +111,11 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["FriendsListFrameScrollFrame"] =
 			{
-				MinVersion = 0,
+				MinVersion = 40000, -- Added when?
 			},
 			["QuickJoinScrollFrame"] =
 			{
-				MinVersion = 0,
+				MinVersion = 40000, -- Added when?
 			},
 			["WhoListScrollFrame"] =
 			{
