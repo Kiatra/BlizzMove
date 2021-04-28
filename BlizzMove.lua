@@ -19,6 +19,7 @@ local UpdateUIPanelPositions = _G.UpdateUIPanelPositions;
 local MouseIsOver = _G.MouseIsOver;
 local pcall = _G.pcall;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
+local strsplit = _G.strsplit;
 
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
@@ -102,12 +103,14 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 
 	if self:IsFrameDisabled(addOnName, frameName) then return false; end
 
+	local copiedData = self.Util:CopyTable(frameData);
+
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
-	self.Frames[addOnName][frameName] = frameData;
+	self.Frames[addOnName][frameName] = copiedData;
 
 	if IsAddOnLoaded(addOnName) and (addOnName ~= self.name and self.enabled or self.initialized) then
 
-		self:ProcessFrame(addOnName, frameName, frameData);
+		self:ProcessFrame(addOnName, frameName, copiedData);
 
 	end
 
@@ -824,12 +827,27 @@ function BlizzMove:OnInitialize()
 
 	self.Config:Initialize();
 
-	-- after a reload, you need to open to category twice to actually open the correct page
-	self:RegisterChatCommand('blizzmove', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove'); end);
-	self:RegisterChatCommand('bm', function() InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove'); end);
+	self:RegisterChatCommand('blizzmove', 'OnSlashCommand');
+	self:RegisterChatCommand('bm', 'OnSlashCommand');
 
 	self:ProcessFrames(self.name);
 
+end
+
+function BlizzMove:OnSlashCommand(message)
+	local arg1, arg2 = strsplit(' ', message);
+	if arg1 == 'dumpDebugInfo' then
+		-- `/bm dumpDebugInfo 1` will extract all CVars rather than just ones that got changed from the default
+		self.Util:DumpAllData(arg2 ~= '1');
+		return;
+	end
+	if arg1 == 'dumpChangedCVars' then
+		self.Util:DumpCVars({changedOnly=true, pastableFormat=true})
+		return;
+	end
+
+	-- after a reload, you need to open to category twice to actually open the correct page
+	InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove');
 end
 
 function BlizzMove:InitDefaults()

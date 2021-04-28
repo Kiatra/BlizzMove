@@ -21,5 +21,6 @@ TaintLess.xml
 BlizzMove.lua
 BlizzMoveAPI.lua
 BlizzMoveConfig.lua
+BlizzMoveUtils.lua
 Frames.lua
 
