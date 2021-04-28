@@ -8,6 +8,10 @@ local type = _G.type;
 local C_Console__GetAllCommands = _G.C_Console.GetAllCommands;
 local string__format = _G.string.format;
 local GetCVarInfo = _G.GetCVarInfo;
+local IsAddOnLoaded = _G.IsAddOnLoaded;
+local GetNumAddOns = _G.GetNumAddOns;
+local GetAddOnInfo = _G.GetAddOnInfo;
+local GetAddOnMetadata = _G.GetAddOnMetadata;
 
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
@@ -63,6 +67,7 @@ function Util:DumpAllData(changedCVarsOnly)
     local data = {};
     data.cvars = self:ExtractCVars(changedCVarsOnly);
     data.savedVars = self:ExtractSavedVars();
+    data.addons = self:ExtractAddonList();
 
     local frame = self:GetMainFrame(json.encode(data));
     frame:Show();
@@ -105,6 +110,21 @@ function Util:ExtractCVars(changedOnly)
         end
     end
 
+    return ret;
+end
+
+function Util:ExtractAddonList()
+    local ret = {};
+    for i = 1, GetNumAddOns() do
+        local addonName, _, _, loadable, _ = GetAddOnInfo(i);
+        if loadable then
+            local version = GetAddOnMetadata(addonName, "Version") or "unknown";
+            ret[addonName] = {
+                version = version,
+                loaded = IsAddOnLoaded(i),
+            };
+        end
+    end
     return ret;
 end
 
@@ -170,7 +190,7 @@ function Util:GetMainFrame(text)
         -- resizing
         f:SetResizable(true);
         f:SetMinResize(150, 100);
-        local rb = CreateFrame("Button", "SimcResizeButton", f);
+        local rb = CreateFrame("Button", f);
         rb:SetPoint("BOTTOMRIGHT", -6, 7);
         rb:SetSize(16, 16);
 
