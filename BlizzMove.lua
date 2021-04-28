@@ -17,7 +17,8 @@ local IsControlKeyDown = _G.IsControlKeyDown;
 local IsShiftKeyDown = _G.IsShiftKeyDown;
 local UpdateUIPanelPositions = _G.UpdateUIPanelPositions;
 local MouseIsOver = _G.MouseIsOver;
-local pcall = _G.pcall;
+local xpcall = _G.xpcall;
+local CallErrorHandler = _G.CallErrorHandler;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local strsplit = _G.strsplit;
 
@@ -732,11 +733,11 @@ local function MakeFrameUnmovable(frame, frameName, frameData)
 end
 
 function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
-	return pcall(MakeFrameMovable, frame, frameName, frameData, frameParent);
+	return xpcall(MakeFrameMovable, CallErrorHandler, frame, frameName, frameData, frameParent);
 end
 
 function BlizzMove:MakeFrameUnmovable(frame, frameName, frameData)
-	return pcall(MakeFrameUnmovable, frame, frameName, frameData);
+	return xpcall(MakeFrameUnmovable, CallErrorHandler, frame, frameName, frameData);
 end
 
 function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)

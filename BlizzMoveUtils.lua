@@ -32,22 +32,8 @@ Util.frameConfig = {
     height = 400,
 }
 
-local escape_char_map = {
-    [ "\\" ] = "\\",
-    [ "\"" ] = "\"",
-    [ "\b" ] = "b",
-    [ "\f" ] = "f",
-    [ "\n" ] = "n",
-    [ "\r" ] = "r",
-    [ "\t" ] = "t",
-}
-
-local function escape_char(c)
-    return escape_char_map[c] and ('\\'..escape_char_map[c]) or string__format('\"..strchar(%04x)..\"', c:byte());
-end
-
 local function encode_string(val)
-    return '"' .. val:gsub('[%z\1-\31\\"]', escape_char) .. '"';
+    return val:gsub('.', function(c) return string__format('strchar(%d)..', c:byte()); end) .. '""';
 end
 
 
@@ -66,6 +52,9 @@ end
 function Util:DumpAllData(changedCVarsOnly)
     local data = {};
     data.cvars = self:ExtractCVars(changedCVarsOnly);
+    for _, info in pairs(data.cvars) do
+        info.value = info.value:gsub('.', function(c) return string__format('\\u%04x', c:byte()); end)
+    end
     data.savedVars = self:ExtractSavedVars();
     data.addons = self:ExtractAddonList();
 
@@ -86,6 +75,9 @@ function Util:DumpCVars(options)
             end
         end
     else
+        for _, info in pairs(data) do
+            info.value = info.value:gsub('.', function(c) return string__format('\\u%04x', c:byte()); end)
+        end
         text = json.encode(data);
     end
 
