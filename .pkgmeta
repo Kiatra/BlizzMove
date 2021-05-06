@@ -27,3 +27,4 @@ externals:
 
 ignore:
     - README.md
+    - toc-versions.txt
