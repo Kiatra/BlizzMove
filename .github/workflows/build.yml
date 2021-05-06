@@ -9,19 +9,32 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      GITHUB_OAUTH: ${{ secrets.GITHUB_OAUTH }}
+      WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Create Retail Package
-      run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -p 17809 -w 23875
-      env:
-        CF_API_KEY: ${{ secrets.CF_API_KEY }}
-        GITHUB_OAUTH: ${{ secrets.GITHUB_OAUTH }}
-        WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+      - name: Replace retail toc-version
+        run: sed -i "s/@toc-version-retail@/`grep -oP 'retail:\K\d+' toc-versions.txt`/g" BlizzMove.toc
 
-    - name: Create Classic Package
-      run: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -s -- -p 17809 -w 23875 -g 1.13.7
-      env:
-        CF_API_KEY: ${{ secrets.CF_API_KEY }}
-        GITHUB_OAUTH: ${{ secrets.GITHUB_OAUTH }}
-        WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+      - name: Replace tbc toc-version
+        run: sed -i "s/@toc-version-tbc@/`grep -oP 'tbc:\K\d+' toc-versions.txt`/g" BlizzMove.toc
+
+      - name: Replace classic toc-version
+        run: sed -i "s/@toc-version-classic@/`grep -oP 'classic:\K\d+' toc-versions.txt`/g" BlizzMove.toc
+
+      - name: Create Retail Package
+        uses: BigWigsMods/packager@master
+
+      - name: Create TBC Package
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g bc
+
+      - name: Create Classic Package
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g classic
