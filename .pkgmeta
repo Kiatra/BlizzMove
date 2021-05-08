@@ -1,5 +1,8 @@
 package-as: BlizzMove
 
+move-folders:
+    BlizzMove/Plugins/Debug: BlizzMove_Debug
+
 externals:
     Libs/LibStub:
         url: https://repos.wowace.com/wow/ace3/trunk/LibStub
@@ -27,4 +30,3 @@ externals:
 
 ignore:
     - README.md
-    - toc-versions.txt

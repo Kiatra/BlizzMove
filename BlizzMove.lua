@@ -21,6 +21,7 @@ local xpcall = _G.xpcall;
 local CallErrorHandler = _G.CallErrorHandler;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local strsplit = _G.strsplit;
+local LoadAddOn = _G.LoadAddOn;
 
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
@@ -104,7 +105,7 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 
 	if self:IsFrameDisabled(addOnName, frameName) then return false; end
 
-	local copiedData = self.Util:CopyTable(frameData);
+	local copiedData = self:CopyTable(frameData);
 
 	self.Frames[addOnName]            = self.Frames[addOnName] or {};
 	self.Frames[addOnName][frameName] = copiedData;
@@ -291,6 +292,18 @@ function BlizzMove:ScheduleOptionsUpdate()
 
 	C_Timer__After(2, function() self.optionUpdateTimerActive = false; self.Config:RegisterOptions(); end);
 
+end
+
+function BlizzMove:CopyTable(table)
+	local copy = {};
+	for k, v in pairs(table) do
+		if (type(v) == "table") then
+			copy[k] = self:CopyTable(v);
+		else
+			copy[k] = v;
+		end
+	end
+	return copy;
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -837,14 +850,23 @@ end
 
 function BlizzMove:OnSlashCommand(message)
 	local arg1, arg2 = strsplit(' ', message);
-	if arg1 == 'dumpDebugInfo' then
-		-- `/bm dumpDebugInfo 1` will extract all CVars rather than just ones that got changed from the default
-		self.Util:DumpAllData(arg2 ~= '1');
-		return;
-	end
-	if arg1 == 'dumpChangedCVars' then
-		self.Util:DumpCVars({changedOnly=true, pastableFormat=true})
-		return;
+	if (
+		arg1 == 'dumpDebugInfo'
+		or arg1 == 'dumpChangedCVars'
+	) then
+		local loaded = LoadAddOn('BlizzMove_Debug');
+		local DebugModule = loaded and self:GetModule('Debug');
+		if (DebugModule) then
+			if arg1 == 'dumpDebugInfo' then
+				-- `/bm dumpDebugInfo 1` will extract all CVars rather than just ones that got changed from the default
+				DebugModule:DumpAllData(arg2 ~= '1');
+			elseif arg1 == 'dumpChangedCVars' then
+				DebugModule:DumpCVars({ changedOnly = true, pastableFormat = true });
+			end
+		else
+			self:Print('Could not load BlizzMove_Debug plugin');
+		end
+		return ;
 	end
 
 	-- after a reload, you need to open to category twice to actually open the correct page
