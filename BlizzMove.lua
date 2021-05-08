@@ -856,17 +856,19 @@ function BlizzMove:OnSlashCommand(message)
 	) then
 		local loaded = LoadAddOn('BlizzMove_Debug');
 		local DebugModule = loaded and self:GetModule('Debug');
-		if (DebugModule) then
-			if arg1 == 'dumpDebugInfo' then
-				-- `/bm dumpDebugInfo 1` will extract all CVars rather than just ones that got changed from the default
-				DebugModule:DumpAllData(arg2 ~= '1');
-			elseif arg1 == 'dumpChangedCVars' then
-				DebugModule:DumpCVars({ changedOnly = true, pastableFormat = true });
-			end
-		else
+		if (not DebugModule) then
 			self:Print('Could not load BlizzMove_Debug plugin');
+			return;
 		end
-		return ;
+
+		if arg1 == 'dumpDebugInfo' then
+			-- `/bm dumpDebugInfo 1` will extract all CVars rather than just ones that got changed from the default
+			DebugModule:DumpAllData(arg2 ~= '1');
+		elseif arg1 == 'dumpChangedCVars' then
+			DebugModule:DumpCVars({ changedOnly = true, pastableFormat = true });
+		end
+
+		return;
 	end
 
 	-- after a reload, you need to open to category twice to actually open the correct page
