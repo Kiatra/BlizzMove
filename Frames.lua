@@ -706,6 +706,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["GMSurveyFrame"] =
 		{
 			MinVersion = 0,
+			MaxVersion = 90000, -- Removed when?
 		},
 	},
 	["Blizzard_GuildBankUI"] =
@@ -726,7 +727,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["GuildFrame"] =
 		{
-			MinVersion = 0,
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_InspectUI"] =
@@ -784,6 +785,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["LookingForGuildFrame"] =
 		{
 			MinVersion = 40000, -- Added when?
+			MaxVersion = 90000, -- Removed when?
 		},
 	},
 	["Blizzard_MacroUI"] =
@@ -923,6 +925,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["WarboardQuestChoiceFrame"] =
 		{
 			MinVersion = 40000, -- Added when?
+			MaxVersion = 90000, -- Removed when?
 		},
 	},
 	["Blizzard_WarfrontsPartyPoseUI"] =
