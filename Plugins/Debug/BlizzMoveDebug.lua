@@ -13,47 +13,33 @@ local GetNumAddOns = _G.GetNumAddOns;
 local GetAddOnInfo = _G.GetAddOnInfo;
 local GetAddOnMetadata = _G.GetAddOnMetadata;
 
-local name = ... or "BlizzMove";
-local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
+local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove');
 if not BlizzMove then return ; end
 
-BlizzMove.Util = BlizzMove.Util or {};
-local Util = BlizzMove.Util;
+local Module = BlizzMove:NewModule('Debug')
 
-local json = LibStub("JsonLua-1.0");
+local json = LibStub('JsonLua-1.0');
 
-Util.frameConfig = {
-    point = "CENTER",
+Module.frameConfig = {
+    point = 'CENTER',
     relativeFrame = nil,
-    relativePoint = "CENTER",
+    relativePoint = 'CENTER',
     ofsx = 0,
     ofsy = 0,
     width = 750,
     height = 400,
 }
+Module.bannedCharacterPattern = '[^a-zA-Z0-9 !@#$%^&*()_+\-=,.:;?~`{}[<>]';
 
 local function encode_string(val)
-    return val:gsub('.', function(c) return string__format('strchar(%d)..', c:byte()); end) .. '""';
+    return '"' .. val:gsub(Module.bannedCharacterPattern, function(c) return string__format('"..strchar(%d).."', c:byte()); end) .. '"';
 end
 
-
-function Util:CopyTable(table)
-    local copy = {};
-    for k, v in pairs(table) do
-        if ( type(v) == "table" ) then
-            copy[k] = self:CopyTable(v);
-        else
-            copy[k] = v;
-        end
-    end
-    return copy;
-end
-
-function Util:DumpAllData(changedCVarsOnly)
+function Module:DumpAllData(changedCVarsOnly)
     local data = {};
     data.cvars = self:ExtractCVars(changedCVarsOnly);
     for _, info in pairs(data.cvars) do
-        info.value = info.value:gsub('.', function(c) return string__format('\\u%04x', c:byte()); end)
+        info.value = info.value:gsub(self.bannedCharacterPattern, function(c) return string__format('\\u%04x', c:byte()); end)
     end
     data.savedVars = self:ExtractSavedVars();
     data.addons = self:ExtractAddonList();
@@ -62,7 +48,7 @@ function Util:DumpAllData(changedCVarsOnly)
     frame:Show();
 end
 
-function Util:DumpCVars(options)
+function Module:DumpCVars(options)
     local pastableFormat = not not options.pastableFormat;
     local changedOnly = not not options.changedOnly;
 
@@ -71,12 +57,12 @@ function Util:DumpCVars(options)
     if(pastableFormat) then
         for command, info in pairs(data) do
             if not info.readonly then
-                text = text .. string__format("/run C_CVar.SetCVar(\"%s\", %s)\n", command, encode_string(info.value));
+                text = text .. string__format('/run C_CVar.SetCVar(\"%s\", %s)\n', command, encode_string(info.value));
             end
         end
     else
         for _, info in pairs(data) do
-            info.value = info.value:gsub('.', function(c) return string__format('\\u%04x', c:byte()); end)
+            info.value = info.value:gsub(self.bannedCharacterPattern, function(c) return string__format('\\u%04x', c:byte()); end)
         end
         text = json.encode(data);
     end
@@ -85,7 +71,7 @@ function Util:DumpCVars(options)
     frame:Show();
 end
 
-function Util:ExtractCVars(changedOnly)
+function Module:ExtractCVars(changedOnly)
     local ret = {};
 
     for _, v in pairs(C_Console__GetAllCommands()) do
@@ -96,7 +82,7 @@ function Util:ExtractCVars(changedOnly)
                 value = value,
                 defaultValue = defaultValue,
                 changed = changed,
-                scope = ((account and "account") or (character and "character") or "unknown"),
+                scope = ((account and 'account') or (character and 'character') or 'unknown'),
                 readonly = readonly,
             };
         end
@@ -105,12 +91,12 @@ function Util:ExtractCVars(changedOnly)
     return ret;
 end
 
-function Util:ExtractAddonList()
+function Module:ExtractAddonList()
     local ret = {};
     for i = 1, GetNumAddOns() do
         local addonName, _, _, loadable, _ = GetAddOnInfo(i);
         if loadable then
-            local version = GetAddOnMetadata(addonName, "Version") or "unknown";
+            local version = GetAddOnMetadata(addonName, 'Version') or 'unknown';
             ret[addonName] = {
                 version = version,
                 loaded = IsAddOnLoaded(i),
@@ -120,15 +106,15 @@ function Util:ExtractAddonList()
     return ret;
 end
 
-function Util:ExtractSavedVars()
+function Module:ExtractSavedVars()
     return BlizzMove.DB;
 end
 
-function Util:GetMainFrame(text)
+function Module:GetMainFrame(text)
     -- Frame code largely adapted from the simulationcraft addon
     if not _G.BlizzMoveCopyFrame then
         -- Main Frame
-        local f = CreateFrame("Frame", "BlizzMoveCopyFrame", UIParent, "DialogBoxFrame");
+        local f = CreateFrame('Frame', 'BlizzMoveCopyFrame', UIParent, 'DialogBoxFrame');
         f:ClearAllPoints();
         -- load position from local DB
         f:SetPoint(
@@ -140,19 +126,19 @@ function Util:GetMainFrame(text)
         );
         f:SetSize(self.frameConfig.width, self.frameConfig.height);
         f:SetBackdrop({
-            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-            edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+            bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+            edgeFile = 'Interface\\PVPFrame\\UI-Character-PVP-Highlight',
             edgeSize = 16,
             insets = { left = 8, right = 8, top = 8, bottom = 8 },
         });
         f:SetMovable(true);
         f:SetClampedToScreen(true);
-        f:SetScript("OnMouseDown", function(frame, button)
-            if button == "LeftButton" then
+        f:SetScript('OnMouseDown', function(frame, button)
+            if button == 'LeftButton' then
                 frame:StartMoving();
             end
         end);
-        f:SetScript("OnMouseUp", function(frame, button)
+        f:SetScript('OnMouseUp', function(frame, button)
             frame:StopMovingOrSizing();
             -- save position between sessions
             local point, relativeFrame, relativeTo, ofsx, ofsy = frame:GetPoint();
@@ -164,39 +150,39 @@ function Util:GetMainFrame(text)
         end);
 
         -- scroll frame
-        local sf = CreateFrame("ScrollFrame", "BlizzMoveCopyFrameScrollFrame", f, "UIPanelScrollFrameTemplate");
-        sf:SetPoint("LEFT", 16, 0);
-        sf:SetPoint("RIGHT", -32, 0);
-        sf:SetPoint("TOP", 0, -32);
-        sf:SetPoint("BOTTOM", _G.BlizzMoveCopyFrameButton, "TOP", 0, 0);
+        local sf = CreateFrame('ScrollFrame', 'BlizzMoveCopyFrameScrollFrame', f, 'UIPanelScrollFrameTemplate');
+        sf:SetPoint('LEFT', 16, 0);
+        sf:SetPoint('RIGHT', -32, 0);
+        sf:SetPoint('TOP', 0, -32);
+        sf:SetPoint('BOTTOM', _G.BlizzMoveCopyFrameButton, 'TOP', 0, 0);
 
         -- edit box
-        local eb = CreateFrame("EditBox", "BlizzMoveCopyFrameEditBox", _G.BlizzMoveCopyFrameScrollFrame);
+        local eb = CreateFrame('EditBox', 'BlizzMoveCopyFrameEditBox', _G.BlizzMoveCopyFrameScrollFrame);
         eb:SetSize(sf:GetSize());
         eb:SetMultiLine(true);
         eb:SetAutoFocus(true);
-        eb:SetFontObject("ChatFontNormal");
-        eb:SetScript("OnEscapePressed", function() f:Hide() end);
+        eb:SetFontObject('ChatFontNormal');
+        eb:SetScript('OnEscapePressed', function() f:Hide() end);
         sf:SetScrollChild(eb);
 
         -- resizing
         f:SetResizable(true);
         f:SetMinResize(150, 100);
-        local rb = CreateFrame("Button", f);
-        rb:SetPoint("BOTTOMRIGHT", -6, 7);
+        local rb = CreateFrame('Button', f);
+        rb:SetPoint('BOTTOMRIGHT', -6, 7);
         rb:SetSize(16, 16);
 
-        rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up");
-        rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight");
-        rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down");
+        rb:SetNormalTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up');
+        rb:SetHighlightTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight');
+        rb:SetPushedTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down');
 
-        rb:SetScript("OnMouseDown", function(frame, button)
-            if button == "LeftButton" then
-                f:StartSizing("BOTTOMRIGHT");
+        rb:SetScript('OnMouseDown', function(frame, button)
+            if button == 'LeftButton' then
+                f:StartSizing('BOTTOMRIGHT');
                 frame:GetHighlightTexture():Hide(); -- more noticeable
             end
         end);
-        rb:SetScript("OnMouseUp", function(frame, button)
+        rb:SetScript('OnMouseUp', function(frame, button)
             f:StopMovingOrSizing();
             frame:GetHighlightTexture():Show();
             eb:SetWidth(sf:GetWidth());

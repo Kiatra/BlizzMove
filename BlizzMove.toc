@@ -1,7 +1,7 @@
-## Interface: 90005
+## Interface: @toc-version-retail@
 ## Interface-Retail: @toc-version-retail@
 ## Interface-Classic: @toc-version-classic@
-## Interface-BC: @toc-version-tbc@
+## Interface-BC: @toc-version-bc@
 ## Title: BlizzMove
 ## Notes: Makes blizzard frames movable
 ## Author: Kiatra - github.com/Kiatra/BlizzMove/
@@ -20,6 +20,4 @@ TaintLess.xml
 BlizzMove.lua
 BlizzMoveAPI.lua
 BlizzMoveConfig.lua
-BlizzMoveUtils.lua
 Frames.lua
-
