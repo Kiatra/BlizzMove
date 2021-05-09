@@ -3,13 +3,15 @@
 ## Interface-Classic: @toc-version-classic@
 ## Interface-BC: @toc-version-bc@
 ## Title: BlizzMove - Debugging plugin
-## Version: @project-version@
 ## Notes: This Load-On-Demand plugin allows for retrieving debugging information.
 ## Author: Numy - github.com/Kiatra/BlizzMove/
+## Version: @project-version@
 ## X-License: GNU General Public License version 3 (GPLv3)
 ## RequiredDeps: BlizzMove
 ## LoadOnDemand: 1
 
+# Libraries
 Libs\json.lua
 
+# Plugin
 BlizzMoveDebug.lua
