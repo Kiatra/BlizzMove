@@ -481,11 +481,16 @@ local function OnMouseDown(frame, button)
 
 		if frameData.storage.detached or not parentReturnValue then
 
-			local userPlaced = frame:IsUserPlaced();
+			if not (BlizzMove.DB and BlizzMove.DB.requireMoveModifier) or IsShiftKeyDown() then
 
-			frame:StartMoving();
-			frame:SetUserPlaced(userPlaced);
-			returnValue = true;
+				local userPlaced = frame:IsUserPlaced();
+
+				frame:StartMoving();
+				frame:SetUserPlaced(userPlaced);
+				frameData.storage.isMoving = true;
+				returnValue = true;
+
+			end
 
 		end
 
@@ -513,11 +518,16 @@ local function OnMouseUp(frame, button)
 
 		if button == "LeftButton" then
 
-			frame:StopMovingOrSizing();
+			if frameData.storage.isMoving then
 
-			frameData.storage.points.dragPoints = GetFramePoints(frame);
-			frameData.storage.points.dragged = true;
-			returnValue = true;
+				frame:StopMovingOrSizing();
+
+				frameData.storage.points.dragPoints = GetFramePoints(frame);
+				frameData.storage.points.dragged = true;
+				frameData.storage.isMoving = nil;
+				returnValue = true;
+
+			end
 
 		elseif button == "RightButton" then
 

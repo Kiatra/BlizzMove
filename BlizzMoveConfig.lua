@@ -70,8 +70,19 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 				get = function(info) return Config:GetConfig(info[#info]); end,
 				set = function(info, value) return Config:SetConfig(info[#info], value); end,
 				args = {
-					savePosStrategy = {
+					requireMoveModifier = {
 						order = 1,
+						name = "Require move modifier.",
+						desc = "If enabled BlizzMove requires to hold shift to move frames.",
+						type = "toggle",
+					},
+					newline1 = {
+						order = 2,
+						type = "description",
+						name = "",
+					},
+					savePosStrategy = {
+						order = 3,
 						name = "How should frame positions be remembered?",
 						desc = [[Do not remember >> frame positions are reset when you close and reopen them
 
@@ -89,13 +100,13 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 							return "Permanently saving frame positions is not fully supported, use at your own risk, and expect there to be bugs!"
 						end,
 					},
-					newline = {
-						order = 2,
+					newline2 = {
+						order = 4,
 						type = "description",
 						name = "",
 					},
 					resetPositions = {
-						order = 3,
+						order = 5,
 						name = "Reset Permanent Positions",
 						desc = "Reset permanently stored positions",
 						type = "execute",
