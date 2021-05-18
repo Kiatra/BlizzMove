@@ -8,7 +8,6 @@ local IsAddOnLoaded = _G.IsAddOnLoaded;
 local next = _G.next;
 local string__gmatch = _G.string.gmatch;
 local tonumber = _G.tonumber;
-local C_Timer__After = _G.C_Timer.After;
 local string__format = _G.string.format;
 local IsAltKeyDown = _G.IsAltKeyDown;
 local PlaySound = _G.PlaySound;
@@ -100,7 +99,7 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 	return true;
 end
 
-function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
+function BlizzMove:RegisterFrame(addOnName, frameName, frameData, skipConfigUpdate)
 	if not addOnName then addOnName = self.name; end
 
 	if self:IsFrameDisabled(addOnName, frameName) then return false; end
@@ -116,7 +115,11 @@ function BlizzMove:RegisterFrame(addOnName, frameName, frameData)
 
 	end
 
-	self:ScheduleOptionsUpdate();
+	if self.initialized and not skipConfigUpdate then
+
+		self.Config:RegisterOptions();
+
+	end
 
 end
 
@@ -282,16 +285,6 @@ function BlizzMove:MatchesCurrentBuild(frameData)
 	if frameData.MaxVersion and frameData.MaxVersion <= self.gameVersion then return false; end
 
 	return true;
-end
-
-function BlizzMove:ScheduleOptionsUpdate()
-
-	if not self.initialized or self.optionUpdateTimerActive then return; end
-
-	self.optionUpdateTimerActive = true;
-
-	C_Timer__After(2, function() self.optionUpdateTimerActive = false; self.Config:RegisterOptions(); end);
-
 end
 
 function BlizzMove:CopyTable(table)

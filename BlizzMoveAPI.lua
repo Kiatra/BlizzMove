@@ -32,7 +32,13 @@ function BlizzMoveAPI:RegisterFrames(framesTable)
 
 		end
 
-		BlizzMove:RegisterFrame(nil, frameName, frameData);
+		BlizzMove:RegisterFrame(nil, frameName, frameData, true);
+
+	end
+
+	if BlizzMove.initialized then
+
+		BlizzMove.Config:RegisterOptions();
 
 	end
 
@@ -51,9 +57,15 @@ function BlizzMoveAPI:RegisterAddOnFrames(addOnFramesTable)
 
 			end
 
-			BlizzMove:RegisterFrame(addOnName, frameName, frameData);
+			BlizzMove:RegisterFrame(addOnName, frameName, frameData, true);
 
 		end
+
+	end
+
+	if BlizzMove.initialized then
+
+		BlizzMove.Config:RegisterOptions();
 
 	end
 
