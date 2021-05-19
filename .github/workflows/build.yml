@@ -33,4 +33,4 @@ jobs:
       - name: Create Burning Crusade Package
         uses: BigWigsMods/packager@master
         with:
-          args: -g bc
+          args: -g bcc
