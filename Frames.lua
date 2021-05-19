@@ -54,7 +54,40 @@ BlizzMoveAPI:RegisterFrames(
 			["HonorFrame"] =
 			{
 				MinVersion = 0,
+				MaxVersion = 20000,
+			},
+			["PVPFrame"] =
+			{
+				MinVersion = 20000,
 				MaxVersion = 70300, -- Removed when?
+				SubFrames =
+				{
+					["PVPFrameHonor"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPFrameArena"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPTeam1"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPTeam2"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPTeam3"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+				},
 			},
 			["TokenFrame"] =
 			{
@@ -706,7 +739,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["GMSurveyFrame"] =
 		{
 			MinVersion = 0,
-			MaxVersion = 90000, -- Removed when?
+			MaxVersion = 20000,
 		},
 	},
 	["Blizzard_GuildBankUI"] =
