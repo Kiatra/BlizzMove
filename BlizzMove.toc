@@ -1,7 +1,7 @@
 ## Interface: @toc-version-retail@
 ## Interface-Retail: @toc-version-retail@
 ## Interface-Classic: @toc-version-classic@
-## Interface-BCC: @toc-version-bc@
+## Interface-BCC: @toc-version-bcc@
 ## Title: BlizzMove
 ## Notes: Makes blizzard frames movable
 ## Author: Kiatra - github.com/Kiatra/BlizzMove/
