@@ -22,6 +22,11 @@ jobs:
         with:
           args: Plugins/*/*.toc *.toc
 
+      - name: Create version specific ToC files
+        uses: Numynum/ToCDuplicator@master
+        with:
+          files: Plugins/*/*.toc *.toc
+
       - name: Create Retail Package
         uses: BigWigsMods/packager@master
 
