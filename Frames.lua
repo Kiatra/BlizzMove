@@ -695,6 +695,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 90000,
 			SubFrames =
 			{
+				["CovenantMissionFrame.OverlayElements"] =
+				{
+					MinVersion = 90000,
+				},
 				["CovenantMissionFrame.MissionTab"] =
 				{
 					MinVersion = 90000,
