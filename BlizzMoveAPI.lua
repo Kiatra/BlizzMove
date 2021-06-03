@@ -9,6 +9,21 @@ if not BlizzMove then return; end
 
 _G.BlizzMoveAPI = _G.BlizzMoveAPI or {};
 local BlizzMoveAPI = _G.BlizzMoveAPI;
+
+
+function BlizzMoveAPI:GetVersion()
+	local rawVersion = BlizzMove.Config.version;
+
+	if(rawVersion == '@project-version@') then
+		return rawVersion, nil, nil, nil, nil;
+	end
+
+	local mayor, minor, patch = string.match(rawVersion, 'v(%d*)%.(%d*)%.(%d*)[a-z]?')
+	local versionInt = patch + minor * 100 + mayor * 10000;
+
+	return rawVersion, mayor, minor, patch, versionInt
+end
+
 ------------------------------------------------------------------------------------------------------
 -- API: Debug Functions
 ------------------------------------------------------------------------------------------------------

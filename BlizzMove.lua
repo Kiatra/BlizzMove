@@ -690,6 +690,13 @@ local function MakeFrameMovable(frame, frameName, frameData, frameParent)
 		return true;
 	end
 
+	if frame and frame.frameData and frame.frameData.storage and not frameData.storage then
+		frameData.storage = frame.frameData.storage;
+		frameData.storage.frameName = frameName;
+		frameData.storage.frameParent = frameParent;
+		frame.frameData = frameData;
+	end
+
 	if not frame or (frameData.storage and frameData.storage.hooked) then return false; end
 
 	frame:SetMovable(true);
