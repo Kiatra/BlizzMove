@@ -14,7 +14,7 @@ local BlizzMoveAPI = _G.BlizzMoveAPI;
 function BlizzMoveAPI:GetVersion()
 	local rawVersion = BlizzMove.Config.version;
 
-	if(rawVersion == '@project-version@') then
+	if(rawVersion == '@project' .. '-version@') then
 		return rawVersion, nil, nil, nil, nil;
 	end
 
