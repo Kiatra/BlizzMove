@@ -174,7 +174,7 @@ function Config:GetFramesTables()
 						[addOnName] = {
 							name = "Movable frames for " .. addOnName,
 							type = "multiselect",
-							values = function(info) return Config:GetDefaultDisabledFrames(info[#info]); end,
+							values = function(info) return self:GetDefaultDisabledFrames(info[#info]); end,
 						},
 					},
 				};

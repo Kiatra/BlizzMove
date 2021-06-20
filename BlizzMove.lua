@@ -207,7 +207,9 @@ function BlizzMove:EnableFrame(addOnName, frameName)
 		self.DB.enabledFrames[addOnName][frameName] = true;
 	end
 
-	self.DB.disabledFrames[addOnName][frameName] = nil;
+	if (self:IsFrameDisabled(addOnName, frameName)) then
+		self.DB.disabledFrames[addOnName][frameName] = nil;
+	end
 
 	local frame = self:GetFrameFromName(frameName)
 	local frameData;
