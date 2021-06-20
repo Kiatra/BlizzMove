@@ -794,9 +794,17 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	if self:IsFrameDisabled(addOnName, frameName) then return; end
 
-	if not self:MatchesCurrentBuild(frameData) then return; end
+	local matchesBuild = self:MatchesCurrentBuild(frameData);
 
 	local frame = self:GetFrameFromName(frameName);
+
+	if(not matchesBuild) then
+		if(frame) then
+			self:Print("Frame was marked as incompatible, but does exist ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
+		end
+
+		return false;
+	end
 
 	if frame then
 
@@ -814,13 +822,13 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 		else
 
-			BlizzMove:Print("Failed to make frame movable:", frameName);
+			self:Print("Failed to make frame movable:", frameName);
 
 		end
 
 	else
 
-		BlizzMove:Print("Could not find frame ( Build:", self.gameBuild, "| Version:", self.gameVersion, "):", frameName);
+		self:Print("Could not find frame ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
 
 	end
 
