@@ -5,6 +5,9 @@ local pairs = _G.pairs;
 local GetAddOnMetadata = _G.GetAddOnMetadata;
 local ReloadUI = _G.ReloadUI;
 local string__match = _G.string.match;
+local StaticPopupDialogs = _G.StaticPopupDialogs;
+local StaticPopup_Show = _G.StaticPopup_Show;
+local IsControlKeyDown = _G.IsControlKeyDown;
 
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
@@ -17,22 +20,24 @@ local BlizzMoveAPI = _G.BlizzMoveAPI;
 Config.version = GetAddOnMetadata(name, "Version") or "";
 
 function Config:GetOptions()
+	local count = 1;
+	local function increment() count = count+1; return count end;
 	return {
 		type = "group",
 		childGroups = "tab",
 		args = {
 			version = {
-				order = 0,
+				order = increment(),
 				type = "description",
 				name = "Version: " .. self.version
 			},
 			mainTab = {
-				order = 1,
+				order = increment(),
 				name = "Info",
 				type = "group",
 				args = {
 					des = {
-						order = 1,
+						order = increment(),
 						type = "description",
 						name = [[
 This addon makes the Blizzard windows movable.
@@ -52,37 +57,52 @@ Resetting a frame:
 Addon authors can enable support for their own custom frames by utilizing the BlizzMoveAPI functions
 ]],
 					},
+					plugins = {
+						order = increment(),
+						type = "execute",
+						name = "Search for plugins here",
+						func = function() Config:ShowURLPopup("https://www.curseforge.com/wow/addons/search?search=BlizzMove+plugin"); end,
+					},
 				},
 			},
-			disableFramesTab = {
-				order = 2,
-				name = "Enabled Frames",
+			fullFramesTab = {
+				order = increment(),
+				name = "List of frames",
 				type = "group",
 				childGroups = "tree",
 				get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
 				set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
-				args = self.DisableFramesTable,
+				args = self.FullFramesTable,
+			},
+			disabledFramesTab = {
+				order = increment(),
+				name = "Default disabled frames",
+				type = "group",
+				childGroups = "tree",
+				get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
+				set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
+				args = self.DisabledFramesTable,
 			},
 			globalConfigTab = {
-				order = 3,
+				order = increment(),
 				name = "Global Config",
 				type = "group",
 				get = function(info) return Config:GetConfig(info[#info]); end,
 				set = function(info, value) return Config:SetConfig(info[#info], value); end,
 				args = {
 					requireMoveModifier = {
-						order = 1,
+						order = increment(),
 						name = "Require move modifier.",
 						desc = "If enabled BlizzMove requires to hold shift to move frames.",
 						type = "toggle",
 					},
 					newline1 = {
-						order = 2,
+						order = increment(),
 						type = "description",
 						name = "",
 					},
 					savePosStrategy = {
-						order = 3,
+						order = increment(),
 						name = "How should frame positions be remembered?",
 						desc = [[Do not remember >> frame positions are reset when you close and reopen them
 
@@ -101,12 +121,12 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 						end,
 					},
 					newline2 = {
-						order = 4,
+						order = increment(),
 						type = "description",
 						name = "",
 					},
 					resetPositions = {
-						order = 5,
+						order = increment(),
 						name = "Reset Permanent Positions",
 						desc = "Reset permanently stored positions",
 						type = "execute",
@@ -119,11 +139,12 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 	}
 end
 
-function Config:GetDisableFramesTable()
-	local tempTable = {};
+function Config:GetFramesTables()
+	local fullTable = {};
+	local disabledTable = {};
 
 	for addOnName, _ in pairs(BlizzMoveAPI:GetRegisteredAddOns()) do
-		tempTable[addOnName] = {
+		fullTable[addOnName] = {
 			name = addOnName,
 			type = "group",
 			order = function(info)
@@ -139,9 +160,41 @@ function Config:GetDisableFramesTable()
 				},
 			},
 		};
+		for frameName, _ in pairs(BlizzMoveAPI:GetRegisteredFrames(addOnName)) do
+			if(not disabledTable[addOnName] and BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)) then
+				disabledTable[addOnName] = {
+					name = addOnName,
+					type = "group",
+					order = function(info)
+						if info[#info] == name then return 0; end
+						if string__match(info[#info], "Blizzard_") then return 5; end
+						return 1;
+					end,
+					args = {
+						[addOnName] = {
+							name = "Movable frames for " .. addOnName,
+							type = "multiselect",
+							values = function(info) return self:GetDefaultDisabledFrames(info[#info]); end,
+						},
+					},
+				};
+			end
+		end
 	end
 
-	return tempTable;
+	return fullTable, disabledTable;
+end
+
+function Config:GetDefaultDisabledFrames(addOnName)
+	local returnTable = {};
+
+	for frameName, _ in pairs(BlizzMoveAPI:GetRegisteredFrames(addOnName)) do
+		if(BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)) then
+			returnTable[frameName] = frameName;
+		end
+	end
+
+	return returnTable;
 end
 
 function Config:Initialize()
@@ -149,11 +202,36 @@ function Config:Initialize()
 	self:RegisterOptions();
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove");
 
+	StaticPopupDialogs["BlizzMoveURLDialog"] = {
+		text = "CTRL-C to copy",
+		button1 = "Close",
+		OnShow = function(dialog, data)
+			local function HidePopup()
+				dialog:Hide();
+			end
+			dialog.editBox:SetScript("OnEscapePressed", HidePopup);
+			dialog.editBox:SetScript("OnEnterPressed", HidePopup);
+			dialog.editBox:SetScript("OnKeyUp", function(_, key)
+				if IsControlKeyDown() and key == "C" then
+					HidePopup();
+				end
+			end);
+			dialog.editBox:SetMaxLetters(0);
+			dialog.editBox:SetText(data);
+			dialog.editBox:HighlightText();
+		end,
+		hasEditBox = true,
+		editBoxWidth = 240,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	};
 end
 
 function Config:RegisterOptions()
 
-	self.DisableFramesTable = self:GetDisableFramesTable();
+	self.FullFramesTable, self.DisabledFramesTable = self:GetFramesTables();
 
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("BlizzMove", self:GetOptions());
 
@@ -165,4 +243,8 @@ end
 
 function Config:SetConfig(property, value)
 	BlizzMove.DB[property] = value;
+end
+
+function Config:ShowURLPopup(url)
+	StaticPopup_Show("BlizzMoveURLDialog", _, _, url);
 end
