@@ -105,6 +105,13 @@ function BlizzMoveAPI:GetRegisteredFrames(addOnName)
 end
 
 
+function BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)
+
+	return BlizzMove:IsFrameDefaultDisabled(addOnName, frameName);
+
+end
+
+
 function BlizzMoveAPI:IsFrameDisabled(addOnName, frameName)
 
 	return BlizzMove:IsFrameDisabled(addOnName, frameName);

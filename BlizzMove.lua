@@ -84,6 +84,7 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 			key == "IgnoreMouse"
 			or key == "ForceParentage"
 			or key == "NonDraggable"
+			or key == "DefaultDisabled"
 		) then
 
 			if type(value) ~= "boolean" then return false; end
@@ -196,31 +197,55 @@ function BlizzMove:DisableFrame(addOnName, frameName)
 end
 
 function BlizzMove:EnableFrame(addOnName, frameName)
-	if not addOnName then addOnName = self.name; end
+	if (not addOnName) then addOnName = self.name; end
 
-	if not self:IsFrameDisabled(addOnName, frameName) then return; end
+	if (not self:IsFrameDisabled(addOnName, frameName)) then return; end
+
+	if (self:IsFrameDefaultDisabled(addOnName, frameName)) then
+		self.DB.enabledFrames                       = self.DB.enabledFrames or {};
+		self.DB.enabledFrames[addOnName]            = self.DB.enabledFrames[addOnName] or {};
+		self.DB.enabledFrames[addOnName][frameName] = true;
+	end
 
 	self.DB.disabledFrames[addOnName][frameName] = nil;
 
 	local frame = self:GetFrameFromName(frameName)
 	local frameData;
 
-	if frame and frame.frameData then
+	if (frame and frame.frameData) then
 		frameData = frame.frameData;
-	elseif self.Frames[addOnName] and self.Frames[addOnName][frameName] then
+	elseif (self.Frames[addOnName] and self.Frames[addOnName][frameName]) then
 		frameData = self.Frames[addOnName][frameName];
 	end
 
-	if frameData then
+	if (frameData) then
 		self:ProcessFrame(addOnName, frameName, frameData, (frameData.storage and frameData.storage.frameParent) or nil);
 	end
 
 end
 
 function BlizzMove:IsFrameDisabled(addOnName, frameName)
-	if not addOnName then addOnName = self.name; end
+	if (not addOnName) then addOnName = self.name; end
 
-	if self.DB and self.DB.disabledFrames and self.DB.disabledFrames[addOnName] and self.DB.disabledFrames[addOnName][frameName] then
+	if (self.DB and self.DB.disabledFrames and self.DB.disabledFrames[addOnName] and self.DB.disabledFrames[addOnName][frameName]) then
+
+		return true;
+
+	end
+
+	if (self:IsFrameDefaultDisabled(addOnName, frameName) and not (self.DB and self.DB.enabledFrames and self.DB.enabledFrames[addOnName] and self.DB.enabledFrames[addOnName][frameName])) then
+
+		return true;
+
+	end
+
+	return false;
+end
+
+function BlizzMove:IsFrameDefaultDisabled(addOnName, frameName)
+	if (not addOnName) then addOnName = self.name; end
+
+	if (self.Frames[addOnName] and self.Frames[addOnName][frameName] and self.Frames[addOnName][frameName].DefaultDisabled) then
 
 		return true;
 
