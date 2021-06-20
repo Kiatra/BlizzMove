@@ -950,7 +950,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["UIWidgetBelowMinimapContainerFrame"] =
 		{
-			MinVersion = 0,
+			MinVersion = 11306, -- Added when?
 			DefaultDisabled = true,
 		},
 		["UIWidgetPowerBarContainerFrame"] =
