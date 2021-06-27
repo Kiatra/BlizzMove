@@ -103,6 +103,7 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 					},
 					savePosStrategy = {
 						order = increment(),
+						width = 1.5,
 						name = "How should frame positions be remembered?",
 						desc = [[Do not remember >> frame positions are reset when you close and reopen them
 
@@ -120,6 +121,19 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 							return "Permanently saving frame positions is not fully supported, use at your own risk, and expect there to be bugs!"
 						end,
 					},
+					saveScaleStrategy = {
+						order = increment(),
+						width = 1.5,
+						name = "How should frame scales be remembered?",
+						desc = [[In Session >> frame scales are saved until you reload your UI
+
+Remember Permanently >> frame scales are remembered until you switch to another option; click the reset button; or disable BlizzMove]],
+						type = "select",
+						values = {
+							session = "In Session, until you reload",
+							permanent = "Remember permanently",
+						},
+					},
 					newline2 = {
 						order = increment(),
 						type = "description",
@@ -127,13 +141,23 @@ Remember Permanently >> frame positions are remembered until you switch to anoth
 					},
 					resetPositions = {
 						order = increment(),
+						width = 1.5,
 						name = "Reset Permanent Positions",
 						desc = "Reset permanently stored positions",
 						type = "execute",
 						func = function() BlizzMove:ResetPointStorage(); ReloadUI(); end,
 						confirm = function() return "Are you sure you want to reset permanently stored positions? This will reload the UI." end,
-					}
-				}
+					},
+					resetScales = {
+						order = increment(),
+						width = 1.5,
+						name = "Reset Permanent Scales",
+						desc = "Reset permanently stored scales",
+						type = "execute",
+						func = function() BlizzMove:ResetScaleStorage(); ReloadUI(); end,
+						confirm = function() return "Are you sure you want to reset permanently stored scales? This will reload the UI." end,
+					},
+				},
 			},
 		},
 	}
