@@ -21,6 +21,7 @@ local CallErrorHandler = _G.CallErrorHandler;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local strsplit = _G.strsplit;
 local LoadAddOn = _G.LoadAddOn;
+local GetBuildInfo = _G.GetBuildInfo;
 
 local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
@@ -275,6 +276,10 @@ function BlizzMove:ResetPointStorage()
 	self.DB.points = {};
 end
 
+function BlizzMove:ResetScaleStorage()
+	self.DB.scales = {};
+end
+
 function BlizzMove:SetupPointStorage(frame)
 	if not frame or not frame.frameData or not frame.frameData.storage or not frame.frameData.storage.frameName then return false; end
 
@@ -424,6 +429,10 @@ local function SetFrameScale(frame, frameScale)
 		-- not detached, but scaled directly => full reset
 		local parentScale = GetFrameScale(frameData.storage.frameParent);
 		newScale = parentScale;
+	end
+
+	if (BlizzMove.DB.saveScaleStrategy == 'permanent') then
+		BlizzMove.DB.scales[frameData.storage.frameName] = newScale;
 	end
 
 	frame:SetScale(newScale);
@@ -653,6 +662,10 @@ local function OnShow(frame)
 	BlizzMove:DebugPrint("OnShow:", frame.frameData.storage.frameName);
 
 	SetFrameParent(frame);
+
+	if(BlizzMove.DB.saveScaleStrategy == 'permanent' and BlizzMove.DB.scales[frame.frameData.storage.frameName]) then
+		SetFrameScale(frame, BlizzMove.DB.scales[frame.frameData.storage.frameName]);
+	end
 
 end
 
@@ -923,7 +936,9 @@ end
 function BlizzMove:InitDefaults()
 	local defaults = {
 		savePosStrategy = "session",
+		saveScaleStrategy = "session",
 		points = {},
+		scales = {},
 	};
 
 	for property, value in pairs(defaults) do
