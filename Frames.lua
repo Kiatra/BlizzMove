@@ -139,7 +139,6 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["FriendsFrameBattlenetFrame.BroadcastFrame"] =
 			{
-				MinVersion = 70000, -- Added when?
 				Detachable = true,
 			},
 			["FriendsListFrameScrollFrame"] =
@@ -305,6 +304,7 @@ BlizzMoveAPI:RegisterFrames(
 	["WorldMapFrame"] =
 	{
 		MinVersion = 40000, -- No longer fullscreen when?
+		SilenceCompatabilityWarnings = true,
 		SubFrames =
 		{
 			["QuestMapFrame"] =
@@ -430,6 +430,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		{
 			MinVersion = 30000, -- Added pre 30300
 			MaxVersion = 90000, -- still exists, but shouldn't be movable (fullscreen)
+			SilenceCompatabilityWarnings = true
 		},
 	},
 	["Blizzard_BindingUI"] =

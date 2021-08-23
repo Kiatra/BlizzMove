@@ -4,10 +4,12 @@ local LibStub = _G.LibStub;
 local pairs = _G.pairs;
 
 local name = ... or "BlizzMove";
+---@type BlizzMove
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
 _G.BlizzMoveAPI = _G.BlizzMoveAPI or {};
+---@class BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
 

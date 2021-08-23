@@ -24,6 +24,7 @@ local LoadAddOn = _G.LoadAddOn;
 local GetBuildInfo = _G.GetBuildInfo;
 
 local name = ... or "BlizzMove";
+--- @class BlizzMove
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
 if not BlizzMove then return; end
 
@@ -86,6 +87,7 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 			or key == "ForceParentage"
 			or key == "NonDraggable"
 			or key == "DefaultDisabled"
+			or key == "SilenceCompatabilityWarnings"
 		) then
 
 			if type(value) ~= "boolean" then return false; end
@@ -812,7 +814,7 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 	local frame = self:GetFrameFromName(frameName);
 
 	if(not matchesBuild) then
-		if(frame) then
+		if(frame and not frameData.SilenceCompatabilityWarnings) then
 			self:Print("Frame was marked as incompatible, but does exist ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
 		end
 

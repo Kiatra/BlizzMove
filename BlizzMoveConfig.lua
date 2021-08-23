@@ -10,11 +10,14 @@ local StaticPopup_Show = _G.StaticPopup_Show;
 local IsControlKeyDown = _G.IsControlKeyDown;
 
 local name = ... or "BlizzMove";
+---@type BlizzMove
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
+---@class BlizzMoveConfig
 BlizzMove.Config = BlizzMove.Config or {};
 local Config = BlizzMove.Config;
+---@type BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
 Config.version = GetAddOnMetadata(name, "Version") or "";
