@@ -24,11 +24,6 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 0,
 			},
-			["PetPaperDollFrame"] =
-			{
-				MinVersion = 20000, -- Added pre 20400
-				MaxVersion = 70300, -- Removed when?
-			},
 			["CompanionFrame"] =
 			{
 				MinVersion = 40000, -- Added when?
