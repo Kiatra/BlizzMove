@@ -146,7 +146,11 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["WhoListScrollFrame"] =
 			{
-				MinVersion = 0,
+				SilenceCompatabilityWarnings = true,
+				MinVersion = 30000,
+				-- Somehow breaks things in TBC, but also isn't needed there
+				-- For classic it's not needed, but oddly also doesn't break things
+				-- For retail it is needed
 			},
 		},
 	},
