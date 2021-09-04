@@ -182,6 +182,11 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
+	["LFGParentFrame"] =
+	{
+		MinVersion = 20502,
+		MaxVersion = 70000, -- Removed when?
+	},
 	["LootFrame"] =
 	{
 		MinVersion = 0,
@@ -746,7 +751,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["GuildBankFrame"] =
 		{
-			MinVersion = 30000, -- Added pre 30300
+			MinVersion = 20502,
 		},
 	},
 	["Blizzard_GuildControlUI"] =
