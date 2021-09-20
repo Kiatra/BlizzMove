@@ -900,6 +900,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				["SoulbindViewer.ConduitList.Charges"] =
 				{
 					MinVersion = 90000,
+					MaxVersion = 90105,
 				},
 			},
 		},
