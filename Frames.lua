@@ -113,6 +113,14 @@ BlizzMoveAPI:RegisterFrames(
 	["DressUpFrame"] =
 	{
 		MinVersion = 0,
+		SubFrames =
+		{
+			["DressUpFrame.OutfitDetailsPanel"] =
+			{
+				MinVersion = 90105,
+				Detachable = true,
+			}
+		},
 	},
 	["FriendsFrame"] =
 	{
