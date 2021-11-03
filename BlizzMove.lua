@@ -357,6 +357,7 @@ local function GetFramePoints(frame)
 	return false;
 end
 
+local ignoreSetPointHook = false;
 local function SetFramePoints(frame, framePoints)
 	if InCombatLockdown() and frame:IsProtected() then return false; end
 
@@ -365,7 +366,7 @@ local function SetFramePoints(frame, framePoints)
 		frame:ClearAllPoints();
 
 		for curPoint = 1, #framePoints do
-			frame.ignoreSetPointHook = true;
+			ignoreSetPointHook = true;
 			frame:SetPoint(
 				framePoints[curPoint].anchorPoint,
 				framePoints[curPoint].relativeFrame,
@@ -373,7 +374,7 @@ local function SetFramePoints(frame, framePoints)
 				framePoints[curPoint].offX,
 				framePoints[curPoint].offY
 			);
-			frame.ignoreSetPointHook = nil;
+			ignoreSetPointHook = false;
 		end
 	end
 
@@ -604,24 +605,27 @@ local function OnMouseUp(frame, button)
 	return returnValue or parentReturnValue;
 end
 
-local function OnMouseWheelChildren(frame, delta, scrollBar)
+local nestedOnMouseWheelCall;
+local function OnMouseWheelChildren(frame, ...)
 	local returnValue = false;
 
 	for _, childFrame in pairs({ frame:GetChildren() }) do
 		local OnMouseWheel = childFrame:GetScript("OnMouseWheel");
 
 		if OnMouseWheel and MouseIsOver(childFrame) then
-			OnMouseWheel(childFrame, delta, scrollBar, true);
+			nestedOnMouseWheelCall = true;
+			OnMouseWheel(childFrame, ...);
+			nestedOnMouseWheelCall = false;
 			returnValue = true;
 		end
 
-		returnValue = OnMouseWheelChildren(childFrame, delta, scrollBar) or returnValue;
+		returnValue = OnMouseWheelChildren(childFrame, ...) or returnValue;
 	end
 
 	return returnValue;
 end
 
-local function OnMouseWheel(frame, delta, scrollBar, nestedCall)
+local function OnMouseWheel(frame, delta, ...)
 
 	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
@@ -629,15 +633,15 @@ local function OnMouseWheel(frame, delta, scrollBar, nestedCall)
 	local parentReturnValue = false;
 	local frameData = frame.frameData;
 
-	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta, nestedCall);
+	BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta, nestedOnMouseWheelCall);
 
-	local onChildren = not IsControlKeyDown() and not nestedCall and OnMouseWheelChildren(frame, delta, scrollBar);
+	local onChildren = not IsControlKeyDown() and not nestedOnMouseWheelCall and OnMouseWheelChildren(frame, delta, ...);
 
-	if not onChildren and not nestedCall and not frameData.storage.detached then
-		parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta, scrollBar));
+	if not onChildren and not nestedOnMouseWheelCall and not frameData.storage.detached then
+		parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta, ...));
 	end
 
-	if not nestedCall and (frameData.storage.detached or not parentReturnValue) then
+	if not nestedOnMouseWheelCall and (frameData.storage.detached or not parentReturnValue) then
 
 		if IsControlKeyDown() then
 
@@ -674,12 +678,12 @@ end
 ------------------------------------------------------------------------------------------------------
 -- Main: Secure Hooks
 ------------------------------------------------------------------------------------------------------
-local function OnSetPoint(frame, anchorPoint, relativeFrame, relativePoint, offX, offY)
+local function OnSetPoint(frame, ...)
 	if not frame.frameData or not frame.frameData.storage or frame.frameData.storage.disabled then return; end
 
 	if BlizzMove.DB.savePosStrategy == "off" then return; end
 
-	if frame.ignoreSetPointHook then return; end
+	if ignoreSetPointHook then return; end
 
 	BlizzMove:SetupPointStorage(frame);
 

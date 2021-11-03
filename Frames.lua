@@ -135,6 +135,13 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 0,
 				Detachable = true,
+				SubFrames =
+				{
+					["RaidInfoScrollFrame"] =
+					{
+						MinVersion = 0,
+					}
+				}
 			},
 			["RecruitAFriendFrame.RecruitList.ScrollFrame"] =
 			{
