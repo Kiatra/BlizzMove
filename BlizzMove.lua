@@ -30,6 +30,7 @@ if not BlizzMove then return; end
 
 BlizzMove.Frames = BlizzMove.Frames or {};
 BlizzMove.FrameData = BlizzMove.FrameData or {};
+BlizzMove.FrameRegistry = BlizzMove.FrameRegistry or {};
 
 ------------------------------------------------------------------------------------------------------
 -- Main: Debug Functions
@@ -93,6 +94,10 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 
 			if type(value) ~= "boolean" then return false; end
 
+		elseif key == "FrameReference" then
+
+			if type(value) ~= "table" or not value.GetObjectType or value:GetObjectType() ~= "Frame" then return false; end
+
 		else
 
 			self:Print("Unsupported key supplied in frameData for frame:", frameName, "; key:", key);
@@ -145,7 +150,7 @@ function BlizzMove:UnregisterFrame(addOnName, frameName, permanent)
 
 	if IsAddOnLoaded(addOnName) then
 
-		self:UnprocessFrame(frameName);
+		self:UnprocessFrame(addOnName, frameName);
 
 	end
 
@@ -215,7 +220,7 @@ function BlizzMove:EnableFrame(addOnName, frameName)
 		self.DB.disabledFrames[addOnName][frameName] = nil;
 	end
 
-	local frame = self:GetFrameFromName(frameName)
+	local frame = self:GetFrameFromName(addOnName, frameName)
 	local frameData;
 
 	if (frame and self.FrameData[frame]) then
@@ -263,7 +268,11 @@ end
 ------------------------------------------------------------------------------------------------------
 -- Main: Helper Functions
 ------------------------------------------------------------------------------------------------------
-function BlizzMove:GetFrameFromName(frameName)
+function BlizzMove:GetFrameFromName(addOnName, frameName)
+	if(self.FrameRegistry[addOnName] and self.FrameRegistry[addOnName][frameName]) then
+		return self.FrameRegistry[addOnName][frameName];
+	end
+
 	local frameTable = _G;
 
 	for keyName in string__gmatch(frameName, "([^.]+)") do
@@ -326,7 +335,11 @@ function BlizzMove:CopyTable(table)
 	local copy = {};
 	for k, v in pairs(table) do
 		if (type(v) == "table") then
-			copy[k] = self:CopyTable(v);
+			if(v.GetObjectType and v:GetObjectType() == "Frame") then
+				copy[k] = v;
+			else
+				copy[k] = self:CopyTable(v);
+			end
 		else
 			copy[k] = v;
 		end
@@ -453,9 +466,9 @@ local function SetFrameParentSubs(frame)
 
 	if not frameData or not frameData.SubFrames then return returnValue end
 
-	for subFrameName, subFrameData in pairs(frameData.SubFrames) do
+	for _, subFrameData in pairs(frameData.SubFrames) do
 
-		local subFrame = BlizzMove:GetFrameFromName(subFrameName);
+		local subFrame = subFrameData.storage.frame;
 
 		if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData) then
 
@@ -816,7 +829,12 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	local matchesBuild = self:MatchesCurrentBuild(frameData);
 
-	local frame = self:GetFrameFromName(frameName);
+	if(frameData.FrameReference) then
+		self.FrameRegistry[addOnName] = self.FrameRegistry[addOnName] or {}
+		self.FrameRegistry[addOnName][frameName] = frameData.FrameReference;
+	end
+
+	local frame = self:GetFrameFromName(addOnName, frameName);
 
 	if(not matchesBuild) then
 		if(frame and not frameData.SilenceCompatabilityWarnings) then
@@ -868,9 +886,9 @@ function BlizzMove:ProcessFrames(addOnName)
 
 end
 
-function BlizzMove:UnprocessFrame(frameName)
+function BlizzMove:UnprocessFrame(addOnName, frameName)
 
-	local frame = self:GetFrameFromName(frameName)
+	local frame = self:GetFrameFromName(addOnName, frameName)
 
 	if frame then
 
@@ -886,7 +904,7 @@ function BlizzMove:UnprocessFrame(frameName)
 
 			for subFrameName, _ in pairs(self.FrameData[frame].SubFrames) do
 
-				self:UnprocessFrame(subFrameName);
+				self:UnprocessFrame(addOnName, subFrameName);
 
 			end
 
