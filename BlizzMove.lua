@@ -468,7 +468,7 @@ local function SetFrameParentSubs(frame)
 
 	for _, subFrameData in pairs(frameData.SubFrames) do
 
-		local subFrame = subFrameData.storage.frame;
+		local subFrame = subFrameData.storage and subFrameData.storage.frame;
 
 		if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData) then
 
