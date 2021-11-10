@@ -459,16 +459,16 @@ local function SetFrameScale(frame, frameScale)
 	return true;
 end
 
-local function SetFrameParentSubs(frame)
+local function SetFrameParentSubs(frame, addOnName)
 
 	local frameData = BlizzMove.FrameData[frame];
 	local returnValue = true;
 
 	if not frameData or not frameData.SubFrames then return returnValue end
 
-	for _, subFrameData in pairs(frameData.SubFrames) do
+	for subFrameName, subFrameData in pairs(frameData.SubFrames) do
 
-		local subFrame = subFrameData.storage and subFrameData.storage.frame;
+		local subFrame = BlizzMove:GetFrameFromName(addOnName, subFrameName);
 
 		if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData) then
 
@@ -478,7 +478,7 @@ local function SetFrameParentSubs(frame)
 				returnValue = false;
 			end
 
-			returnValue = SetFrameParentSubs(subFrame) and returnValue;
+			returnValue = SetFrameParentSubs(subFrame, addOnName) and returnValue;
 
 		end
 
@@ -492,7 +492,7 @@ local function SetFrameParent(frame)
 
 	local frameData = BlizzMove.FrameData[frame];
 
-	return (frameData.storage.frameParent and SetFrameParent(frameData.storage.frameParent)) or SetFrameParentSubs(frame);
+	return (frameData.storage.frameParent and SetFrameParent(frameData.storage.frameParent)) or SetFrameParentSubs(frame, frameData.storage.addOnName);
 
 end
 
@@ -718,7 +718,7 @@ end
 ------------------------------------------------------------------------------------------------------
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
-local function MakeFrameMovable(frame, frameName, frameData, frameParent)
+local function MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent)
 	if not frame then return false; end
 
 	if InCombatLockdown() and frame:IsProtected() then return false; end
@@ -753,6 +753,7 @@ local function MakeFrameMovable(frame, frameName, frameData, frameParent)
 	if frame and BlizzMove.FrameData[frame] and BlizzMove.FrameData[frame].storage and not frameData.storage then
 		frameData.storage = BlizzMove.FrameData[frame].storage;
 		frameData.storage.frameName = frameName;
+		frameData.storage.addOnName = addOnName;
 		frameData.storage.frameParent = frameParent;
 		BlizzMove.FrameData[frame] = frameData;
 	end
@@ -815,8 +816,8 @@ local function MakeFrameUnmovable(frame, frameData)
 	return true;
 end
 
-function BlizzMove:MakeFrameMovable(frame, frameName, frameData, frameParent)
-	return xpcall(MakeFrameMovable, CallErrorHandler, frame, frameName, frameData, frameParent);
+function BlizzMove:MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent)
+	return xpcall(MakeFrameMovable, CallErrorHandler, frame, addOnName, frameName, frameData, frameParent);
 end
 
 function BlizzMove:MakeFrameUnmovable(frame, frameData)
@@ -846,7 +847,7 @@ function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
 
 	if frame then
 
-		if self:MakeFrameMovable(frame, frameName, frameData, frameParent) then
+		if self:MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent) then
 
 			if frameData.SubFrames then
 

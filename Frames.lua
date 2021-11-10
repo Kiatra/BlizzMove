@@ -528,10 +528,15 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["CollectionsJournal"] =
 		{
 			MinVersion = 40000, -- Added when?
+			MaxVersion = 90105, -- Bug introduced in 9.1.5 breaks movement of this frame
+			SilenceCompatabilityWarnings = true,
+
 		},
 		["WardrobeFrame"] =
 		{
 			MinVersion = 40000, -- Added when?
+			MaxVersion = 90105, -- Bug introduced in 9.1.5 breaks CollectionsJournal if you move this frame
+			SilenceCompatabilityWarnings = true,
 		},
 	},
 	["Blizzard_Communities"] =
