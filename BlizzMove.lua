@@ -506,6 +506,7 @@ local function OnMouseDown(frame, button)
 	local returnValue = false;
 	local parentReturnValue = false;
 	local frameData = BlizzMove.FrameData[frame];
+	BlizzMove:SetupPointStorage(frame);
 
 	BlizzMove:DebugPrint("OnMouseDown:", frameData.storage.frameName, button);
 
@@ -536,6 +537,8 @@ local function OnMouseDown(frame, button)
 				frameData.storage.isMoving = true;
 				returnValue = true;
 
+				frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetFramePoints(frame);
+
 			end
 
 		end
@@ -552,7 +555,6 @@ local function OnMouseUp(frame, button)
 	local returnValue = false;
 	local parentReturnValue = false;
 	local frameData = BlizzMove.FrameData[frame];
-	BlizzMove:SetupPointStorage(frame);
 
 	BlizzMove:DebugPrint("OnMouseUp:", frameData.storage.frameName, button);
 
@@ -605,6 +607,11 @@ local function OnMouseUp(frame, button)
 				frameData.storage.points.dragPoints = nil;
 				frameData.storage.points.dragged = nil;
 				returnValue = true;
+
+				if (frameData.storage.points.startPoints) then
+					SetFramePoints(frame, frameData.storage.points.startPoints);
+					frameData.storage.points.startPoints = nil;
+				end
 
 				UpdateUIPanelPositions(frame);
 

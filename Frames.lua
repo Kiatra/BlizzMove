@@ -530,7 +530,6 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 40000, -- Added when?
 			MaxVersion = 90105, -- Bug introduced in 9.1.5 breaks movement of this frame
 			SilenceCompatabilityWarnings = true,
-
 		},
 		["WardrobeFrame"] =
 		{
