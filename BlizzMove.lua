@@ -603,7 +603,7 @@ local function OnMouseUp(frame, button)
 
 			if IsShiftKeyDown() or fullReset then
 
-				if (frameData.storage.points.startPoints) then
+				if (not fullReset and frameData.storage.points.startPoints) then
 					SetFramePoints(frame, frameData.storage.points.startPoints);
 					frameData.storage.points.startPoints = nil;
 				end
@@ -984,6 +984,14 @@ end
 function BlizzMove:ADDON_LOADED(event, addOnName)
 
 	if addOnName ~= self.name then self:ProcessFrames(addOnName); end
+
+	-- fix a stupid anchor family connection issue blizzard added in 9.1.5
+	if addOnName == 'Blizzard_Collections' then
+		local checkbox = _G.WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox;
+		checkbox.Label:ClearAllPoints();
+		checkbox.Label:SetPoint("LEFT", checkbox, "RIGHT", 2, 1);
+		checkbox.Label:SetPoint("RIGHT", checkbox, "RIGHT", 160, 1);
+	end
 
 end
 
