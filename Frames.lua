@@ -925,11 +925,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["TalentFrame"] =
 		{
 			MinVersion = 0,
-			MaxVersion = 20000,
+			MaxVersion = 11401,
 		},
 		["PlayerTalentFrame"] =
 		{
-			MinVersion = 20000,
+			MinVersion = 11401,
 		},
 	},
 	["Blizzard_TalkingHeadUI"] =
