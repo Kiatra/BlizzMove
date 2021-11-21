@@ -42,6 +42,10 @@ end
 ------------------------------------------------------------------------------------------------------
 -- Main: Frame Functions
 ------------------------------------------------------------------------------------------------------
+local function IsFrame(value)
+	return type(value) == "table" and value.GetObjectType and value:GetObjectType() == "Frame";
+end
+
 function BlizzMove:ValidateFrame(frameName, frameData, isSubFrame)
 
 	return self:ValidateFrameName(frameName) and self:ValidateFrameData(frameName, frameData, isSubFrame);
@@ -56,15 +60,17 @@ end
 
 function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 
+	local validationError;
+
 	for key, value in pairs(frameData) do
 
 		if key == "SubFrames" then
 
-			if type(value) ~= "table" then return false; end
+			if type(value) ~= "table" then validationError = true; end
 
 			for subFrameName, subFrameData in pairs(value) do
 
-				if not self:ValidateFrame(subFrameName, subFrameData, true) then return false; end
+				if not self:ValidateFrame(subFrameName, subFrameData, true) then validationError = true; break; end
 
 			end
 
@@ -75,14 +81,14 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 			or key == "MaxBuild"
 		) then
 
-			if (type(value) ~= "number" or value < 0) then return false; end
+			if (type(value) ~= "number" or value < 0) then validationError = true; end
 
 		elseif (
 			key == "Detachable"
 			or key == "ManuallyScaleWithParent"
 		) then
 
-			if (type(value) ~= "boolean" or (value == true and not isSubFrame)) then return false; end
+			if (type(value) ~= "boolean" or (value == true and not isSubFrame)) then validationError = true; end
 
 		elseif (
 			key == "IgnoreMouse"
@@ -92,16 +98,21 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 			or key == "SilenceCompatabilityWarnings"
 		) then
 
-			if type(value) ~= "boolean" then return false; end
+			if type(value) ~= "boolean" then validationError = true; end
 
 		elseif key == "FrameReference" then
 
-			if type(value) ~= "table" or not value.GetObjectType or value:GetObjectType() ~= "Frame" then return false; end
+			if not IsFrame(value) then validationError = true; end
 
 		else
 
-			self:Print("Unsupported key supplied in frameData for frame:", frameName, "; key:", key);
+			self:Print("Ignoring unsupported key supplied in frameData, for frame:", frameName, "; key:", key);
 
+		end
+
+		if (validationError) then
+			self:Print('Validation error, frame:', frameName, '; key:', key, '; value:', value);
+			return false;
 		end
 
 	end
@@ -335,7 +346,7 @@ function BlizzMove:CopyTable(table)
 	local copy = {};
 	for k, v in pairs(table) do
 		if (type(v) == "table") then
-			if(v.GetObjectType and v:GetObjectType() == "Frame") then
+			if(IsFrame(v)) then
 				copy[k] = v;
 			else
 				copy[k] = self:CopyTable(v);

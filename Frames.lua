@@ -622,27 +622,27 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 40000, -- Added when?
 			SubFrames =
 			{
-				["EncounterJournalInstanceSelectScrollFrameScrollChild"] =
+				["EncounterJournal.instanceSelect.scroll"] =
 				{
 					MinVersion = 40000,
 				},
-				["EncounterJournalEncounterFrameInstanceFrameLoreScrollFrameScrollChild"] =
+				["EncounterJournal.encounter.instance.loreScroll"] =
 				{
 					MinVersion = 40000,
 				},
-				["EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild"] =
+				["EncounterJournal.encounter.info.overviewScroll"] =
 				{
 					MinVersion = 40000,
 				},
-				["EncounterJournalEncounterFrameInfoLootScrollFrameScrollChild"] =
+				["EncounterJournal.encounter.info.lootScroll"] =
 				{
 					MinVersion = 40000,
 				},
-				["EncounterJournalEncounterFrameInfoDetailsScrollFrameScrollChild"] =
+				["EncounterJournal.encounter.info.detailsScroll"] =
 				{
 					MinVersion = 40000,
 				},
-				["EncounterJournalEncounterFrameInfoModelFrame"] =
+				["EncounterJournal.encounter.info.model"] =
 				{
 					MinVersion = 40000,
 					NonDraggable = true,
@@ -731,15 +731,15 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					MinVersion = 90000,
 				},
-				["CovenantMissionFrameMissions.MaterialFrame"] =
+				["CovenantMissionFrame.MissionTab.MissionList.MaterialFrame"] =
 				{
 					MinVersion = 90000,
 				},
-				["CovenantMissionFrameFollowersListScrollFrameScrollChild"] =
+				["CovenantMissionFrame.FollowerList.listScroll"] =
 				{
 					MinVersion = 90000,
 				},
-				["CovenantMissionFrameFollowers.MaterialFrame"] =
+				["CovenantMissionFrame.FollowerList.MaterialFrame"] =
 				{
 					MinVersion = 90000,
 				},
