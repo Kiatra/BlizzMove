@@ -92,6 +92,7 @@ function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
 
 		elseif (
 			key == "IgnoreMouse"
+			or key == "IgnoreMouseWheel"
 			or key == "ForceParentage"
 			or key == "NonDraggable"
 			or key == "DefaultDisabled"
@@ -760,7 +761,9 @@ local function MakeFrameMovable(frame, addOnName, frameName, frameData, framePar
 
 			end
 
-			frame:EnableMouseWheel(true);
+			if not frameData.IgnoreMouseWheel then
+				frame:EnableMouseWheel(true);
+			end
 
 		end
 
@@ -790,8 +793,10 @@ local function MakeFrameMovable(frame, addOnName, frameName, frameData, framePar
 
 		end
 
-		frame:EnableMouseWheel(true);
-		BlizzMove:SecureHookScript(frame, "OnMouseWheel", OnMouseWheel);
+		if not frameData.IgnoreMouseWheel then
+			frame:EnableMouseWheel(true);
+			BlizzMove:SecureHookScript(frame, "OnMouseWheel", OnMouseWheel);
+		end
 
 	end
 

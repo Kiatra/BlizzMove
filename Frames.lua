@@ -263,6 +263,7 @@ BlizzMoveAPI:RegisterFrames(
 			["LFGListSearchPanelScrollFrame"] =
 			{
 				MinVersion = 40000,
+				IgnoreMouseWheel = true,
 			},
 			["ScenarioQueueFrameSpecific"] =
 			{
