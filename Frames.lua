@@ -524,6 +524,20 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 0,
 		},
 	},
+	["Blizzard_ClickBindingUI"] =
+	{
+		["ClickBindingFrame"] =
+		{
+			MinVersion = 90200,
+			SubFrames =
+			{
+				["ClickBindingFrame.ScrollBox"] =
+				{
+					MinVersion = 90200,
+				}
+			},
+		},
+	},
 	["Blizzard_Collections"] =
 	{
 		["CollectionsJournal"] =
