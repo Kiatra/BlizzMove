@@ -22,6 +22,9 @@ local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCate
 local strsplit = _G.strsplit;
 local LoadAddOn = _G.LoadAddOn;
 local GetBuildInfo = _G.GetBuildInfo;
+local tinsert = _G.tinsert;
+local unpack = _G.unpack;
+local wipe = _G.wipe;
 
 local name = ... or "BlizzMove";
 --- @class BlizzMove
@@ -31,6 +34,7 @@ if not BlizzMove then return; end
 BlizzMove.Frames = BlizzMove.Frames or {};
 BlizzMove.FrameData = BlizzMove.FrameData or {};
 BlizzMove.FrameRegistry = BlizzMove.FrameRegistry or {};
+BlizzMove.CombatLockdownQueue = BlizzMove.CombatLockdownQueue or {};
 
 ------------------------------------------------------------------------------------------------------
 --- Debug Functions
@@ -258,11 +262,11 @@ do
 	end
 
 	function BlizzMove:ResetScaleStorage()
-		self.DB.scales = {};
+		wipe(self.DB.scales);
 	end
 
 	function BlizzMove:ResetPointStorage()
-		self.DB.points = {};
+		wipe(self.DB.points);
 	end
 
 	function BlizzMove:SetupPointStorage(frame)
@@ -835,6 +839,13 @@ do
 			return false;
 		end
 
+		if InCombatLockdown() and frame:IsProtected() then
+			self:AddToCombatLockdownQueue(BlizzMove.ProcessFrame, self, addOnName, frameName, frameData, frameParent);
+			self:DebugPrint('Adding to combatLockdownQueue: ProcessFrame - ', addOnName, ' - ', frameName);
+
+			return false;
+		end
+
 		if not self:MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent) then
 			self:Print("Failed to make frame movable:", frameName);
 
@@ -867,6 +878,13 @@ do
 
 		if not self:MatchesCurrentBuild(frameData) then return; end
 
+		if InCombatLockdown() and frame:IsProtected() then
+			self:AddToCombatLockdownQueue(BlizzMove.UnprocessFrame, self, addOnName, frameName);
+			self:DebugPrint('Adding to combatLockdownQueue: UnprocessFrame - ', addOnName, ' - ', frameName);
+
+			return;
+		end
+
 		self:MakeFrameUnmovable(frame, frameData);
 
 		if frameData.SubFrames then
@@ -881,6 +899,25 @@ end
 --- Addon Init and Event Handling Functions
 ------------------------------------------------------------------------------------------------------
 do
+	function BlizzMove:AddToCombatLockdownQueue(func, ...)
+		if #self.CombatLockdownQueue == 0 then
+			self:RegisterEvent("PLAYER_REGEN_ENABLED");
+		end
+
+		tinsert(self.CombatLockdownQueue, { func = func, args = { ... } });
+	end
+
+	function BlizzMove:PLAYER_REGEN_ENABLED()
+		self:UnregisterEvent("PLAYER_REGEN_ENABLED");
+		if #self.CombatLockdownQueue == 0 then return; end
+		self:DebugPrint('Processing self.CombatLockdownQueue, length:', #self.CombatLockdownQueue);
+
+		for _, item in pairs(self.CombatLockdownQueue) do
+			item.func(unpack(item.args));
+		end
+		wipe(self.CombatLockdownQueue);
+	end
+
 	function BlizzMove:OnInitialize()
 		self.initialized = true;
 
