@@ -1,4 +1,4 @@
--- upvalue the globals
+-- up-value the globals
 local _G = getfenv(0);
 local LibStub = _G.LibStub;
 local pairs = _G.pairs;
@@ -14,17 +14,18 @@ local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
----@class BlizzMoveConfig
-BlizzMove.Config = BlizzMove.Config or {};
-local Config = BlizzMove.Config;
 ---@type BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
-Config.version = GetAddOnMetadata(name, "Version") or "";
+---@class BlizzMoveConfig
+BlizzMove.Config = BlizzMove.Config or {};
+local Config = BlizzMove.Config;
+
+Config.version = GetAddOnMetadata(name, "Version") or "unknown";
 
 function Config:GetOptions()
 	local count = 1;
-	local function increment() count = count+1; return count end;
+	local function increment() count = count + 1; return count end;
 	return {
 		type = "group",
 		childGroups = "tab",
@@ -39,7 +40,7 @@ function Config:GetOptions()
 				name = "Info",
 				type = "group",
 				args = {
-					des = {
+					description = {
 						order = increment(),
 						type = "description",
 						name = [[
@@ -169,16 +170,17 @@ end
 function Config:GetFramesTables()
 	local fullTable = {};
 	local disabledTable = {};
+	local addonOrder = function(info)
+		if info[#info] == name then return 0; end
+		if string__match(info[#info], "Blizzard_") then return 5; end
+		return 1;
+	end;
 
 	for addOnName, _ in pairs(BlizzMoveAPI:GetRegisteredAddOns()) do
 		fullTable[addOnName] = {
 			name = addOnName,
 			type = "group",
-			order = function(info)
-				if info[#info] == name then return 0; end
-				if string__match(info[#info], "Blizzard_") then return 5; end
-				return 1;
-			end,
+			order = addonOrder,
 			args = {
 				[addOnName] = {
 					name = "Movable frames for " .. addOnName,
@@ -188,15 +190,11 @@ function Config:GetFramesTables()
 			},
 		};
 		for frameName, _ in pairs(BlizzMoveAPI:GetRegisteredFrames(addOnName)) do
-			if(not disabledTable[addOnName] and BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)) then
+			if(BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)) then
 				disabledTable[addOnName] = {
 					name = addOnName,
 					type = "group",
-					order = function(info)
-						if info[#info] == name then return 0; end
-						if string__match(info[#info], "Blizzard_") then return 5; end
-						return 1;
-					end,
+					order = addonOrder,
 					args = {
 						[addOnName] = {
 							name = "Movable frames for " .. addOnName,
@@ -205,6 +203,7 @@ function Config:GetFramesTables()
 						},
 					},
 				};
+				break;
 			end
 		end
 	end
@@ -225,7 +224,6 @@ function Config:GetDefaultDisabledFrames(addOnName)
 end
 
 function Config:Initialize()
-
 	self:RegisterOptions();
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove");
 
@@ -257,11 +255,8 @@ function Config:Initialize()
 end
 
 function Config:RegisterOptions()
-
 	self.FullFramesTable, self.DisabledFramesTable = self:GetFramesTables();
-
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("BlizzMove", self:GetOptions());
-
 end
 
 function Config:GetConfig(property)
