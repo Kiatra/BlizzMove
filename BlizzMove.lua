@@ -936,8 +936,8 @@ do
 	function BlizzMove:OnSlashCommand(message)
 		local arg1, arg2 = strsplit(' ', message);
 		if (
-				arg1 == 'dumpDebugInfo'
-						or arg1 == 'dumpChangedCVars'
+			arg1 == 'dumpDebugInfo'
+			or arg1 == 'dumpChangedCVars'
 		) then
 			local loaded = LoadAddOn('BlizzMove_Debug');
 			local DebugModule = loaded and self:GetModule('Debug');
@@ -954,6 +954,13 @@ do
 				DebugModule:DumpCVars({ changedOnly = true, pastableFormat = true });
 			end
 
+			return;
+		end
+
+		if arg1 == "debugLoadAll" then
+			for addOnName, _ in pairs(self:GetRegisteredAddOns()) do
+				self:Print((LoadAddOn(addOnName) and "Loaded") or "Missing", addOnName) ;
+			end
 			return;
 		end
 

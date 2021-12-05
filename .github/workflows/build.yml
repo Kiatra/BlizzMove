@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Generate Changelog
+        run: .github/generate_changelog.sh
+
       - name: Replace toc-versions
         uses: Numynum/ToCVersions@master
         with:
