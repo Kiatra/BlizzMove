@@ -481,7 +481,6 @@ local OnMouseWheel;
 local OnShow;
 do
 	function OnMouseDown(frame, button)
-
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
 		local returnValue = false;
@@ -492,25 +491,22 @@ do
 		BlizzMove:DebugPrint("OnMouseDown:", frameData.storage.frameName, button);
 
 		if button == "LeftButton" then
-
 			if IsAltKeyDown() and frameData.Detachable and not frameData.storage.detached then
-
 				frameData.storage.points.detachPoints = GetFramePoints(frame);
 				frameData.storage.detached = true;
 				returnValue = true;
 
 				PlaySound((SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_OPEN) or 839);
-
 			end
 
 			if not frameData.storage.detached then
 				parentReturnValue = (frameData.storage.frameParent and OnMouseDown(frameData.storage.frameParent, button));
 			end
 
-			if frameData.storage.detached or not parentReturnValue then
-
-				if not (BlizzMove.DB and BlizzMove.DB.requireMoveModifier) or IsShiftKeyDown() then
-
+			if (
+					(frameData.storage.detached or not parentReturnValue)
+					and (not (BlizzMove.DB and BlizzMove.DB.requireMoveModifier) or IsShiftKeyDown())
+			) then
 					local userPlaced = frame:IsUserPlaced();
 
 					frame:StartMoving();
@@ -518,18 +514,13 @@ do
 					frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetFramePoints(frame);
 					frameData.storage.isMoving = true;
 					returnValue = true;
-
-				end
-
 			end
-
 		end
 
 		return returnValue or parentReturnValue;
 	end
 
 	function OnMouseUp(frame, button)
-
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
 		local returnValue = false;
@@ -543,64 +534,47 @@ do
 		end
 
 		if frameData.storage.detached or not parentReturnValue then
+			if button == "LeftButton" and frameData.storage.isMoving then
+				frame:StopMovingOrSizing();
 
-			if button == "LeftButton" then
-
-				if frameData.storage.isMoving then
-
-					frame:StopMovingOrSizing();
-
-					frameData.storage.points.dragPoints = GetFramePoints(frame);
-					frameData.storage.points.dragged = true;
-					frameData.storage.isMoving = nil;
-					returnValue = true;
-
-				end
+				frameData.storage.points.dragPoints = GetFramePoints(frame);
+				frameData.storage.points.dragged = true;
+				frameData.storage.isMoving = nil;
+				returnValue = true;
 
 			elseif button == "RightButton" then
-
 				local fullReset = false;
 
 				if IsAltKeyDown() and frameData.storage.detached then
-
 					if SetFramePoints(frame, frameData.storage.points.detachPoints) then
-
 						frameData.storage.points.detachPoints = nil;
 						frameData.storage.detached = nil;
 						returnValue = true;
 						fullReset = true;
-
 						PlaySound((SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_CLOSE) or 840);
-
 					end
-
 				end
 
 				if IsControlKeyDown() or fullReset then
-
 					returnValue = SetFrameScale(frame, 1) or returnValue;
-
 				end
 
 				if IsShiftKeyDown() or fullReset then
+					if(frameData.storage.points) then
+						if (not fullReset and frameData.storage.points.startPoints) then
+							SetFramePoints(frame, frameData.storage.points.startPoints);
+							frameData.storage.points.startPoints = nil;
+						end
 
-					if (not fullReset and frameData.storage.points.startPoints) then
-						SetFramePoints(frame, frameData.storage.points.startPoints);
-						frameData.storage.points.startPoints = nil;
+						frameData.storage.points.dragPoints = nil;
+						frameData.storage.points.dragged = nil;
 					end
-
-					frameData.storage.points.dragPoints = nil;
-					frameData.storage.points.dragged = nil;
 					returnValue = true;
-
 					UpdateUIPanelPositions(frame);
-
 				end
 
 				returnValue = true;
-
 			end
-
 		end
 
 		return returnValue or parentReturnValue;
@@ -627,7 +601,6 @@ do
 	end
 
 	function OnMouseWheel(frame, delta, ...)
-
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
 		local returnValue = false;
@@ -642,21 +615,15 @@ do
 			parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta, ...));
 		end
 
-		if not nestedOnMouseWheelCall and (frameData.storage.detached or not parentReturnValue) then
+		if (not nestedOnMouseWheelCall and (frameData.storage.detached or not parentReturnValue) and IsControlKeyDown()) then
+			local oldScale = GetFrameScale(frame) or 1;
 
-			if IsControlKeyDown() then
+			local newScale = oldScale + 0.1 * delta;
 
-				local oldScale = GetFrameScale(frame) or 1;
+			if newScale > 1.5 then newScale = 1.5; end
+			if newScale < 0.5 then newScale = 0.5; end
 
-				local newScale = oldScale + 0.1 * delta;
-
-				if newScale > 1.5 then newScale = 1.5; end
-				if newScale < 0.5 then newScale = 0.5; end
-
-				returnValue = SetFrameScale(frame, newScale) or returnValue;
-
-			end
-
+			returnValue = SetFrameScale(frame, newScale) or returnValue;
 		end
 
 		return returnValue or parentReturnValue;
