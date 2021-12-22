@@ -363,6 +363,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 			},
 		},
+		["AchievementFrame.searchResults"] =
+		{
+			MinVersion = 30000, -- Added when?
+		},
 	},
 	["Blizzard_AlliedRacesUI"] =
 	{
@@ -394,6 +398,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["ArchaeologyFrame"] =
 		{
 			MinVersion = 40000,
+		},
+		["ArcheologyDigsiteProgressBar"] =
+		{
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_ArtifactUI"] =
