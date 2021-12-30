@@ -953,11 +953,24 @@ do
 		if addOnName ~= self.name then self:ProcessFrames(addOnName); end
 
 		-- fix a stupid anchor family connection issue blizzard added in 9.1.5
-		if addOnName == 'Blizzard_Collections' then
+		if addOnName == "Blizzard_Collections" then
 			local checkbox = _G.WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox;
 			checkbox.Label:ClearAllPoints();
 			checkbox.Label:SetPoint("LEFT", checkbox, "RIGHT", 2, 1);
 			checkbox.Label:SetPoint("RIGHT", checkbox, "RIGHT", 160, 1);
+		end
+		-- fix another anchor family connection issue caused by blizzard being blizzard
+		if addOnName == "Blizzard_EncounterJournal" then
+			self:RawHook(
+				"AdventureJournal_Reward_OnEnter",
+				function(rewardFrame)
+					if rewardFrame.data then
+						_G.EncounterJournalTooltip:ClearAllPoints();
+					end
+					self.hooks.AdventureJournal_Reward_OnEnter(rewardFrame);
+				end,
+				true
+			)
 		end
 	end
 
