@@ -961,16 +961,16 @@ do
 		end
 		-- fix another anchor family connection issue caused by blizzard being blizzard
 		if addOnName == "Blizzard_EncounterJournal" then
-			self:RawHook(
-				"AdventureJournal_Reward_OnEnter",
-				function(rewardFrame)
-					if rewardFrame.data then
-						_G.EncounterJournalTooltip:ClearAllPoints();
-					end
-					self.hooks.AdventureJournal_Reward_OnEnter(rewardFrame);
-				end,
-				true
-			)
+			local replacement = function(rewardFrame)
+				if rewardFrame.data then
+					_G.EncounterJournalTooltip:ClearAllPoints();
+				end
+				self.hooks.AdventureJournal_Reward_OnEnter(rewardFrame);
+			end
+			self:RawHook("AdventureJournal_Reward_OnEnter", replacement, true);
+			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion1.reward, "OnEnter", replacement)
+			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion2.reward, "OnEnter", replacement)
+			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion3.reward, "OnEnter", replacement)
 		end
 	end
 
