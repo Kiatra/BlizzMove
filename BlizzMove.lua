@@ -25,6 +25,7 @@ local GetBuildInfo = _G.GetBuildInfo;
 local tinsert = _G.tinsert;
 local unpack = _G.unpack;
 local wipe = _G.wipe;
+local C_Timer = _G.C_Timer;
 
 local name = ... or "BlizzMove";
 --- @class BlizzMove
@@ -287,6 +288,16 @@ do
 		end
 		self.FrameData[frame].storage.points = self.DB.points[frameName];
 
+		if (self.FrameData[frame].storage.points.detachPoints) then
+			local relativeFrameName = self.FrameData[frame].storage.points.detachPoints[1].relativeFrameName;
+			if (relativeFrameName and self:GetFrameFromName(nil, relativeFrameName)) then
+				self.FrameData[frame].storage.detached = true;
+				self.FrameData[frame].storage.points.detachPoints[1].relativeFrame = self:GetFrameFromName(nil, relativeFrameName);
+			else
+				wipe(self.FrameData[frame].storage.points);
+			end
+		end
+
 		return true;
 	end
 
@@ -326,6 +337,7 @@ end
 ------------------------------------------------------------------------------------------------------
 --- Frame Points Helper Functions
 ------------------------------------------------------------------------------------------------------
+local GetAbsoluteFramePosition;
 local GetFramePoints;
 local SetFramePoints;
 local ignoreSetPointHook = false;
@@ -343,12 +355,36 @@ do
 				framePoints[curPoint].relativePoint,
 				framePoints[curPoint].offX,
 				framePoints[curPoint].offY = frame:GetPoint(curPoint);
+
+				local relativeFrame = framePoints[curPoint].relativeFrame;
+				if (
+					relativeFrame
+					and BlizzMove.FrameData[relativeFrame]
+					and BlizzMove.FrameData[relativeFrame].storage
+					and BlizzMove.FrameData[relativeFrame].storage.frameName
+				) then
+					framePoints[curPoint].relativeFrameName = BlizzMove.FrameData[relativeFrame].storage.frameName;
+				elseif (relativeFrame and relativeFrame.GetName and relativeFrame:GetName()) then
+					framePoints[curPoint].relativeFrameName = relativeFrame:GetName();
+				end
 			end
 
 			return framePoints;
 		end
 
 		return false;
+	end
+
+	function GetAbsoluteFramePosition(frame)
+		return {
+			{
+				["anchorPoint"] = "TOPLEFT",
+				["relativeFrame"] = "UIParent",
+				["relativePoint"] = "BOTTOMLEFT",
+				["offX"] = frame:GetLeft(),
+				["offY"] = frame:GetTop(),
+			},
+		}
 	end
 
 	function SetFramePoints(frame, framePoints)
@@ -504,8 +540,8 @@ do
 			end
 
 			if (
-					(frameData.storage.detached or not parentReturnValue)
-					and (not (BlizzMove.DB and BlizzMove.DB.requireMoveModifier) or IsShiftKeyDown())
+				(frameData.storage.detached or not parentReturnValue)
+				and (not (BlizzMove.DB and BlizzMove.DB.requireMoveModifier) or IsShiftKeyDown())
 			) then
 					local userPlaced = frame:IsUserPlaced();
 
@@ -537,7 +573,7 @@ do
 			if button == "LeftButton" and frameData.storage.isMoving then
 				frame:StopMovingOrSizing();
 
-				frameData.storage.points.dragPoints = GetFramePoints(frame);
+				frameData.storage.points.dragPoints = GetAbsoluteFramePosition(frame);
 				frameData.storage.points.dragged = true;
 				frameData.storage.isMoving = nil;
 				returnValue = true;
@@ -660,7 +696,11 @@ do
 		BlizzMove:SetupPointStorage(frame);
 
 		if BlizzMove.FrameData[frame].storage.points.dragged then
-			SetFramePoints(frame, BlizzMove.FrameData[frame].storage.points.dragPoints);
+			if BlizzMove.DB.savePosStrategy ~= "permanent" then
+				SetFramePoints(frame, BlizzMove.FrameData[frame].storage.points.dragPoints);
+			else
+				C_Timer.After(0, function() SetFramePoints(frame, BlizzMove.FrameData[frame].storage.points.dragPoints); end);
+			end
 		end
 	end
 
@@ -741,8 +781,6 @@ do
 		BlizzMove:SecureHook(frame, "SetWidth",  OnSizeUpdate);
 		BlizzMove:SecureHook(frame, "SetHeight", OnSizeUpdate);
 
-		OnSizeUpdate(frame);
-
 		frameData.storage = {};
 		frameData.storage.hooked = true;
 		frameData.storage.frame = frame;
@@ -750,6 +788,9 @@ do
 		frameData.storage.frameParent = frameParent;
 
 		BlizzMove.FrameData[frame] = frameData;
+
+		OnSizeUpdate(frame);
+		OnSetPoint(frame);
 
 		return true;
 	end
