@@ -699,7 +699,7 @@ do
 			if BlizzMove.DB.savePosStrategy ~= "permanent" then
 				SetFramePoints(frame, BlizzMove.FrameData[frame].storage.points.dragPoints);
 			else
-				C_Timer.After(0, function() SetFramePoints(frame, BlizzMove.FrameData[frame].storage.points.dragPoints); end);
+				BlizzMove:AddToSetFramePointsQueue(frame, BlizzMove.FrameData[frame].storage.points.dragPoints);
 			end
 		end
 	end
@@ -926,6 +926,36 @@ do
 		wipe(self.CombatLockdownQueue);
 	end
 
+	local setFramePointsQueue = {};
+	local onUpdateFrame = CreateFrame("Frame")
+	function BlizzMove:SavePositionStrategyChanged(oldValue, newValue)
+		if oldValue == 'permanent' then
+			self:Unhook(onUpdateFrame, 'OnUpdate')
+		end
+		if newValue == 'permanent' then
+			self:RawHookScript(onUpdateFrame, 'OnUpdate')
+		end
+	end
+
+	function BlizzMove:AddToSetFramePointsQueue(frame, framePoints)
+		if setFramePointsQueue[frame] then return; end
+		self:DebugPrint('Adding to setFramePointsQueue: ', frame.GetName and frame:GetName() or 'unknown frame');
+
+		setFramePointsQueue[frame] = framePoints;
+	end
+
+	function BlizzMove:OnUpdate()
+		local count = 0;
+		for frame, framePoints in pairs(setFramePointsQueue) do
+			count = count + 1;
+			SetFramePoints(frame, framePoints);
+		end
+		if count == 0 then return; end
+
+		BlizzMove:DebugPrint('Processed setFramePointsQueue, length: ', count);
+		wipe(setFramePointsQueue)
+	end;
+
 	function BlizzMove:OnInitialize()
 		self.initialized = true;
 
@@ -1017,6 +1047,7 @@ do
 
 	function BlizzMove:OnEnable()
 		self.enabled = true;
+		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
 
 		for addOnName, _ in pairs(self.Frames) do
 			if addOnName ~= self.name and IsAddOnLoaded(addOnName) then

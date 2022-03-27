@@ -264,7 +264,11 @@ function Config:GetConfig(property)
 end
 
 function Config:SetConfig(property, value)
+	local oldValue = BlizzMove.DB[property] or nil;
 	BlizzMove.DB[property] = value;
+	if property == "savePosStrategy" then
+		BlizzMove:SavePositionStrategyChanged(oldValue, value);
+	end
 end
 
 function Config:ShowURLPopup(url)
