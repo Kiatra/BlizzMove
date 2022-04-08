@@ -200,7 +200,7 @@ BlizzMoveAPI:RegisterFrames(
 	["LFGParentFrame"] =
 	{
 		MinVersion = 20502,
-		MaxVersion = 70000, -- Removed when?
+		MaxVersion = 20503, -- Moved to LOD Blizzard_LookingForGroupUI
 	},
 	["LootFrame"] =
 	{
@@ -854,6 +854,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["ItemUpgradeFrame"] =
 		{
 			MinVersion = 40000, -- Added when?
+		},
+	},
+	["Blizzard_LookingForGroupUI"] =
+	{
+		["LFGParentFrame"] =
+		{
+			MinVersion = 20504, -- Moved from framexml
+			MaxVersion = 70000, -- Removed when?
 		},
 	},
 	["Blizzard_LookingForGuildUI"] =
