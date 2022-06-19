@@ -465,6 +465,15 @@ do
 			BlizzMove.DB.scales[frameData.storage.frameName] = newScale;
 		end
 
+		do --The frame is scaled, but remains stationary based on the topleft corner. The frame no longer appears to move while rescaling ~Goranaws
+			local w, h = frame:GetSize()
+			local x, y = frame:GetCenter()
+			local tlX = ((x - (w/2)) * oldScale) / newScale
+			local tlY = ((y + (h/2)) * oldScale)  / newScale
+			frame:ClearAllPoints()
+			frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", tlX, tlY)
+		end
+		
 		frame:SetScale(newScale);
 		BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string__format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)));
 
