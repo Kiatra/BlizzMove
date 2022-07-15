@@ -76,7 +76,7 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 				childGroups = "tree",
 				get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
 				set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
-				args = self.FullFramesTable,
+				args = self.ListOfFramesTable,
 			},
 			disabledFramesTab = {
 				order = increment(),
@@ -85,7 +85,7 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
 				childGroups = "tree",
 				get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
 				set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
-				args = self.DisabledFramesTable,
+				args = self.DefaultDisabledFramesTable,
 			},
 			globalConfigTab = {
 				order = increment(),
@@ -164,16 +164,41 @@ Remember Permanently >> frame scales are remembered until you switch to another 
 end
 
 function Config:GetFramesTables()
-	local fullTable = {};
-	local disabledTable = {};
+	local listOfFrames = {};
+	local defaultDisabledFrames = {};
 	local addonOrder = function(info)
-		if info[#info] == name then return 0; end
-		if string__match(info[#info], "Blizzard_") then return 5; end
-		return 1;
+		if info[#info] == name then return 10; end
+		if string__match(info[#info], "Blizzard_") then return 30; end
+		return 20;
 	end;
 
+    local allFrames = {
+        ["0"] = {
+            name = "Filter",
+            type = "input",
+            desc = "Search by frame name, or '-' for disabled frames, or '+' for enabled frames.",
+            order = 1,
+            get = function() return self.search; end,
+            set = function(_, value) self.search = value; end
+        },
+        ["1"] = {
+            name = "Clear",
+            type = "execute",
+            desc = "Clear the search filter.",
+            order = 2,
+            func = function() self.search = ""; end,
+            width = 0.5,
+        },
+    }
+    listOfFrames["0"] = {
+        name = "All frames",
+        type = "group",
+        order = 1,
+        args = allFrames,
+    };
+
 	for addOnName, _ in pairs(BlizzMoveAPI:GetRegisteredAddOns()) do
-		fullTable[addOnName] = {
+		listOfFrames[addOnName] = {
 			name = addOnName,
 			type = "group",
 			order = addonOrder,
@@ -185,9 +210,16 @@ function Config:GetFramesTables()
 				},
 			},
 		};
+        allFrames[addOnName] = {
+            name = "Movable frames for " .. addOnName,
+            type = "multiselect",
+            order = addonOrder,
+            values = function(info) return self:GetFilteredFrames(info[#info], self.search); end,
+            hidden = function(info) return not next(info.option.values(info)); end,
+        }
 		for frameName, _ in pairs(BlizzMoveAPI:GetRegisteredFrames(addOnName)) do
 			if(BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)) then
-				disabledTable[addOnName] = {
+				defaultDisabledFrames[addOnName] = {
 					name = addOnName,
 					type = "group",
 					order = addonOrder,
@@ -204,7 +236,23 @@ function Config:GetFramesTables()
 		end
 	end
 
-	return fullTable, disabledTable;
+	return listOfFrames, defaultDisabledFrames;
+end
+
+function Config:GetFilteredFrames(addOnName, filter)
+	local frames = {};
+	for frameName, _ in pairs(BlizzMoveAPI:GetRegisteredFrames(addOnName)) do
+		if (
+			not filter or filter == ''
+			or (filter == '-' and BlizzMoveAPI:IsFrameDisabled(addOnName, frameName))
+			or (filter == '+' and not BlizzMoveAPI:IsFrameDisabled(addOnName, frameName))
+			or (string__match(string.lower(frameName), string.lower(filter)))
+			or (string__match(string.lower(addOnName), string.lower(filter)))
+		) then
+			frames[frameName] = frameName;
+		end
+	end
+	return frames;
 end
 
 function Config:GetDefaultDisabledFrames(addOnName)
@@ -220,6 +268,7 @@ function Config:GetDefaultDisabledFrames(addOnName)
 end
 
 function Config:Initialize()
+	self.search = "";
 	self:RegisterOptions();
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove");
 
@@ -251,7 +300,7 @@ function Config:Initialize()
 end
 
 function Config:RegisterOptions()
-	self.FullFramesTable, self.DisabledFramesTable = self:GetFramesTables();
+	self.ListOfFramesTable, self.DefaultDisabledFramesTable = self:GetFramesTables();
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("BlizzMove", self:GetOptions());
 end
 
