@@ -559,6 +559,7 @@ local OnMouseDown;
 local OnMouseUp;
 local OnMouseWheel;
 local OnShow;
+local OnSubFrameHide;
 do
 	function OnMouseDown(frame, button)
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
@@ -722,6 +723,20 @@ do
 		end
 
 	end
+
+	function OnSubFrameHide(frame)
+		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
+
+		local frameData = BlizzMove.FrameData[frame];
+		local parent = frameData.storage.frameParent or nil;
+
+		BlizzMove:DebugPrint("OnHide:", frameData.storage.frameName, frameData.storage.isMoving);
+		if parent then return OnSubFrameHide(parent); end
+
+		if frameData.storage.isMoving then
+			BlizzMove:WaitForGlobalMouseUp(frame);
+		end
+	end
 end
 
 ------------------------------------------------------------------------------------------------------
@@ -820,6 +835,9 @@ do
 		end
 
 		BlizzMove:SecureHookScript(frame, "OnShow", OnShow);
+		if frameParent then
+			BlizzMove:SecureHookScript(frame, "OnHide", OnSubFrameHide);
+		end
 
 		BlizzMove:SecureHook(frame, "SetPoint",  OnSetPoint);
 		BlizzMove:SecureHook(frame, "SetWidth",  OnSizeUpdate);
@@ -996,9 +1014,24 @@ do
 		end
 		if count == 0 then return; end
 
-		BlizzMove:DebugPrint('Processed setFramePointsQueue, length: ', count);
+		self:DebugPrint('Processed setFramePointsQueue, length: ', count);
 		wipe(setFramePointsQueue)
-	end;
+	end
+
+	local awaitingGlobalMouseUp;
+	function BlizzMove:WaitForGlobalMouseUp(frame)
+		awaitingGlobalMouseUp = frame;
+		self:RegisterEvent('GLOBAL_MOUSE_UP');
+	end
+
+	function BlizzMove:GLOBAL_MOUSE_UP(event, button)
+		self:UnregisterEvent(event);
+		if not awaitingGlobalMouseUp then return; end
+		self:DebugPrint('Processing global MouseUp event after sub-frame got hidden');
+
+		OnMouseUp(awaitingGlobalMouseUp, button);
+		awaitingGlobalMouseUp = nil;
+	end
 
 	function BlizzMove:OnInitialize()
 		self.initialized = true;
