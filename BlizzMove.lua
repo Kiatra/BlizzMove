@@ -25,7 +25,10 @@ local GetBuildInfo = _G.GetBuildInfo;
 local tinsert = _G.tinsert;
 local unpack = _G.unpack;
 local wipe = _G.wipe;
-local C_Timer = _G.C_Timer;
+local GetScreenWidth = _G.GetScreenWidth;
+local GetScreenHeight = _G.GetScreenHeight;
+local CreateFrame = _G.CreateFrame;
+local abs = _G.abs;
 
 local name = ... or "BlizzMove";
 --- @class BlizzMove
@@ -376,15 +379,56 @@ do
 	end
 
 	function GetAbsoluteFramePosition(frame)
+		-- inspired by LibWindow-1.1 (https://www.wowace.com/projects/libwindow-1-1)
+
+		local scale = frame:GetScale();
+		if not scale then return end
+		local left, top = frame:GetLeft() * scale, frame:GetTop() * scale
+		local right, bottom = frame:GetRight() * scale, frame:GetBottom() * scale
+		local parentWidth = GetScreenWidth();
+		local parentHeight = GetScreenHeight();
+
+		local horizontalOffsetFromCenter = (left + right) / 2 - parentWidth / 2;
+		local verticalOffsetFromCenter = (top + bottom) / 2 - parentHeight / 2;
+
+		local x, y, point = 0, 0, "";
+		if (left < (parentWidth - right) and left < abs(horizontalOffsetFromCenter))
+		then
+			x = left;
+			point = "LEFT";
+		elseif ((parentWidth - right) < abs(horizontalOffsetFromCenter)) then
+			x = right - parentWidth;
+			point = "RIGHT";
+		else
+			x = horizontalOffsetFromCenter;
+		end
+
+		if bottom < (parentHeight - top) and bottom < abs(verticalOffsetFromCenter) then
+			y = bottom;
+			point = "BOTTOM" .. point;
+		elseif (parentHeight - top) < abs(verticalOffsetFromCenter) then
+			y = top - parentHeight;
+			point = "TOP" .. point;
+		else
+			y = verticalOffsetFromCenter;
+		end
+
+		if point == "" then
+			point = "CENTER"
+		end
+
+		BlizzMove:DebugPrint("GetAbsoluteFramePosition", "x:", math.floor(x), "y:", math.floor(y), "point:", point);
+
+		-- the nested table is for backwards compatibility
 		return {
 			{
-				["anchorPoint"] = "TOPLEFT",
+				["anchorPoint"] = point,
 				["relativeFrame"] = "UIParent",
-				["relativePoint"] = "BOTTOMLEFT",
-				["offX"] = frame:GetLeft(),
-				["offY"] = frame:GetTop(),
+				["relativePoint"] = point,
+				["offX"] = x,
+				["offY"] = y,
 			},
-		}
+		};
 	end
 
 	function SetFramePoints(frame, framePoints)
