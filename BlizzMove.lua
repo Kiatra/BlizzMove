@@ -115,14 +115,16 @@ do
 	function BlizzMove:RegisterFrame(addOnName, frameName, frameData, skipConfigUpdate)
 		if not addOnName then addOnName = self.name; end
 
-		if self:IsFrameDisabled(addOnName, frameName) then return false; end
-
 		local copiedData = self:CopyTable(frameData);
 
 		self.Frames[addOnName]            = self.Frames[addOnName] or {};
 		self.Frames[addOnName][frameName] = copiedData;
 
-		if IsAddOnLoaded(addOnName) and (addOnName ~= self.name and self.enabled or self.initialized) then
+		if (
+			not self:IsFrameDisabled(addOnName, frameName)
+			and IsAddOnLoaded(addOnName)
+			and (addOnName ~= self.name and self.enabled or self.initialized)
+		) then
 			self:ProcessFrame(addOnName, frameName, copiedData);
 		end
 
