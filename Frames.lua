@@ -26,15 +26,14 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["PetPaperDollFrame"] =
 			{
-				SilenceCompatabilityWarnings = true, -- does exist in BCC, but not required to make it movable
-				MinVersion = 30000,
-				MaxVersion = 40000, -- Removed when?
+				MinVersion = 0,
+				MaxVersion = 70300, -- Removed when?
 				SubFrames =
 				{
 					["PetPaperDollFrameCompanionFrame"] =
 					{
-						MinVersion = 30000, -- Added when?
-						MaxVersion = 40000, -- Removed when?
+						MinVersion = 30000,
+						MaxVersion = 70300, -- Removed when?
 					},
 				},
 			},
@@ -68,39 +67,40 @@ BlizzMoveAPI:RegisterFrames(
 			["PVPFrame"] =
 			{
 				MinVersion = 20000,
-				MaxVersion = 70300, -- Removed when?
+				MaxVersion = 30000, -- Moved to PVPParentFrame
+				SilenceCompatabilityWarnings = true,
 				SubFrames =
 				{
 					["PVPFrameHonor"] =
 					{
 						MinVersion = 20000,
-						MaxVersion = 70300, -- Removed when?
+						MaxVersion = 30000,
 					},
 					["PVPFrameArena"] =
 					{
 						MinVersion = 20000,
-						MaxVersion = 70300, -- Removed when?
+						MaxVersion = 30000,
 					},
 					["PVPTeam1"] =
 					{
 						MinVersion = 20000,
-						MaxVersion = 70300, -- Removed when?
+						MaxVersion = 30000,
 					},
 					["PVPTeam2"] =
 					{
 						MinVersion = 20000,
-						MaxVersion = 70300, -- Removed when?
+						MaxVersion = 30000,
 					},
 					["PVPTeam3"] =
 					{
 						MinVersion = 20000,
-						MaxVersion = 70300, -- Removed when?
+						MaxVersion = 30000,
 					},
 				},
 			},
 			["TokenFrame"] =
 			{
-				MinVersion = 30000, -- Added pre 30300
+				MinVersion = 30000,
 				SubFrames =
 				{
 					["TokenFramePopup"] =
@@ -163,11 +163,17 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["FriendsFrameBattlenetFrame.BroadcastFrame"] =
 			{
+				MinVersion = 0,
 				Detachable = true,
 			},
 			["FriendsListFrameScrollFrame"] =
 			{
 				MinVersion = 40000, -- Added when?
+			},
+			["FriendsFrameFriendsScrollFrame"] =
+			{
+				MinVersion = 0,
+				MaxVersion = 40000, -- Removed when?
 			},
 			["QuickJoinScrollFrame"] =
 			{
@@ -175,11 +181,40 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["WhoListScrollFrame"] =
 			{
+				MinVersion = 40000, -- check comment below
 				SilenceCompatabilityWarnings = true,
-				MinVersion = 30000,
-				-- Somehow breaks things in TBC, but also isn't needed there
-				-- For classic it's not needed, but oddly also doesn't break things
-				-- For retail it is needed
+				-- Classic: Not required, but does not break anything.
+				-- TBC: Not required, but breaks clicking on results other then the first.
+				-- Wrath: Not required, but breaks clicking on results other then the first.
+				-- Retail: Required.
+			},
+			["GuildFrame"] =
+			{
+				MinVersion = 0,
+				MaxVersion = 40000, -- Moved to LoD when?
+				SubFrames =
+				{
+					["GuildInfoFrame"] =
+					{
+						MinVersion = 0,
+						MaxVersion = 40000, -- Removed when?
+						Detachable = true,
+						SubFrames =
+						{
+							["GuildInfoFrameScrollFrame"] =
+							{
+								MinVersion = 0,
+								MaxVersion = 40000, -- Removed when?
+							},
+						},
+					},
+					["GuildEventLogFrame"] =
+					{
+						MinVersion = 30000,
+						MaxVersion = 40000, -- Removed when?
+						Detachable = true,
+					},
+				}
 			},
 		},
 	},
@@ -294,34 +329,34 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["PVPFrame"] =
 			{
-				SilenceCompatabilityWarnings = true,
-				MinVersion = 30000, -- exists as a subframe of CharacterFrame in BCC, but as a separate from in wrath
+				MinVersion = 30000, -- Moved from CharacterFrame
 				MaxVersion = 70300, -- Removed when?
+				SilenceCompatabilityWarnings = true,
 				SubFrames =
 				{
 					["PVPFrameHonor"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 						MaxVersion = 70300, -- Removed when?
 					},
 					["PVPFrameArena"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 						MaxVersion = 70300, -- Removed when?
 					},
 					["PVPTeam1"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 						MaxVersion = 70300, -- Removed when?
 					},
 					["PVPTeam2"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 						MaxVersion = 70300, -- Removed when?
 					},
 					["PVPTeam3"] =
 					{
-						MinVersion = 20000,
+						MinVersion = 30000,
 						MaxVersion = 70300, -- Removed when?
 					},
 				},
@@ -340,7 +375,7 @@ BlizzMoveAPI:RegisterFrames(
 	["QuestLogDetailFrame"] =
 	{
 		MinVersion = 30000,
-		MaxVersion = 40000, -- Removed when?
+		MaxVersion = 70300, -- Removed when?
 	},
 	["QuestLogPopupDetailFrame"] =
 	{
@@ -407,7 +442,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["AchievementFrame"] =
 		{
-			MinVersion = 30000, -- Added pre 30300
+			MinVersion = 30000,
 			SubFrames =
 			{
 				["AchievementFrameHeader"] =
@@ -517,7 +552,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["BarberShopFrame"] =
 		{
-			MinVersion = 30000, -- Added pre 30300
+			MinVersion = 30000,
 			MaxVersion = 90000, -- still exists, but shouldn't be movable (fullscreen)
 			SilenceCompatabilityWarnings = true
 		},
@@ -540,7 +575,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["CalendarFrame"] =
 		{
-			MinVersion = 30000, -- Added pre 30300
+			MinVersion = 30000,
 			SubFrames =
 			{
 				["CalendarCreateEventFrame"] =
@@ -624,9 +659,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		{
 			MinVersion = 40000, -- Added when?
 		},
+		-- ["CommunitiesAddDialog"] = {}, -- Frame is protected, similar to the Store frame
 		["CommunitiesFrame"] =
 		{
-			MinVersion = 0,
+			MinVersion = 0, -- Backported into classic from retail (with limited functionality)
 			SubFrames =
 			{
 				["ClubFinderCommunityAndGuildFinderFrame.CommunityCards.ListScrollFrame"] =
@@ -839,7 +875,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["GlyphFrame"] =
 				{
-					MinVersion = 30000, -- Added pre 30300, but overlaps talentframe
+					MinVersion = 30000,
 					MaxVersion = 60200,
 				},
 			}
@@ -871,7 +907,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["GuildFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000, -- Moved out of FriendsFrame when?
 		},
 	},
 	["Blizzard_InspectUI"] =
@@ -914,7 +950,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ItemSocketingFrame"] =
 		{
-			MinVersion = 20000, -- Added pre 20400
+			MinVersion = 20000,
 		},
 	},
 	["Blizzard_ItemUpgradeUI"] =
@@ -951,7 +987,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ObliterumForgeFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 70000, -- Added when?
 		},
 	},
 	["Blizzard_OrderHallUI"] =
