@@ -2,9 +2,10 @@
 ## Interface-Retail: @toc-version-retail@
 ## Interface-Classic: @toc-version-classic@
 ## Interface-BCC: @toc-version-bcc@
+## Interface-Wrath: @toc-version-wrath@
 ## Title: BlizzMove
 ## Notes: Makes blizzard frames movable
-## Author: Kiatra - github.com/Kiatra/BlizzMove/
+## Author: Kiatra, zaCade, Numy - github.com/Kiatra/BlizzMove/
 ## X-WoWI-ID: 23875
 ## X-Curse-Project-ID: 17809
 ## Version: @project-version@

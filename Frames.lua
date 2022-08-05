@@ -24,6 +24,20 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 0,
 			},
+			["PetPaperDollFrame"] =
+			{
+				SilenceCompatabilityWarnings = true, -- does exist in BCC, but not required to make it movable
+				MinVersion = 30000,
+				MaxVersion = 40000, -- Removed when?
+				SubFrames =
+				{
+					["PetPaperDollFrameCompanionFrame"] =
+					{
+						MinVersion = 30000, -- Added when?
+						MaxVersion = 40000, -- Removed when?
+					},
+				},
+			},
 			["CompanionFrame"] =
 			{
 				MinVersion = 40000, -- Added when?
@@ -272,6 +286,48 @@ BlizzMoveAPI:RegisterFrames(
 			},
 		},
 	},
+	["PVPParentFrame"] =
+	{
+		MinVersion = 30000,
+		MaxVersion = 70300, -- Removed when?
+		SubFrames =
+		{
+			["PVPFrame"] =
+			{
+				SilenceCompatabilityWarnings = true,
+				MinVersion = 30000, -- exists as a subframe of CharacterFrame in BCC, but as a separate from in wrath
+				MaxVersion = 70300, -- Removed when?
+				SubFrames =
+				{
+					["PVPFrameHonor"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPFrameArena"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPTeam1"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPTeam2"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+					["PVPTeam3"] =
+					{
+						MinVersion = 20000,
+						MaxVersion = 70300, -- Removed when?
+					},
+				},
+			},
+		},
+	},
 	["QuestFrame"] =
 	{
 		MinVersion = 0,
@@ -280,6 +336,11 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 		MaxVersion = 70300, -- Removed when?
+	},
+	["QuestLogDetailFrame"] =
+	{
+		MinVersion = 30000,
+		MaxVersion = 40000, -- Removed when?
 	},
 	["QuestLogPopupDetailFrame"] =
 	{
@@ -365,7 +426,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		},
 		["AchievementFrame.searchResults"] =
 		{
-			MinVersion = 30000, -- Added when?
+			MinVersion = 40000, -- Added when?
 		},
 	},
 	["Blizzard_AlliedRacesUI"] =
@@ -490,7 +551,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					{
 						["CalendarCreateEventInviteListScrollFrame"] =
 						{
-							MinVersion = 30000,
+							MinVersion = 40000, -- Added when?
 						},
 					},
 				},
@@ -502,11 +563,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					{
 						["CalendarViewEventFrame.HeaderFrame"] =
 						{
-							MinVersion = 40000, -- Added when?
+							MinVersion = 30000,
 						},
 						["CalendarViewEventInviteListScrollFrame"] =
 						{
-							MinVersion = 30000,
+							MinVersion = 40000, -- Added when?
 						},
 					},
 				},
@@ -769,14 +830,21 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
---	["Blizzard_GlyphUI"] =
---	{
---		["GlyphFrame"] =
---		{
---			MinVersion = 30000, -- Added pre 30300, but overlaps talentframe
---			MaxVersion = 60200,
---		},
---	},
+	["Blizzard_GlyphUI"] =
+	{
+		["PlayerTalentFrame"] =
+		{
+			MinVersion = 11401,
+			SubFrames =
+			{
+				["GlyphFrame"] =
+				{
+					MinVersion = 30000, -- Added pre 30300, but overlaps talentframe
+					MaxVersion = 60200,
+				},
+			}
+		},
+	},
 	["Blizzard_GMSurveyUI"] =
 	{
 		["GMSurveyFrame"] =
