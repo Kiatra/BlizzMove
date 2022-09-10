@@ -906,6 +906,8 @@ do
 		end
 
 		if not frame then
+			self.notFoundFrames = self.notFoundFrames or {};
+			tinsert(self.notFoundFrames, frameName);
 			self:Print("Could not find frame ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
 
 			return false;
@@ -1074,10 +1076,16 @@ do
 			return;
 		end
 
-		if arg1 == "debugLoadAll" then
+		if arg1 == 'debugLoadAll' then
 			for addOnName, _ in pairs(self:GetRegisteredAddOns()) do
 				self:Print((LoadAddOn(addOnName) and "Loaded") or "Missing", addOnName) ;
 			end
+			return;
+		elseif arg1 == 'dumpMissingFrames' then
+			self.Config:ShowURLPopup(
+				'Build:' .. self.gameBuild.. '| Version:' .. self.gameVersion.. '| BMVersion:' .. self.Config.version .. "\n\n"
+						.. table.concat(self.notFoundFrames or {'<none>'}, "\n")
+			);
 			return;
 		end
 
