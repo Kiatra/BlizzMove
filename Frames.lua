@@ -1083,6 +1083,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
+	["Blizzard_ClassTalentUI"] =
+	{
+		["ClassTalentFrame"] =
+		{
+			MinVersion = 100000,
+		},
+	},
 	["Blizzard_TalentUI"] =
 	{
 		["TalentFrame"] =
