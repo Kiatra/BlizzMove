@@ -1126,9 +1126,15 @@ do
 				self.hooks.AdventureJournal_Reward_OnEnter(rewardFrame);
 			end
 			self:RawHook("AdventureJournal_Reward_OnEnter", replacement, true);
-			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion1.reward, "OnEnter", replacement)
-			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion2.reward, "OnEnter", replacement)
-			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion3.reward, "OnEnter", replacement)
+			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion1.reward, "OnEnter", replacement);
+			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion2.reward, "OnEnter", replacement);
+			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion3.reward, "OnEnter", replacement);
+		end
+		-- fix BattlefieldFrame having weird positioning
+		if _G.BattlefieldFrame and _G.PVPParentFrame then
+			_G.BattlefieldFrame:SetParent(_G.PVPParentFrame);
+			_G.BattlefieldFrame:ClearAllPoints();
+			_G.BattlefieldFrame:SetAllPoints();
 		end
 	end
 
