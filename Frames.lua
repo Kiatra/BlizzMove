@@ -13,7 +13,8 @@ BlizzMoveAPI:RegisterFrames(
 	["BattlefieldFrame"] =
 	{
 		MinVersion = 0,
-		MaxVersion = 70300, -- Removed when?
+		MaxVersion = 30400, -- Moved to PVPParentFrame
+		SilenceCompatabilityWarnings = true,
 	},
 	["CharacterFrame"] =
 	{
@@ -337,6 +338,12 @@ BlizzMoveAPI:RegisterFrames(
 		MaxVersion = 70300, -- Removed when?
 		SubFrames =
 		{
+			["BattlefieldFrame"] =
+			{
+				MinVersion = 30400, -- Moved from UIParent
+				MaxVersion = 70300, -- Removed when?
+				SilenceCompatabilityWarnings = true,
+			},
 			["PVPFrame"] =
 			{
 				MinVersion = 30000, -- Moved from CharacterFrame
