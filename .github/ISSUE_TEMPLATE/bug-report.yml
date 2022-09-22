@@ -1,0 +1,56 @@
+name: Bug Report
+description: Report a bug in BlizzMove
+title: "[Bug Report] <title here>"
+labels: ['bug', 'needs-investigation']
+body:
+  - type: dropdown
+    id: game-version
+    attributes:
+      label: What game version did the bug occur in?
+      multiple: true
+      options:
+        - Vanilla Classic
+        - Burning Crusade Classic
+        - Wrath of the Lich King Classic
+        - Retail
+    validations:
+      required: true
+  - type: checkboxes
+    id: troubleshooting-steps
+    attributes:
+      label: Troubleshooting
+      description: By submitting this issue you agree that you have followed our Troubleshooting steps.
+      options:
+        - label: I have verified that BlizzMove is up to date.
+          required: true
+        - label: I have tried to reproduce the bug with no other addons loaded.
+          required: true
+        - label: I have verified that the issue hasn't yet been reported.
+          required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug.
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: bug-reproduction-steps
+    attributes:
+      label: Steps to reproduce.
+      description: Steps to reproduce the behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: bug-expected-behavior
+    attributes:
+      label: Expected behavior.
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: bug-errors
+    attributes:
+      label: Errors
+      description: If you have any error logs, please put them here.
+      render: lua
