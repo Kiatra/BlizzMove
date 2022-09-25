@@ -135,7 +135,7 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 90105,
 				Detachable = true,
-			}
+			},
 		},
 	},
 	["FriendsFrame"] =
@@ -158,8 +158,8 @@ BlizzMoveAPI:RegisterFrames(
 					{
 						MinVersion = 0,
 						MaxVersion = 100000,
-					}
-				}
+					},
+				},
 			},
 			["RecruitAFriendFrame.RecruitList.ScrollFrame"] =
 			{
@@ -222,7 +222,7 @@ BlizzMoveAPI:RegisterFrames(
 						MaxVersion = 40000, -- Removed when?
 						Detachable = true,
 					},
-				}
+				},
 			},
 		},
 	},
@@ -512,7 +512,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					MinVersion = 90000,
 				},
-			}
+			},
 		},
 	},
 	["Blizzard_ArchaeologyUI"] =
@@ -666,7 +666,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				["ClickBindingFrame.ScrollBox"] =
 				{
 					MinVersion = 90200,
-				}
+				},
 			},
 		},
 	},
@@ -799,7 +799,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					MinVersion = 40000,
 					NonDraggable = true,
 				},
-			}
+			},
 		},
 	},
 	["Blizzard_FlightMap"] =
@@ -913,7 +913,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					MinVersion = 30000,
 					MaxVersion = 60200,
 				},
-			}
+			},
 		},
 	},
 	["Blizzard_GMSurveyUI"] =
