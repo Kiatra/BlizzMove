@@ -950,6 +950,58 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["InspectFrame"] =
 		{
 			MinVersion = 0,
+			SubFrames =
+			{
+				["InspectPaperDollFrame"] =
+				{
+					MinVersion = 0,
+				},
+				["InspectHonorFrame"] =
+				{
+					MinVersion = 0,
+					MaxVersion = 20000,
+				},
+				["InspectPVPFrame"] =
+				{
+					MinVersion = 20000,
+					SubFrames =
+					{
+						["InspectPVPFrameHonor"] =
+						{
+							MinVersion = 20000,
+							MaxVersion = 70300, -- Removed when?
+						},
+						["InspectPVPFrameArena"] =
+						{
+							MinVersion = 20000,
+							MaxVersion = 70300, -- Removed when?
+						},
+						["InspectPVPTeam1"] =
+						{
+							MinVersion = 20000,
+							MaxVersion = 70300, -- Removed when?
+						},
+						["InspectPVPTeam2"] =
+						{
+							MinVersion = 20000,
+							MaxVersion = 70300, -- Removed when?
+						},
+						["InspectPVPTeam3"] =
+						{
+							MinVersion = 20000,
+							MaxVersion = 70300, -- Removed when?
+						},
+					},
+				},
+				["InspectTalentFrame"] =
+				{
+					MinVersion = 20000, -- Added when?
+				},
+				["InspectGuildFrame"] =
+				{
+					MinVersion = 40000, -- Added when?
+				},
+			},
 		},
 	},
 	["Blizzard_IslandsPartyPoseUI"] =
