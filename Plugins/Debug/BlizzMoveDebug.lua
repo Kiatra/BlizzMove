@@ -49,9 +49,8 @@ function Module:FindBadAnchorConnections(frame)
 
     local badAnchorConnections = {};
     for child, _ in pairs(children) do
-        local childParents = self:GetAllTreeParents(inverse, child, frame);
-        for parent, layer in pairs(childParents) do
-            if not children[parent] and parent ~= frame and layer == 1 then
+        for parent, _ in pairs(inverse[child] or {}) do
+            if not children[parent] and parent ~= frame then
                 table.insert(badAnchorConnections, {
                     name = getFrameName(child),
                     targetName = getFrameName(parent),
@@ -77,36 +76,17 @@ function Module:GetAllTreeChildren(tree, frame)
     return children;
 end
 
-function Module:GetAllTreeParents(tree, frame, stopAtFrame, parents, layer)
-    layer = (layer or 0) + 1;
-    parents = parents or {};
-    if not tree[frame] then return parents; end
-    for parent, _ in pairs(tree[frame]) do
-        if parent ~= stopAtFrame and not parents[parent] then
-            parents[parent] = layer;
-            for grandparent, resultingLayer in pairs(self:GetAllTreeParents(tree, parent, stopAtFrame, parents, layer)) do
-                parents[grandparent] = resultingLayer;
-            end
-        end
-    end
-
-    return parents;
-end
-
 function Module:BuildAnchorTree()
     local tree = {};
     local inverse = {};
 
     local frame = EnumerateFrames();
     while frame do
-        local points = {}
         for i = 1, frame.GetNumPoints and frame:GetNumPoints() or 0 do
             local relativeTo = select(2, frame:GetPoint(i));
             if not relativeTo then
                 relativeTo = frame.GetParent and frame:GetParent() or UIParent;
             end
-            points[relativeTo] = { frame:GetPoint(i) };
-            points[getFrameName(relativeTo, 'noName' .. i)] = { frame:GetPoint(i) };
             tree[relativeTo] = tree[relativeTo] or {};
             tree[relativeTo][frame] = true;
 
