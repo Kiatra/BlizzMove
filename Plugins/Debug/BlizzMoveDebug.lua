@@ -14,8 +14,10 @@ local GetAddOnInfo = _G.GetAddOnInfo;
 local GetAddOnMetadata = _G.GetAddOnMetadata;
 
 local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove');
+--local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove'):GetModule('Debug');
 if not BlizzMove then return ; end
 
+--- @class BlizzMove_Debug
 local Module = BlizzMove:NewModule('Debug')
 
 local json = LibStub('JsonLua-1.0');
@@ -33,6 +35,104 @@ Module.bannedCharacterPattern = '[^a-zA-Z0-9 !@#$%^&*()_+\-=,.:;?~`{}[<>]';
 
 local function encode_string(val)
     return '"' .. val:gsub(Module.bannedCharacterPattern, function(c) return string__format('"..strchar(%d).."', c:byte()); end) .. '"';
+end
+
+local function getFrameName(frame, fallback)
+    return frame.GetDebugName and frame:GetDebugName()
+            or frame.GetName and frame:GetName()
+            or fallback or 'noName';
+end
+
+function Module:FindBadAnchorConnections(frame)
+    local tree, inverse = self:BuildAnchorTree();
+    local children = self:GetAllTreeChildren(tree, frame);
+
+    local badAnchorConnections = {};
+    for child, _ in pairs(children) do
+        local childParents = self:GetAllTreeParents(inverse, child, frame);
+        for parent, layer in pairs(childParents) do
+            if not children[parent] and parent ~= frame and layer == 1 then
+                table.insert(badAnchorConnections, {
+                    name = getFrameName(child),
+                    targetName = getFrameName(parent),
+                    source = child.GetSourceLocation and child:GetSourceLocation() or 'Unknown',
+                });
+            end
+        end
+    end
+
+    return badAnchorConnections;
+end
+
+function Module:GetAllTreeChildren(tree, frame)
+    local children = {};
+    if not tree[frame] then return children; end
+    for child, _ in pairs(tree[frame]) do
+        children[child] = true;
+        for grandchild, _ in pairs(self:GetAllTreeChildren(tree, child)) do
+            children[grandchild] = true;
+        end
+    end
+
+    return children;
+end
+
+function Module:GetAllTreeParents(tree, frame, stopAtFrame, parents, layer)
+    layer = (layer or 0) + 1;
+    parents = parents or {};
+    if not tree[frame] then return parents; end
+    for parent, _ in pairs(tree[frame]) do
+        if parent ~= stopAtFrame and not parents[parent] then
+            parents[parent] = layer;
+            for grandparent, resultingLayer in pairs(self:GetAllTreeParents(tree, parent, stopAtFrame, parents, layer)) do
+                parents[grandparent] = resultingLayer;
+            end
+        end
+    end
+
+    return parents;
+end
+
+function Module:BuildAnchorTree()
+    local tree = {};
+    local inverse = {};
+
+    local frame = EnumerateFrames();
+    while frame do
+        local points = {}
+        local currentFrame = frame
+        for i = 1, frame.GetNumPoints and frame:GetNumPoints() or 0 do
+            local relativeTo = select(2, frame:GetPoint(i));
+            if not relativeTo then
+                relativeTo = frame.GetParent and frame:GetParent() or UIParent;
+            end
+            points[relativeTo] = { frame:GetPoint(i) };
+            points[getFrameName(relativeTo, 'noName' .. i)] = { frame:GetPoint(i) };
+            tree[relativeTo] = tree[relativeTo] or {};
+            tree[relativeTo][frame] = function()
+                return {
+                    childTree = (tree[currentFrame] or nil),
+                    childInverseTree = (inverse[currentFrame] or nil),
+                    childPoints = points,
+                    childName = getFrameName(currentFrame),
+                };
+            end;
+
+            inverse[frame] = inverse[frame] or {};
+            inverse[frame][relativeTo] = function()
+                return {
+                    parentTree = (tree[relativeTo] or nil),
+                    parentInverseTree = (inverse[relativeTo] or nil),
+                    ownPoints = points,
+                    parentName = getFrameName(relativeTo),
+                };
+            end;
+        end
+
+        frame = EnumerateFrames(frame);
+    end
+
+    return tree, inverse;
 end
 
 function Module:DumpAllData(changedCVarsOnly)
@@ -167,7 +267,7 @@ function Module:GetMainFrame(text)
 
         -- resizing
         f:SetResizable(true);
-        f:SetMinResize(150, 100);
+        --f:SetMinResize(150, 100);
         local rb = CreateFrame('Button', f);
         rb:SetPoint('BOTTOMRIGHT', -6, 7);
         rb:SetSize(16, 16);
