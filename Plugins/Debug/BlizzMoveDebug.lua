@@ -100,7 +100,6 @@ function Module:BuildAnchorTree()
     local frame = EnumerateFrames();
     while frame do
         local points = {}
-        local currentFrame = frame
         for i = 1, frame.GetNumPoints and frame:GetNumPoints() or 0 do
             local relativeTo = select(2, frame:GetPoint(i));
             if not relativeTo then
@@ -109,24 +108,10 @@ function Module:BuildAnchorTree()
             points[relativeTo] = { frame:GetPoint(i) };
             points[getFrameName(relativeTo, 'noName' .. i)] = { frame:GetPoint(i) };
             tree[relativeTo] = tree[relativeTo] or {};
-            tree[relativeTo][frame] = function()
-                return {
-                    childTree = (tree[currentFrame] or nil),
-                    childInverseTree = (inverse[currentFrame] or nil),
-                    childPoints = points,
-                    childName = getFrameName(currentFrame),
-                };
-            end;
+            tree[relativeTo][frame] = true;
 
             inverse[frame] = inverse[frame] or {};
-            inverse[frame][relativeTo] = function()
-                return {
-                    parentTree = (tree[relativeTo] or nil),
-                    parentInverseTree = (inverse[relativeTo] or nil),
-                    ownPoints = points,
-                    parentName = getFrameName(relativeTo),
-                };
-            end;
+            inverse[frame][relativeTo] = true;
         end
 
         frame = EnumerateFrames(frame);
