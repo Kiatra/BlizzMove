@@ -1130,6 +1130,15 @@ do
 			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion2.reward, "OnEnter", replacement);
 			self:RawHookScript(_G.EncounterJournal.suggestFrame.Suggestion3.reward, "OnEnter", replacement);
 		end
+		-- fix yet another anchor family connection issue, added in 10.0
+		if addOnName == "Blizzard_Communities" then
+			local dialog = _G.CommunitiesFrame.NotificationSettingsDialog or nil;
+			if dialog then
+				dialog:ClearAllPoints();
+				dialog:SetAllPoints();
+			end
+		end
+
 		-- fix BattlefieldFrame having weird positioning
 		if _G.BattlefieldFrame and _G.PVPParentFrame then
 			_G.BattlefieldFrame:SetParent(_G.PVPParentFrame);

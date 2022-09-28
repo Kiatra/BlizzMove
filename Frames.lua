@@ -122,6 +122,10 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
+	["ContainerFrameCombinedBags"] =
+	{
+		MinVersion = 100000,
+	},
 	["DestinyFrame"] =
 	{
 		MinVersion = 50000,
@@ -194,7 +198,8 @@ BlizzMoveAPI:RegisterFrames(
 				-- Classic: Not required, but does not break anything.
 				-- TBC: Not required, but breaks clicking on results other then the first.
 				-- Wrath: Not required, but breaks clicking on results other then the first.
-				-- Retail: Required.
+				-- Shadowlands: Required.
+				-- Dragonflight: Not required, and renamed
 			},
 			["GuildFrame"] =
 			{
@@ -448,6 +453,17 @@ BlizzMoveAPI:RegisterFrames(
 			["QuestMapFrame"] =
 			{
 				MinVersion = 40000, -- Added when?
+				SubFrames =
+				{
+					["QuestMapFrame.DetailsFrame.RewardsFrame"] =
+					{
+						MinVersion = 40000, -- Added when?
+					},
+					["QuestMapFrame.DetailsFrame.ScrollFrame"] =
+					{
+						MinVersion = 40000, -- Added when?
+					},
+				},
 			},
 		},
 	},
@@ -472,6 +488,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					MinVersion = 30000,
 					MaxVersion = 100000,
 				},
+				["AchievementFrame.Header"] =
+				{
+					MinVersion = 100000,
+				},
 				["AchievementFrameCategoriesContainer"] =
 				{
 					MinVersion = 30000,
@@ -488,6 +508,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		{
 			MinVersion = 40000, -- Added when?
 			MaxVersion = 100000,
+		},
+		["AchievementFrame.SearchResults"] =
+		{
+			MinVersion = 100000,
 		},
 	},
 	["Blizzard_AlliedRacesUI"] =
@@ -588,6 +612,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["KeyBindingFrame"] =
 		{
 			MinVersion = 0,
+			MaxVersion = 100000,
 		},
 	},
 	["Blizzard_BlackMarketUI"] =
@@ -656,6 +681,20 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 0,
 		},
 	},
+	["Blizzard_ClassTalentUI"] =
+	{
+		["ClassTalentFrame"] =
+		{
+			MinVersion = 100000,
+			SubFrames =
+			{
+				["ClassTalentFrame.TalentsTab.ButtonsParent"] =
+				{
+					MinVersion = 100000,
+				},
+			},
+		},
+	},
 	["Blizzard_ClickBindingUI"] =
 	{
 		["ClickBindingFrame"] =
@@ -668,6 +707,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					MinVersion = 90200,
 				},
 			},
+		},
+		["ClickBindingFrame.TutorialFrame"] =
+		{
+			MinVersion = 90200,
 		},
 	},
 	["Blizzard_Collections"] =
@@ -702,6 +745,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					Detachable = true,
 					MinVersion = 40000, -- Added when?
+				},
+				["CommunitiesFrame.NotificationSettingsDialog"] =
+				{
+					MinVersion = 100000,
 				},
 			},
 		},
@@ -772,6 +819,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			SubFrames =
 			{
 				["EncounterJournal.instanceSelect.scroll"] =
+				{
+					MinVersion = 40000,
+					MaxVersion = 100000,
+				},
+				["EncounterJournal.instanceSelect.ScrollBox"] =
 				{
 					MinVersion = 40000,
 					MaxVersion = 100000,
@@ -906,6 +958,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["PlayerTalentFrame"] =
 		{
 			MinVersion = 11401,
+			MaxVersion = 100000,
 			SubFrames =
 			{
 				["GlyphFrame"] =
@@ -996,6 +1049,8 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				["InspectTalentFrame"] =
 				{
 					MinVersion = 20000, -- Added when?
+					MaxVersion = 100000,
+					SilenceCompatabilityWarnings = true, -- hasn't been removed from the code, but is no longer visible or functional
 				},
 				["InspectGuildFrame"] =
 				{
@@ -1089,6 +1144,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["PlayerChoiceFrame"] =
 		{
 			MinVersion = 90000,
+			MaxVersion = 100000,
+		},
+	},
+	["Blizzard_Professions"] =
+	{
+		["ProfessionsFrame"] =
+		{
+			MinVersion = 100000,
 		},
 	},
 	["Blizzard_PVPMatch"] =
@@ -1142,13 +1205,6 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
-	["Blizzard_ClassTalentUI"] =
-	{
-		["ClassTalentFrame"] =
-		{
-			MinVersion = 100000,
-		},
-	},
 	["Blizzard_TalentUI"] =
 	{
 		["TalentFrame"] =
@@ -1159,6 +1215,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["PlayerTalentFrame"] =
 		{
 			MinVersion = 11401,
+			MaxVersion = 100000,
 		},
 	},
 	["Blizzard_TalkingHeadUI"] =
@@ -1180,11 +1237,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["TradeSkillFrame"] =
 		{
 			MinVersion = 11306,
+			MaxVersion = 100000,
 			SubFrames =
 			{
 				["TradeSkillFrame.RecipeList"] =
 				{
 					MinVersion = 40000, -- Added when?
+					MaxVersion = 100000,
 				},
 			},
 		},
