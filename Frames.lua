@@ -854,6 +854,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
+	["Blizzard_ExpansionLandingPage"] =
+	{
+		["ExpansionLandingPage"] =
+		{
+			MinVersion = 100000,
+		},
+	},
 	["Blizzard_FlightMap"] =
 	{
 		["FlightMapFrame"] =
@@ -949,6 +956,20 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				["CovenantMissionFrame.FollowerList.MaterialFrame"] =
 				{
 					MinVersion = 90000,
+				},
+			},
+		},
+	},
+	["Blizzard_GenericTraitUI"] =
+	{
+		["GenericTraitFrame"] =
+		{
+			MinVersion = 100000,
+			SubFrames =
+			{
+				["GenericTraitFrame.ButtonsParent"] =
+				{
+					MinVersion = 100000,
 				},
 			},
 		},
@@ -1123,6 +1144,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["MacroFrame"] =
 		{
 			MinVersion = 0,
+		},
+	},
+	["Blizzard_MajorFactions"] =
+	{
+		["MajorFactionRenownFrame"] =
+		{
+			MinVersion = 100000,
 		},
 	},
 	["Blizzard_ObliterumUI"] =
