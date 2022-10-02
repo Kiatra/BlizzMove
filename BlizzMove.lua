@@ -718,6 +718,13 @@ do
 
 		BlizzMove:DebugPrint("OnShow:", BlizzMove.FrameData[frame].storage.frameName);
 
+		if InCombatLockdown() and frame:IsProtected() then
+			BlizzMove:AddToCombatLockdownQueue(OnShow, frame);
+			BlizzMove:DebugPrint('Adding to combatLockdownQueue: OnShow - ', BlizzMove.FrameData[frame].storage.frameName);
+
+			return;
+		end
+
 		SetFrameParent(frame);
 
 		if(BlizzMove.DB.saveScaleStrategy == 'permanent' and BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]) then
