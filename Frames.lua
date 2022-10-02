@@ -825,8 +825,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["EncounterJournal.instanceSelect.ScrollBox"] =
 				{
-					MinVersion = 40000,
-					MaxVersion = 100000,
+					MinVersion = 100000,
 				},
 				["EncounterJournal.encounter.instance.loreScroll"] =
 				{
