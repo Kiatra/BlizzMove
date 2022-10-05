@@ -1196,11 +1196,23 @@ do
 			end
 		end
 
-		-- fix BattlefieldFrame having weird positioning
-		if _G.BattlefieldFrame and _G.PVPParentFrame then
-			_G.BattlefieldFrame:SetParent(_G.PVPParentFrame);
-			_G.BattlefieldFrame:ClearAllPoints();
-			_G.BattlefieldFrame:SetAllPoints();
+		if addOnName == self.name then
+			-- fix BattlefieldFrame having weird positioning
+			if _G.BattlefieldFrame and _G.PVPParentFrame then
+				_G.BattlefieldFrame:SetParent(_G.PVPParentFrame);
+				_G.BattlefieldFrame:ClearAllPoints();
+				_G.BattlefieldFrame:SetAllPoints();
+			end
+
+			if self.gameVersion >= 100000 then
+				-- fix anchor family connection issues with the combined bag
+				self:RawHook("UpdateContainerFrameAnchors", function()
+					for _, frame in ipairs(ContainerFrameSettingsManager:GetBagsShown()) do
+						frame:ClearAllPoints();
+					end
+					self.hooks.UpdateContainerFrameAnchors();
+				end, true);
+			end
 		end
 	end
 
@@ -1208,9 +1220,10 @@ do
 		self.enabled = true;
 		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
 
+		self:ADDON_LOADED(_, self.name);
 		for addOnName, _ in pairs(self.Frames) do
 			if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
-				self:ProcessFrames(addOnName);
+				self:ADDON_LOADED(_, addOnName);
 			end
 		end
 
