@@ -748,7 +748,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["CommunitiesFrame.NotificationSettingsDialog"] =
 				{
-					MinVersion = 100000,
+					MinVersion = 40000, -- Added when?
 				},
 			},
 		},
