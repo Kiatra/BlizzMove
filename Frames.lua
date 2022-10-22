@@ -607,6 +607,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			SilenceCompatabilityWarnings = true
 		},
 	},
+	["Blizzard_BehavioralMessaging"] =
+	{
+		["BehavioralMessagingDetails"] =
+		{
+			MinVersion = 10000, -- Added when?
+		},
+	},
 	["Blizzard_BindingUI"] =
 	{
 		["KeyBindingFrame"] =
@@ -681,6 +688,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 0,
 		},
 	},
+	["Blizzard_ChromieTimeUI"] =
+	{
+		["ChromieTimeFrame"] =
+		{
+			MinVersion = 90000,
+		},
+	},
 	["Blizzard_ClassTalentUI"] =
 	{
 		["ClassTalentFrame"] =
@@ -748,13 +762,17 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["CommunitiesFrame.NotificationSettingsDialog"] =
 				{
-					MinVersion = 40000, -- Added when?
+					MinVersion = 10000, -- Added when?
 				},
 			},
 		},
 		["CommunitiesFrame.RecruitmentDialog"] =
 		{
 			MinVersion = 40000, -- Added when?
+		},
+		["CommunitiesSettingsDialog"] =
+		{
+			MinVersion = 10000, -- Added when?
 		},
 		["CommunitiesGuildLogFrame"] =
 		{
@@ -978,7 +996,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["PlayerTalentFrame"] =
 		{
 			MinVersion = 11401,
-			MaxVersion = 100000,
+			-- MaxVersion = 100000, -- Not actually removed yet, but presumably will be in the near future
 			SubFrames =
 			{
 				["GlyphFrame"] =
@@ -1112,7 +1130,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ItemSocketingFrame"] =
 		{
-			MinVersion = 20000,
+			MinVersion = 10000,
 		},
 	},
 	["Blizzard_ItemUpgradeUI"] =
@@ -1181,6 +1199,25 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 100000,
 		},
 	},
+	["Blizzard_ProfessionsCustomerOrders"] =
+	{
+		["ProfessionsCustomerOrdersFrame"] =
+		{
+			MinVersion = 100000,
+			SubFrames =
+			{
+				["ProfessionsCustomerOrdersFrame.Form"] =
+				{
+					MinVersion = 100000,
+				},
+				["ProfessionsCustomerOrdersFrame.Form.CurrentListings"] =
+				{
+					MinVersion = 100000,
+					Detachable = true,
+				}
+			},
+		},
+	},
 	["Blizzard_PVPMatch"] =
 	{
 		["PVPMatchResults"] =
@@ -1232,6 +1269,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
+	["Blizzard_SubscriptionInterstitialUI"] =
+	{
+		["SubscriptionInterstitialFrame"] =
+		{
+			MinVersion = 40000, -- Added when?
+		},
+	},
 	["Blizzard_TalentUI"] =
 	{
 		["TalentFrame"] =
@@ -1242,7 +1286,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["PlayerTalentFrame"] =
 		{
 			MinVersion = 11401,
-			MaxVersion = 100000,
+			-- MaxVersion = 100000, -- Not actually removed yet, but presumably will be in the near future
 		},
 	},
 	["Blizzard_TalkingHeadUI"] =
@@ -1250,6 +1294,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["TalkingHeadFrame"] =
 		{
 			MinVersion = 40000, -- Added when?
+		},
+	},
+	["Blizzard_TimeManager"] =
+	{
+		["TimeManagerFrame"] =
+		{
+			MinVersion = 10000, -- Added when?
 		},
 	},
 	["Blizzard_TorghastLevelPicker"] =
