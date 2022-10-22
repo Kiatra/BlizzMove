@@ -65,10 +65,13 @@ function BlizzMoveAPI:UnregisterFrame(addOnName, frameName, permanent)
 	return BlizzMove:UnregisterFrame(addOnName, frameName, permanent);
 end
 
+--- @return table<string, string> # Returns a table with the addon name as key and value
 function BlizzMoveAPI:GetRegisteredAddOns()
 	return BlizzMove:GetRegisteredAddOns();
 end
 
+--- @param addOnName ?string # The name of the addon, defaults to BlizzMove (i.e. framexml frames)
+--- @return table<string, string> # Returns a table with the addon name as key and value
 function BlizzMoveAPI:GetRegisteredFrames(addOnName)
 	return BlizzMove:GetRegisteredFrames(addOnName);
 end

@@ -1074,6 +1074,7 @@ do
 		debugAnchor = 'debugAnchor',
 		debugLoadAll = 'debugLoadAll',
 		dumpMissingFrames = 'dumpMissingFrames',
+		dumpTopLevelFrames = 'dumpTopLevelFrames',
 	};
 	function BlizzMove:OnInitialize()
 		self.initialized = true;
@@ -1098,6 +1099,7 @@ do
 			arg1 == commands.dumpDebugInfo
 			or arg1 == commands.dumpChangedCVars
 			or arg1 == commands.debugAnchor
+			or arg1 == commands.dumpTopLevelFrames
 		) then
 			local loaded = LoadAddOn('BlizzMove_Debug');
 			--- @type BlizzMove_Debug
@@ -1128,6 +1130,8 @@ do
 				else
 					self:Print('No bad anchor connections found');
 				end
+			elseif arg1 == commands.dumpTopLevelFrames then
+				DebugModule:DumpTopLevelFrames();
 			end
 
 			return;
@@ -1219,6 +1223,7 @@ do
 	function BlizzMove:OnEnable()
 		self.enabled = true;
 		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
+		C_CVar.SetCVar('enableSourceLocationLookup', 1)
 
 		self:ADDON_LOADED(_, self.name);
 		for addOnName, _ in pairs(self.Frames) do
