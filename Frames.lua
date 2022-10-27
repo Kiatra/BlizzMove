@@ -403,6 +403,10 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 40000, -- Added when?
 	},
+	["QuickKeybindFrame"] =
+	{
+		MinVersion = 100000, -- Moved from Blizzard_BindingUI
+	},
 	["ReadyCheckFrame"] =
 	{
 		MinVersion = 0,
@@ -620,6 +624,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		{
 			MinVersion = 0,
 			MaxVersion = 100000,
+		},
+		["QuickKeybindFrame"] =
+		{
+			MinVersion = 40000, -- Added when?
+			MaxVersion = 100000, -- Moved to FrameXML
 		},
 	},
 	["Blizzard_BlackMarketUI"] =
