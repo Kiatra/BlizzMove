@@ -204,7 +204,7 @@ BlizzMoveAPI:RegisterFrames(
 			["GuildFrame"] =
 			{
 				MinVersion = 0,
-				MaxVersion = 40000, -- Moved to LoD when?
+				MaxVersion = 40000, -- Moved to Blizzard_GuildUI when?
 				SubFrames =
 				{
 					["GuildInfoFrame"] =
@@ -263,7 +263,7 @@ BlizzMoveAPI:RegisterFrames(
 	["LFGParentFrame"] =
 	{
 		MinVersion = 20502,
-		MaxVersion = 20503, -- Moved to LOD Blizzard_LookingForGroupUI
+		MaxVersion = 20503, -- Moved to Blizzard_LookingForGroupUI
 	},
 	["LootFrame"] =
 	{
@@ -345,7 +345,7 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["BattlefieldFrame"] =
 			{
-				MinVersion = 30400, -- Moved from UIParent
+				MinVersion = 30400, -- Moved from FrameXML
 				MaxVersion = 70300, -- Removed when?
 				SilenceCompatabilityWarnings = true,
 			},
@@ -1042,7 +1042,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["GuildFrame"] =
 		{
-			MinVersion = 40000, -- Moved out of FriendsFrame when?
+			MinVersion = 40000, -- Moved from FrameXML when?
 		},
 	},
 	["Blizzard_InspectUI"] =
@@ -1153,7 +1153,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["LFGParentFrame"] =
 		{
-			MinVersion = 20504, -- Moved from framexml
+			MinVersion = 20504, -- Moved from FrameXML
 			MaxVersion = 70000, -- Removed when?
 		},
 	},
