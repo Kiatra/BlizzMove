@@ -278,6 +278,11 @@ BlizzMoveAPI:RegisterFrames(
 			{
 				MinVersion = 0,
 			},
+			["MailFrameInset"] =
+			{
+				MinVersion = 0,
+				ForceParentage = true,
+			},
 			["OpenMailFrame"] =
 			{
 				MinVersion = 0,

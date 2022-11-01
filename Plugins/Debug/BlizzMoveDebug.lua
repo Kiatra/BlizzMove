@@ -57,6 +57,7 @@ function Module:FindBadAnchorConnections(frame)
                     name = getFrameName(child),
                     targetName = getFrameName(parent),
                     source = child.GetSourceLocation and child:GetSourceLocation() or 'Unknown',
+                    targetSource = parent.GetSourceLocation and parent:GetSourceLocation() or 'Unknown',
                 });
             end
         end

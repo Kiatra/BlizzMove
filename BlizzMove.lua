@@ -401,8 +401,8 @@ do
 			local text = sharedText .. 'Copy the text from this popup window, and report it to the addon author.\n\nBad anchor connections for "' .. frameName .. '":\n';
 			for _, info in pairs(result) do
 				text = text .. string__format(
-					'\n\n"%s" is outside anchor family, but referenced by "%s" (created in "%s")',
-					info.targetName, info.name, info.source
+					'\n\n"%s" is outside anchor family, but referenced by "%s" (created in "%s", and "%s" respectively)',
+					info.targetName, info.name, info.targetSource, info.source
 				);
 			end
 			DebugModule:GetMainFrame(text):Show();
@@ -1122,8 +1122,8 @@ do
 					local text = 'Bad anchor connections for "' .. arg2 .. '":\n';
 					for _, info in pairs(result) do
 						text = text .. string__format(
-							'\n\n"%s" is outside anchor family, but referenced by "%s" (created in "%s")',
-							info.targetName, info.name, info.source
+							'\n\n"%s" is outside anchor family, but referenced by "%s" (created in "%s", and "%s" respectively)',
+							info.targetName, info.name, info.targetSource, info.source
 						);
 					end
 					DebugModule:GetMainFrame(text):Show();
