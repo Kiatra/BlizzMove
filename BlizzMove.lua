@@ -531,10 +531,7 @@ do
 			newScale = parentScale;
 		end
 
-		if (BlizzMove.DB.saveScaleStrategy == 'permanent') then
-			BlizzMove.DB.scales[frameData.storage.frameName] = newScale;
-		end
-
+		BlizzMove.DB.scales[frameData.storage.frameName] = newScale;
 		frame:SetScale(newScale);
 		BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string__format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)));
 
@@ -804,6 +801,29 @@ do
 		local clampHeight = (frame:GetHeight() - clampDistance) or 0;
 
 		frame:SetClampRectInsets(clampWidth, -clampWidth, -clampHeight, clampHeight);
+	end
+end
+
+------------------------------------------------------------------------------------------------------
+--- Secure Global Hook Handlers
+------------------------------------------------------------------------------------------------------
+local OnUpdateScaleForFit;
+do
+	function OnUpdateScaleForFit(frame)
+		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
+
+		BlizzMove:DebugPrint("OnUpdateScaleForFit:", BlizzMove.FrameData[frame].storage.frameName);
+
+		if InCombatLockdown() and frame:IsProtected() then
+			BlizzMove:AddToCombatLockdownQueue(OnUpdateScaleForFit, frame);
+			BlizzMove:DebugPrint('Adding to combatLockdownQueue: OnUpdateScaleForFit - ', BlizzMove.FrameData[frame].storage.frameName);
+
+			return;
+		end
+
+		if(BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]) then
+			SetFrameScale(frame, BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]);
+		end
 	end
 end
 
@@ -1091,6 +1111,7 @@ do
 			self:RegisterChatCommand('bm'..command, function(message) self:OnSlashCommand(command..' '..message); end);
 		end
 		self:ProcessFrames(self.name);
+		self:SecureHook('UpdateScaleForFit', OnUpdateScaleForFit);
 	end
 
 	function BlizzMove:OnSlashCommand(message)
