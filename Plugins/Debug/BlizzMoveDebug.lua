@@ -190,7 +190,6 @@ local ignoredFrames = {
     CommunitiesTicketManagerDialog = true, -- popup frame, not sure if we want to move it
     CompactRaidFrameManager = true, -- does not behave like a window
     EventTrace = true, -- movable by default
-    EventTrace = true, -- movable by default
     GMChatFrame = true, -- movable by default
     GMChatStatusFrame = true, -- popup frame
     GuideFrame = true, -- not sure what it is
@@ -217,7 +216,8 @@ function Module:DumpTopLevelFrames()
     end
     for _, addon in pairs(BlizzMoveAPI:GetRegisteredAddOns()) do
         LoadAddOn(addon);
-        for _, frame in pairs(BlizzMoveAPI:GetRegisteredFrames(addon)) do
+        for _, frameName in pairs(BlizzMoveAPI:GetRegisteredFrames(addon)) do
+            local frame = BlizzMove:GetFrameFromName(frameName);
             registeredFrames[frame] = true;
         end
     end

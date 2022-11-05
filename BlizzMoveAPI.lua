@@ -71,7 +71,7 @@ function BlizzMoveAPI:GetRegisteredAddOns()
 end
 
 --- @param addOnName ?string # The name of the addon, defaults to BlizzMove (i.e. framexml frames)
---- @return table<string, string> # Returns a table with the addon name as key and value
+--- @return table<string, string> # Returns a table with the frame name as key and value
 function BlizzMoveAPI:GetRegisteredFrames(addOnName)
 	return BlizzMove:GetRegisteredFrames(addOnName);
 end

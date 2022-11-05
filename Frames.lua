@@ -1224,16 +1224,16 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ProfessionsCustomerOrdersFrame"] =
 		{
-			MinVersion = 100000,
+			MinVersion = 100002,
 			SubFrames =
 			{
 				["ProfessionsCustomerOrdersFrame.Form"] =
 				{
-					MinVersion = 100000,
+					MinVersion = 100002,
 				},
 				["ProfessionsCustomerOrdersFrame.Form.CurrentListings"] =
 				{
-					MinVersion = 100000,
+					MinVersion = 100002,
 					Detachable = true,
 				}
 			},
