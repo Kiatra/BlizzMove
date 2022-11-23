@@ -267,6 +267,15 @@ do
 		return frameTable;
 	end
 
+	function BlizzMove:GetFrameName(frame)
+		return
+			frame
+			and self.FrameData
+			and self.FrameData[frame]
+			and self.FrameData[frame].storage
+			and self.FrameData[frame].storage.frameName
+	end
+
 	function BlizzMove:ResetScaleStorage()
 		wipe(self.DB.scales);
 	end
@@ -276,7 +285,8 @@ do
 	end
 
 	function BlizzMove:SetupPointStorage(frame)
-		if not frame or not self.FrameData[frame] or not self.FrameData[frame].storage or not self.FrameData[frame].storage.frameName then return false; end
+		local frameName = self:GetFrameName(frame);
+		if not frameName then return false; end
 
 		if self.DB.savePosStrategy ~= "permanent" then
 			if not self.FrameData[frame].storage.points then
@@ -284,8 +294,6 @@ do
 			end
 			return true;
 		end
-
-		local frameName = self.FrameData[frame].storage.frameName;
 
 		if self.FrameData[frame].storage.points and self.FrameData[frame].storage.points == self.DB.points[frameName] then return true; end
 		if self.DB.points[frameName] == nil then
@@ -362,13 +370,8 @@ do
 				framePoints[curPoint].offY = frame:GetPoint(curPoint);
 
 				local relativeFrame = framePoints[curPoint].relativeFrame;
-				if (
-					relativeFrame
-					and BlizzMove.FrameData[relativeFrame]
-					and BlizzMove.FrameData[relativeFrame].storage
-					and BlizzMove.FrameData[relativeFrame].storage.frameName
-				) then
-					framePoints[curPoint].relativeFrameName = BlizzMove.FrameData[relativeFrame].storage.frameName;
+				if (BlizzMove:GetFrameName(relativeFrame)) then
+					framePoints[curPoint].relativeFrameName = BlizzMove:GetFrameName(relativeFrame);
 				elseif (relativeFrame and relativeFrame.GetName and relativeFrame:GetName()) then
 					framePoints[curPoint].relativeFrameName = relativeFrame:GetName();
 				end
@@ -462,10 +465,12 @@ do
 
 		if framePoints and framePoints[1] then
 			frame:ClearAllPoints();
+			local SetPoint = frame.SetPointBase or frame.SetPoint;
 
 			for curPoint = 1, #framePoints do
 				ignoreSetPointHook = true;
-				frame:SetPoint(
+				SetPoint(
+					frame,
 					framePoints[curPoint].anchorPoint,
 					framePoints[curPoint].relativeFrame,
 					framePoints[curPoint].relativePoint,
@@ -737,19 +742,19 @@ do
 
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
-		BlizzMove:DebugPrint("OnShow:", BlizzMove.FrameData[frame].storage.frameName);
+		BlizzMove:DebugPrint("OnShow:", BlizzMove:GetFrameName(frame));
 
 		if InCombatLockdown() and frame:IsProtected() then
 			BlizzMove:AddToCombatLockdownQueue(OnShow, frame);
-			BlizzMove:DebugPrint('Adding to combatLockdownQueue: OnShow - ', BlizzMove.FrameData[frame].storage.frameName);
+			BlizzMove:DebugPrint('Adding to combatLockdownQueue: OnShow - ', BlizzMove:GetFrameName(frame));
 
 			return;
 		end
 
 		SetFrameParent(frame);
 
-		if(BlizzMove.DB.saveScaleStrategy == 'permanent' and BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]) then
-			SetFrameScale(frame, BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]);
+		if(BlizzMove.DB.saveScaleStrategy == 'permanent' and BlizzMove.DB.scales[BlizzMove:GetFrameName(frame)]) then
+			SetFrameScale(frame, BlizzMove.DB.scales[BlizzMove:GetFrameName(frame)]);
 		end
 
 	end
@@ -812,17 +817,17 @@ do
 	function OnUpdateScaleForFit(frame)
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
-		BlizzMove:DebugPrint("OnUpdateScaleForFit:", BlizzMove.FrameData[frame].storage.frameName);
+		BlizzMove:DebugPrint("OnUpdateScaleForFit:", BlizzMove:GetFrameName(frame));
 
 		if InCombatLockdown() and frame:IsProtected() then
 			BlizzMove:AddToCombatLockdownQueue(OnUpdateScaleForFit, frame);
-			BlizzMove:DebugPrint('Adding to combatLockdownQueue: OnUpdateScaleForFit - ', BlizzMove.FrameData[frame].storage.frameName);
+			BlizzMove:DebugPrint('Adding to combatLockdownQueue: OnUpdateScaleForFit - ', BlizzMove:GetFrameName(frame));
 
 			return;
 		end
 
-		if(BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]) then
-			SetFrameScale(frame, BlizzMove.DB.scales[BlizzMove.FrameData[frame].storage.frameName]);
+		if(BlizzMove.DB.scales[BlizzMove:GetFrameName(frame)]) then
+			SetFrameScale(frame, BlizzMove.DB.scales[BlizzMove:GetFrameName(frame)]);
 		end
 	end
 end
@@ -831,6 +836,19 @@ end
 --- Processing Frame Functions
 ------------------------------------------------------------------------------------------------------
 do
+	local function hookScript(frame, script, handler)
+		BlizzMove:SecureHookScript(frame, script, handler);
+		if (frame:HasScript(script)) then
+			hooksecurefunc(frame, 'SetScript', function(self, scriptName)
+				if (scriptName == script and self == frame) then
+					BlizzMove:DebugPrint('SetScript hook triggered for ', BlizzMove:GetFrameName(frame), scriptName);
+					BlizzMove:Unhook(frame, script);
+					BlizzMove:SecureHookScript(frame, script, handler);
+				end
+			end);
+		end
+	end
+
 	local function MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent)
 		if not frame then return false; end
 
@@ -877,19 +895,19 @@ do
 		if not frameData.IgnoreMouse then
 			if not frameData.NonDraggable then
 				frame:EnableMouse(true);
-				BlizzMove:SecureHookScript(frame, "OnMouseDown", OnMouseDown);
-				BlizzMove:SecureHookScript(frame, "OnMouseUp",   OnMouseUp);
+				hookScript(frame, "OnMouseDown", OnMouseDown);
+				hookScript(frame, "OnMouseUp",   OnMouseUp);
 			end
 
 			if not frameData.IgnoreMouseWheel then
 				frame:EnableMouseWheel(true);
-				BlizzMove:SecureHookScript(frame, "OnMouseWheel", OnMouseWheel);
+				hookScript(frame, "OnMouseWheel", OnMouseWheel);
 			end
 		end
 
-		BlizzMove:SecureHookScript(frame, "OnShow", OnShow);
+		hookScript(frame, "OnShow", OnShow);
 		if frameParent then
-			BlizzMove:SecureHookScript(frame, "OnHide", OnSubFrameHide);
+			hookScript(frame, "OnHide", OnSubFrameHide);
 		end
 
 		BlizzMove:SecureHook(frame, "SetPoint",  OnSetPoint);
