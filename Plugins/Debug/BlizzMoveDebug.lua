@@ -310,33 +310,6 @@ function Module:GetMainFrame(text)
         eb:SetScript('OnEscapePressed', function() f:Hide() end);
         sf:SetScrollChild(eb);
 
-        -- resizing
-        f:SetResizable(true);
-        --f:SetMinResize(150, 100);
-        local rb = CreateFrame('Button', f);
-        rb:SetPoint('BOTTOMRIGHT', -6, 7);
-        rb:SetSize(16, 16);
-
-        rb:SetNormalTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up');
-        rb:SetHighlightTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight');
-        rb:SetPushedTexture('Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down');
-
-        rb:SetScript('OnMouseDown', function(frame, button)
-            if button == 'LeftButton' then
-                f:StartSizing('BOTTOMRIGHT');
-                frame:GetHighlightTexture():Hide(); -- more noticeable
-            end
-        end);
-        rb:SetScript('OnMouseUp', function(frame, button)
-            f:StopMovingOrSizing();
-            frame:GetHighlightTexture():Show();
-            eb:SetWidth(sf:GetWidth());
-
-            -- save size between sessions
-            self.frameConfig.width = f:GetWidth();
-            self.frameConfig.height = f:GetHeight();
-        end);
-
         _G.BlizzMoveCopyFrame = f;
     end
     _G.BlizzMoveCopyFrameEditBox:SetText(text);
