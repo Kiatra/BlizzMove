@@ -223,7 +223,9 @@ function Module:DumpTopLevelFrames()
         LoadAddOn(addon);
         for _, frameName in pairs(BlizzMoveAPI:GetRegisteredFrames(addon)) do
             local frame = BlizzMove:GetFrameFromName(addon, frameName);
-            registeredFrames[frame] = true;
+            if frame then
+                registeredFrames[frame] = true;
+            end
         end
     end
 

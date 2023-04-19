@@ -1215,6 +1215,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	},
 	["Blizzard_Professions"] =
 	{
+		["InspectRecipeFrame"] =
+		{
+			MinVersion = 100100,
+		},
 		["ProfessionsFrame"] =
 		{
 			MinVersion = 100000,
