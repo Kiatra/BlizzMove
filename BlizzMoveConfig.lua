@@ -2,7 +2,7 @@
 local _G = getfenv(0);
 local LibStub = _G.LibStub;
 local pairs = _G.pairs;
-local GetAddOnMetadata = _G.GetAddOnMetadata;
+local GetAddOnMetadata = _G.GetAddOnMetadata or _G.C_AddOns.GetAddOnMetadata;
 local ReloadUI = _G.ReloadUI;
 local string__match = _G.string.match;
 local StaticPopupDialogs = _G.StaticPopupDialogs;

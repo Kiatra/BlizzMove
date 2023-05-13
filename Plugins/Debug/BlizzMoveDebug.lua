@@ -11,7 +11,7 @@ local GetCVarInfo = _G.GetCVarInfo;
 local IsAddOnLoaded = _G.IsAddOnLoaded;
 local GetNumAddOns = _G.GetNumAddOns;
 local GetAddOnInfo = _G.GetAddOnInfo;
-local GetAddOnMetadata = _G.GetAddOnMetadata;
+local GetAddOnMetadata = _G.GetAddOnMetadata or _G.C_AddOns.GetAddOnMetadata;
 
 local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove');
 if not BlizzMove then return ; end
