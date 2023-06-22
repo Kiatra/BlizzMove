@@ -427,7 +427,11 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["SettingsPanel"] =
 	{
-		MinVersion = 100000,
+		VersionRanges =
+		{
+			{ Min = 30402, Max = 40000 }, -- Backported in Wrath 3.4.2
+			{ Min = 100000 },
+		},
 	},
 	["SpellBookFrame"] =
 	{

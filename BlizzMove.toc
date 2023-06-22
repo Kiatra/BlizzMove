@@ -16,7 +16,6 @@
 
 # Libraries
 Libs\Libs.xml
-TaintLess.xml
 
 # Add-On
 BlizzMove.lua

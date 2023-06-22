@@ -185,10 +185,14 @@ local blizzardAddons = { "blizzard_achievementui", "blizzard_adventuremap", "bli
 -- manual list of Toplevel frames that we don't handle on purpose
 local ignoredFrames = {
     AuctionHouseMultisellProgressFrame = true, -- popup frame
+    AuctionProgressFrame = true, -- popup frame
+    BarbersChoiceConfirmFrame = true, -- popup frame
+    BarberShopBannerFrame = true, -- graphic at the top of the screen in classic
     BarberShopFrame = true, -- fullscreen frame
     BattlefieldMapFrame = true, -- movable by default
     ClassTrialThanksForPlayingDialog = true, -- popup frame
     CombatText = true, -- seems to be scrolling combat text - don't move it
+    CommentatorEventAlertsFrame = true, -- unsure what it is, might be commentator-mode only
     CommunitiesAvatarPickerDialog = true, -- fullscreen popup frame
     CommunitiesTicketManagerDialog = true, -- popup frame, not sure if we want to move it
     CompactRaidFrameManager = true, -- does not behave like a window
