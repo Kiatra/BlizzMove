@@ -94,6 +94,8 @@ do
 							type(range) ~= "table"
 							or (range.Min and (type(range.Min) ~= "number" or range.Min < 0))
 							or (range.Max and (type(range.Max) ~= "number" or range.Max < 0))
+							or (range.Max and range.Min and range.Max < range.Min)
+							or (not range.Max and not range.Min)
 						) then
 							validationError = true;
 							break;

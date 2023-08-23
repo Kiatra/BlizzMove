@@ -216,6 +216,7 @@ local ignoredFrames = {
     UIWidgetTopCenterContainerFrame = true, -- not sure what it is
     VoiceChatChannelActivatedNotification = true, -- popup frame, not sure if we want to move it
     VoiceChatPromptActivateChannel = true, -- popup frame, not sure if we want to move it
+    WorldMapFrame = true, -- fullscreen on classic
 };
 function Module:DumpTopLevelFrames()
     local registeredFrames = {};

@@ -21,20 +21,15 @@ BlizzMoveAPI:RegisterFrames(
 		MinVersion = 0,
 		SubFrames =
 		{
-			["PaperDollFrame"] =
-			{
-				MinVersion = 0,
-			},
+			["PaperDollFrame"] = {},
 			["PetPaperDollFrame"] =
 			{
-				MinVersion = 0,
 				MaxVersion = 70300, -- Removed when?
 				SubFrames =
 				{
 					["PetPaperDollFrameCompanionFrame"] =
 					{
 						MinVersion = 30000,
-						MaxVersion = 70300, -- Removed when?
 					},
 				},
 			},
@@ -45,24 +40,20 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["ReputationFrame"] =
 			{
-				MinVersion = 0,
 				SubFrames =
 				{
 					["ReputationDetailFrame"] =
 					{
-						MinVersion = 0,
 						Detachable = true,
 					},
 				},
 			},
 			["SkillFrame"] =
 			{
-				MinVersion = 0,
 				MaxVersion = 70300, -- Removed when?
 			},
 			["HonorFrame"] =
 			{
-				MinVersion = 0,
 				MaxVersion = 20000,
 			},
 			["PVPFrame"] =
@@ -72,46 +63,28 @@ BlizzMoveAPI:RegisterFrames(
 				SilenceCompatabilityWarnings = true,
 				SubFrames =
 				{
-					["PVPFrameHonor"] =
-					{
-						MinVersion = 20000,
-						MaxVersion = 30000,
-					},
-					["PVPFrameArena"] =
-					{
-						MinVersion = 20000,
-						MaxVersion = 30000,
-					},
-					["PVPTeam1"] =
-					{
-						MinVersion = 20000,
-						MaxVersion = 30000,
-					},
-					["PVPTeam2"] =
-					{
-						MinVersion = 20000,
-						MaxVersion = 30000,
-					},
-					["PVPTeam3"] =
-					{
-						MinVersion = 20000,
-						MaxVersion = 30000,
-					},
+					["PVPFrameHonor"] = {},
+					["PVPFrameArena"] = {},
+					["PVPTeam1"] = {},
+					["PVPTeam2"] = {},
+					["PVPTeam3"] = {},
 				},
 			},
 			["TokenFrame"] =
 			{
-				MinVersion = 30000,
+				VersionRanges =
+				{
+					{ Min = 11404, Max = 20000 }, -- exists, but does nothing
+					{ Min = 30000 },
+				},
 				SubFrames =
 				{
 					["TokenFramePopup"] =
 					{
-						MinVersion = 30000,
 						Detachable = true,
 					},
 					["TokenFrameContainer"] =
 					{
-						MinVersion = 30000,
 						MaxVersion = 100000,
 					},
 				},
@@ -154,13 +127,11 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["RaidInfoFrame"] =
 			{
-				MinVersion = 0,
 				Detachable = true,
 				SubFrames =
 				{
 					["RaidInfoScrollFrame"] =
 					{
-						MinVersion = 0,
 						MaxVersion = 100000,
 					},
 				},
@@ -172,7 +143,6 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["FriendsFrameBattlenetFrame.BroadcastFrame"] =
 			{
-				MinVersion = 0,
 				Detachable = true,
 			},
 			["FriendsListFrameScrollFrame"] =
@@ -182,7 +152,6 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["FriendsFrameFriendsScrollFrame"] =
 			{
-				MinVersion = 0,
 				MaxVersion = 40000, -- Removed when?
 			},
 			["QuickJoinScrollFrame"] =
@@ -203,28 +172,20 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["GuildFrame"] =
 			{
-				MinVersion = 0,
 				MaxVersion = 40000, -- Moved to Blizzard_GuildUI when?
 				SubFrames =
 				{
 					["GuildInfoFrame"] =
 					{
-						MinVersion = 0,
-						MaxVersion = 40000, -- Removed when?
 						Detachable = true,
 						SubFrames =
 						{
-							["GuildInfoFrameScrollFrame"] =
-							{
-								MinVersion = 0,
-								MaxVersion = 40000, -- Removed when?
-							},
+							["GuildInfoFrameScrollFrame"] = {},
 						},
 					},
 					["GuildEventLogFrame"] =
 					{
 						MinVersion = 30000,
-						MaxVersion = 40000, -- Removed when?
 						Detachable = true,
 					},
 				},
@@ -274,29 +235,20 @@ BlizzMoveAPI:RegisterFrames(
 		MinVersion = 0,
 		SubFrames =
 		{
-			["SendMailFrame"] =
-			{
-				MinVersion = 0,
-			},
+			["SendMailFrame"] = {},
 			["MailFrameInset"] =
 			{
-				MinVersion = 0,
 				ForceParentage = true,
 			},
 			["OpenMailFrame"] =
 			{
-				MinVersion = 0,
 				Detachable = true,
 				ManuallyScaleWithParent = true,
 				SubFrames =
 				{
-					["OpenMailSender"] =
-					{
-						MinVersion = 0,
-					},
+					["OpenMailSender"] = {},
 					["OpenMailFrameInset"] =
 					{
-						MinVersion = 0,
 						ForceParentage = true,
 					},
 				},
@@ -322,22 +274,16 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["LFGListApplicationViewerScrollFrame"] =
 			{
-				MinVersion = 40000,
 				MaxVersion = 100000,
 			},
-			["LFGListFrame.ApplicationViewer.UnempoweredCover"] =
-			{
-				MinVersion = 40000,
-			},
+			["LFGListFrame.ApplicationViewer.UnempoweredCover"] = {},
 			["LFGListSearchPanelScrollFrame"] =
 			{
-				MinVersion = 40000,
 				MaxVersion = 100000,
 				IgnoreMouseWheel = true,
 			},
 			["ScenarioQueueFrameSpecific"] =
 			{
-				MinVersion = 40000,
 				MaxVersion = 90000,
 			},
 		},
@@ -361,31 +307,11 @@ BlizzMoveAPI:RegisterFrames(
 				SilenceCompatabilityWarnings = true,
 				SubFrames =
 				{
-					["PVPFrameHonor"] =
-					{
-						MinVersion = 30000,
-						MaxVersion = 70300, -- Removed when?
-					},
-					["PVPFrameArena"] =
-					{
-						MinVersion = 30000,
-						MaxVersion = 70300, -- Removed when?
-					},
-					["PVPTeam1"] =
-					{
-						MinVersion = 30000,
-						MaxVersion = 70300, -- Removed when?
-					},
-					["PVPTeam2"] =
-					{
-						MinVersion = 30000,
-						MaxVersion = 70300, -- Removed when?
-					},
-					["PVPTeam3"] =
-					{
-						MinVersion = 30000,
-						MaxVersion = 70300, -- Removed when?
-					},
+					["PVPFrameHonor"] = {},
+					["PVPFrameArena"] = {},
+					["PVPTeam1"] = {},
+					["PVPTeam2"] = {},
+					["PVPTeam3"] = {},
 				},
 			},
 		},
@@ -429,8 +355,9 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		VersionRanges =
 		{
+			{ Min = 11404, Max = 20000 }, -- Backported in Classic 1.14.4
 			{ Min = 30402, Max = 40000 }, -- Backported in Wrath 3.4.2
-			{ Min = 100000 },
+			{ Min = 100000 }, -- Added in DF
 		},
 	},
 	["SpellBookFrame"] =
@@ -471,17 +398,10 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["QuestMapFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
 				SubFrames =
 				{
-					["QuestMapFrame.DetailsFrame.RewardsFrame"] =
-					{
-						MinVersion = 40000, -- Added when?
-					},
-					["QuestMapFrame.DetailsFrame.ScrollFrame"] =
-					{
-						MinVersion = 40000, -- Added when?
-					},
+					["QuestMapFrame.DetailsFrame.RewardsFrame"] = {},
+					["QuestMapFrame.DetailsFrame.ScrollFrame"] = {},
 				},
 			},
 		},
@@ -499,12 +419,15 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["AchievementFrame"] =
 		{
-			MinVersion = 30000,
+			VersionRanges =
+			{
+				{ Min = 11404, Max = 20000 }, -- Backported in a broken state in Classic 1.14.4
+				{ Min = 30000 },
+			},
 			SubFrames =
 			{
 				["AchievementFrameHeader"] =
 				{
-					MinVersion = 30000,
 					MaxVersion = 100000,
 				},
 				["AchievementFrame.Header"] =
@@ -513,12 +436,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["AchievementFrameCategoriesContainer"] =
 				{
-					MinVersion = 30000,
 					MaxVersion = 100000,
 				},
 				["AchievementFrameAchievementsContainer"] =
 				{
-					MinVersion = 30000,
 					MaxVersion = 100000,
 				},
 			},
@@ -547,14 +468,8 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 90000,
 			SubFrames =
 			{
-				["AnimaDiversionFrame.ScrollContainer"] =
-				{
-					MinVersion = 90000,
-				},
-				["AnimaDiversionFrame.ReinforceProgressFrame"] =
-				{
-					MinVersion = 90000,
-				},
+				["AnimaDiversionFrame.ScrollContainer"] = {},
+				["AnimaDiversionFrame.ReinforceProgressFrame"] = {},
 			},
 		},
 	},
@@ -658,12 +573,15 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["CalendarFrame"] =
 		{
-			MinVersion = 30000,
+			VersionRanges =
+			{
+				{ Min = 11404, Max = 20000 }, -- exists, in a partially broken state
+				{ Min = 30000 },
+			},
 			SubFrames =
 			{
 				["CalendarCreateEventFrame"] =
 				{
-					MinVersion = 30000,
 					Detachable = true,
 					SubFrames =
 					{
@@ -676,14 +594,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["CalendarViewEventFrame"] =
 				{
-					MinVersion = 30000,
 					Detachable = true,
 					SubFrames =
 					{
-						["CalendarViewEventFrame.HeaderFrame"] =
-						{
-							MinVersion = 30000,
-						},
+						["CalendarViewEventFrame.HeaderFrame"] = {},
 						["CalendarViewEventInviteListScrollFrame"] =
 						{
 							MinVersion = 40000, -- Added when?
@@ -693,7 +607,6 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["CalendarViewHolidayFrame"] =
 				{
-					MinVersion = 30000,
 					Detachable = true,
 				},
 			},
@@ -727,10 +640,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 100000,
 			SubFrames =
 			{
-				["ClassTalentFrame.TalentsTab.ButtonsParent"] =
-				{
-					MinVersion = 100000,
-				},
+				["ClassTalentFrame.TalentsTab.ButtonsParent"] = {},
 			},
 		},
 	},
@@ -741,10 +651,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 90200,
 			SubFrames =
 			{
-				["ClickBindingFrame.ScrollBox"] =
-				{
-					MinVersion = 90200,
-				},
+				["ClickBindingFrame.ScrollBox"] = {},
 			},
 		},
 		["ClickBindingFrame.TutorialFrame"] =
@@ -785,10 +692,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					Detachable = true,
 					MinVersion = 40000, -- Added when?
 				},
-				["CommunitiesFrame.NotificationSettingsDialog"] =
-				{
-					MinVersion = 0, -- Added when?
-				},
+				["CommunitiesFrame.NotificationSettingsDialog"] = {},
 			},
 		},
 		["CommunitiesFrame.RecruitmentDialog"] =
@@ -863,7 +767,6 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["EncounterJournal.instanceSelect.scroll"] =
 				{
-					MinVersion = 40000,
 					MaxVersion = 100000,
 				},
 				["EncounterJournal.instanceSelect.ScrollBox"] =
@@ -872,25 +775,16 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["EncounterJournal.encounter.instance.loreScroll"] =
 				{
-					MinVersion = 40000,
 					MaxVersion = 100000,
 				},
-				["EncounterJournal.encounter.info.overviewScroll"] =
-				{
-					MinVersion = 40000,
-				},
+				["EncounterJournal.encounter.info.overviewScroll"] = {},
 				["EncounterJournal.encounter.info.lootScroll"] =
 				{
-					MinVersion = 40000,
 					MaxVersion = 100000,
 				},
-				["EncounterJournal.encounter.info.detailsScroll"] =
-				{
-					MinVersion = 40000,
-				},
+				["EncounterJournal.encounter.info.detailsScroll"] = {},
 				["EncounterJournal.encounter.info.model"] =
 				{
-					MinVersion = 40000,
 					NonDraggable = true,
 				},
 			},
@@ -927,12 +821,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["GarrisonLandingPageReportListListScrollFrame"] =
 				{
-					MinVersion = 60000,
 					MaxVersion = 100000,
 				},
 				["GarrisonLandingPageFollowerListListScrollFrame"] =
 				{
-					MinVersion = 60000,
 					MaxVersion = 100000,
 				},
 			},
@@ -970,35 +862,16 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 90000,
 			SubFrames =
 			{
-				["CovenantMissionFrame.MissionTab"] =
-				{
-					MinVersion = 90000,
-				},
-				["CovenantMissionFrame.MissionTab.MissionPage"] =
-				{
-					MinVersion = 90000,
-				},
-				["CovenantMissionFrame.MissionTab.MissionPage.CostFrame"] =
-				{
-					MinVersion = 90000,
-				},
-				["CovenantMissionFrame.MissionTab.MissionPage.StartMissionFrame"] =
-				{
-					MinVersion = 90000,
-				},
-				["CovenantMissionFrame.MissionTab.MissionList.MaterialFrame"] =
-				{
-					MinVersion = 90000,
-				},
+				["CovenantMissionFrame.MissionTab"] = {},
+				["CovenantMissionFrame.MissionTab.MissionPage"] = {},
+				["CovenantMissionFrame.MissionTab.MissionPage.CostFrame"] = {},
+				["CovenantMissionFrame.MissionTab.MissionPage.StartMissionFrame"] = {},
+				["CovenantMissionFrame.MissionTab.MissionList.MaterialFrame"] = {},
 				["CovenantMissionFrame.FollowerList.listScroll"] =
 				{
-					MinVersion = 90000,
 					MaxVersion = 100000,
 				},
-				["CovenantMissionFrame.FollowerList.MaterialFrame"] =
-				{
-					MinVersion = 90000,
-				},
+				["CovenantMissionFrame.FollowerList.MaterialFrame"] = {},
 			},
 		},
 	},
@@ -1009,10 +882,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 100000,
 			SubFrames =
 			{
-				["GenericTraitFrame.ButtonsParent"] =
-				{
-					MinVersion = 100000,
-				},
+				["GenericTraitFrame.ButtonsParent"] = {},
 			},
 		},
 	},
@@ -1026,7 +896,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["GlyphFrame"] =
 				{
-					MinVersion = 30000,
+					MinVersion = 11404, -- Backported in a broken state
 					MaxVersion = 60200,
 				},
 			},
@@ -1068,13 +938,9 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 0,
 			SubFrames =
 			{
-				["InspectPaperDollFrame"] =
-				{
-					MinVersion = 0,
-				},
+				["InspectPaperDollFrame"] = {},
 				["InspectHonorFrame"] =
 				{
-					MinVersion = 0,
 					MaxVersion = 20000,
 				},
 				["InspectPVPFrame"] =
@@ -1084,27 +950,22 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					{
 						["InspectPVPFrameHonor"] =
 						{
-							MinVersion = 20000,
 							MaxVersion = 70300, -- Removed when?
 						},
 						["InspectPVPFrameArena"] =
 						{
-							MinVersion = 20000,
 							MaxVersion = 70300, -- Removed when?
 						},
 						["InspectPVPTeam1"] =
 						{
-							MinVersion = 20000,
 							MaxVersion = 70300, -- Removed when?
 						},
 						["InspectPVPTeam2"] =
 						{
-							MinVersion = 20000,
 							MaxVersion = 70300, -- Removed when?
 						},
 						["InspectPVPTeam3"] =
 						{
-							MinVersion = 20000,
 							MaxVersion = 70300, -- Removed when?
 						},
 					},
@@ -1169,8 +1030,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["LFGParentFrame"] =
 		{
-			MinVersion = 20504, -- Moved from FrameXML
-			MaxVersion = 70000, -- Removed when?
+			VersionRanges =
+			{
+				{ Min = 11404, Max = 20000 }, -- Backported in a broken state
+				{ Min = 20504, Max = 70000 }, -- Moved from FrameXML; Removed when?
+			},
 		},
 	},
 	["Blizzard_LookingForGuildUI"] =
@@ -1235,13 +1099,9 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			MinVersion = 100002,
 			SubFrames =
 			{
-				["ProfessionsCustomerOrdersFrame.Form"] =
-				{
-					MinVersion = 100002,
-				},
+				["ProfessionsCustomerOrdersFrame.Form"] = {},
 				["ProfessionsCustomerOrdersFrame.Form.CurrentListings"] =
 				{
-					MinVersion = 100002,
 					Detachable = true,
 				}
 			},
@@ -1292,7 +1152,6 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["SoulbindViewer.ConduitList.Charges"] =
 				{
-					MinVersion = 90000,
 					MaxVersion = 90105,
 				},
 			},
@@ -1352,7 +1211,6 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				["TradeSkillFrame.RecipeList"] =
 				{
 					MinVersion = 40000, -- Added when?
-					MaxVersion = 100000,
 				},
 			},
 		},
