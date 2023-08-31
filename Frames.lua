@@ -663,7 +663,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["CollectionsJournal"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 30403,
 		},
 		["WardrobeFrame"] =
 		{

@@ -1256,10 +1256,12 @@ do
 
 		-- fix a stupid anchor family connection issue blizzard added in 9.1.5
 		if addOnName == "Blizzard_Collections" then
-			local checkbox = _G.WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox;
-			checkbox.Label:ClearAllPoints();
-			checkbox.Label:SetPoint("LEFT", checkbox, "RIGHT", 2, 1);
-			checkbox.Label:SetPoint("RIGHT", checkbox, "RIGHT", 160, 1);
+			local checkbox = _G.WardrobeTransmogFrame and _G.WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox;
+			if checkbox then
+				checkbox.Label:ClearAllPoints();
+				checkbox.Label:SetPoint("LEFT", checkbox, "RIGHT", 2, 1);
+				checkbox.Label:SetPoint("RIGHT", checkbox, "RIGHT", 160, 1);
+			end
 		end
 		-- fix another anchor family connection issue caused by blizzard being blizzard
 		if addOnName == "Blizzard_EncounterJournal" then
