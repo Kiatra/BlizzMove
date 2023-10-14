@@ -4,14 +4,15 @@ local LibStub = _G.LibStub;
 local CreateFrame = _G.CreateFrame;
 local UIParent = _G.UIParent;
 local pairs = _G.pairs;
-local type = _G.type;
-local C_Console__GetAllCommands = _G.C_Console.GetAllCommands;
+local C_Console__GetAllCommands = _G.ConsoleGetAllCommands or _G.C_Console.GetAllCommands;
 local string__format = _G.string.format;
+local string__gmatch = _G.string.gmatch;
 local GetCVarInfo = _G.GetCVarInfo;
 local IsAddOnLoaded = _G.IsAddOnLoaded;
 local GetNumAddOns = _G.GetNumAddOns;
 local GetAddOnInfo = _G.GetAddOnInfo;
 local GetAddOnMetadata = _G.GetAddOnMetadata or _G.C_AddOns.GetAddOnMetadata;
+local GetFrameMetatable = _G.GetFrameMetatable or function() getmetatable(CreateFrame('FRAME')) end
 
 local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove');
 if not BlizzMove then return ; end
@@ -38,10 +39,29 @@ local function encode_string(val)
     return '"' .. val:gsub(Module.bannedCharacterPattern, function(c) return string__format('"..strchar(%d).."', c:byte()); end) .. '"';
 end
 
+ function callFrameMethod(frame, method)
+    local functionRef = frame[method] or GetFrameMetatable().__index[method] or nop;
+    local ok, result = pcall(functionRef, frame);
+
+    return ok and result or false
+end
+
 local function getFrameName(frame, fallback)
-    return frame.GetDebugName and frame:GetDebugName()
-            or frame.GetName and frame:GetName()
+    return callFrameMethod(frame, 'GetDebugName')
+            or callFrameMethod(frame, 'GetName')
             or fallback or 'noName';
+end
+
+local function getFrameByName(frameName)
+    local frameTable = _G;
+
+    for keyName in string__gmatch(frameName, "([^.]+)") do
+        if not frameTable[keyName] then return nil; end
+
+        frameTable = frameTable[keyName];
+    end
+
+    return frameTable;
 end
 
 function Module:FindBadAnchorConnections(frame)
@@ -55,8 +75,8 @@ function Module:FindBadAnchorConnections(frame)
                 table.insert(badAnchorConnections, {
                     name = getFrameName(child),
                     targetName = getFrameName(parent),
-                    source = child.GetSourceLocation and child:GetSourceLocation() or 'Unknown',
-                    targetSource = parent.GetSourceLocation and parent:GetSourceLocation() or 'Unknown',
+                    source = callFrameMethod(child, 'GetSourceLocation') or 'Unknown',
+                    targetSource = callFrameMethod(parent, 'GetSourceLocation') or 'Unknown',
                 });
             end
         end
@@ -84,13 +104,13 @@ function Module:BuildAnchorTree()
 
     local frame = EnumerateFrames();
     while frame do
-        local isForbidden = frame.IsForbidden and frame:IsForbidden();
-        local isRestricted = not isForbidden and frame.IsAnchoringRestricted and frame:IsAnchoringRestricted();
-        local numPoints = not isRestricted and frame.GetNumPoints and frame:GetNumPoints() or 0;
+        local isForbidden = callFrameMethod(frame, 'IsForbidden');
+        local isRestricted = not isForbidden and callFrameMethod(frame, 'IsAnchoringRestricted');
+        local numPoints = not isRestricted and callFrameMethod(frame, 'GetNumPoints') or 0;
         for i = 1, numPoints do
             local relativeTo = select(2, frame:GetPoint(i));
             if not relativeTo then
-                relativeTo = frame.GetParent and frame:GetParent() or UIParent;
+                relativeTo = callFrameMethod(frame, 'GetParent') or UIParent;
             end
             tree[relativeTo] = tree[relativeTo] or {};
             tree[relativeTo][frame] = true;
@@ -180,6 +200,17 @@ function Module:ExtractSavedVars()
     return BlizzMove.DB;
 end
 
+local strataLevels = {
+    WORLD = 1,
+    BACKGROUND = 2,
+    LOW = 3,
+    MEDIUM = 4,
+    HIGH = 5,
+    DIALOG = 6,
+    FULLSCREEN = 7,
+    FULLSCREEN_DIALOG = 8,
+    TOOLTIP = 9,
+};
 -- list extracted from the listfile @ https://github.com/wowdev/wow-listfile/blob/master/community-listfile.csv
 local blizzardAddons = { "blizzard_achievementui", "blizzard_adventuremap", "blizzard_alliedracesui", "blizzard_animadiversionui", "blizzard_animcreate", "blizzard_apidocumentation", "blizzard_apidocumentationgenerated", "blizzard_archaeologyui", "blizzard_ardenwealdgardening", "blizzard_arenaui", "blizzard_artifactui", "blizzard_auctionhouseshared", "blizzard_auctionhouseui", "blizzard_auctionui", "blizzard_authchallengeui", "blizzard_autoxml", "blizzard_azeriteessenceui", "blizzard_azeriterespecui", "blizzard_azeritetempui", "blizzard_azeriteui", "blizzard_barbershopui", "blizzard_battlefieldmap", "blizzard_battlefieldminimap", "blizzard_behavioralmessaging", "blizzard_bindingui", "blizzard_blackmarketui", "blizzard_boosttutorial", "blizzard_cachedlogin", "blizzard_calendar", "blizzard_challengesui", "blizzard_channels", "blizzard_charactercreate", "blizzard_charactercustomize", "blizzard_charcustomize", "blizzard_chromietimeui", "blizzard_classtalentdebug", "blizzard_classtalentui", "blizzard_classtrial", "blizzard_clickbindingui", "blizzard_clientsavedvariables", "blizzard_collections", "blizzard_combatlog", "blizzard_combattext", "blizzard_commentator", "blizzard_communities", "blizzard_compactraidframes", "blizzard_componenttests", "blizzard_console", "blizzard_consoleextensions", "blizzard_contribution", "blizzard_covenantcallings", "blizzard_covenantpreviewui", "blizzard_covenantrenown", "blizzard_covenantsanctum", "blizzard_covenanttoasts", "blizzard_craftui", "blizzard_cufprofiles", "blizzard_deathrecap", "blizzard_debugloader", "blizzard_debugtools", "blizzard_deprecated", "blizzard_encounterjournal", "blizzard_eventtrace", "blizzard_expansionlandingpage", "blizzard_flightmap", "blizzard_frameeffects", "blizzard_garrisontemplates", "blizzard_garrisonui", "blizzard_generictraitui", "blizzard_glyphui", "blizzard_gmchatui", "blizzard_gmsurveyui", "blizzard_guildbankui", "blizzard_guildcontrolui", "blizzard_guildrecruitmentui", "blizzard_guildui", "blizzard_hybridminimap", "blizzard_inspectui", "blizzard_islandspartyposeui", "blizzard_islandsqueueui", "blizzard_itemalterationui", "blizzard_iteminteractionui", "blizzard_itemsocketingui", "blizzard_itemupgradeui", "blizzard_kiosk", "blizzard_kioskmodeui", "blizzard_landingsoulbinds", "blizzard_loginerrorhelpers", "blizzard_lookingforgroupui", "blizzard_lookingforguildui", "blizzard_macroui", "blizzard_mainlinesettings", "blizzard_majorfactions", "blizzard_mapcanvas", "blizzard_mawbuffs", "blizzard_moneyreceipt", "blizzard_movepad", "blizzard_nameplates", "blizzard_newplayerexperience", "blizzard_newplayerexperienceguide", "blizzard_objectivetracker", "blizzard_obliterumui", "blizzard_olditemupgradeui", "blizzard_oldplayerchoiceui", "blizzard_orderhallui", "blizzard_partyposeui", "blizzard_perksprogram", "blizzard_perksprogramdevtool", "blizzard_petbattleui", "blizzard_petjournal", "blizzard_playerchoice", "blizzard_playerchoiceui", "blizzard_professions", "blizzard_professionscrafterorders", "blizzard_professionscustomerorders", "blizzard_professionsdebug", "blizzard_professionsspecializations", "blizzard_professionstemplates", "blizzard_profspecsimporter", "blizzard_prototypedialog", "blizzard_ptrfeedback", "blizzard_ptrfeedbackglue", "blizzard_pvphonorsystemui", "blizzard_pvpmatch", "blizzard_pvpui", "blizzard_questchoice", "blizzard_questnavigation", "blizzard_questnextquestlog", "blizzard_raidui", "blizzard_reforgingui", "blizzard_runeforgeui", "blizzard_scrappingmachineui", "blizzard_scriptedanimations", "blizzard_scriptedanimationstest", "blizzard_scrollboxdebug", "blizzard_securetransferui", "blizzard_selectorui", "blizzard_settings", "blizzard_settingsdebug", "blizzard_sharedmapdataproviders", "blizzard_sharedtalentui", "blizzard_sharedwidgetframes", "blizzard_socialui", "blizzard_soulbinds", "blizzard_soulbindsdebug", "blizzard_storeui", "blizzard_subscriptioninterstitialui", "blizzard_talenttestapi", "blizzard_talenttestdata", "blizzard_talenttestui", "blizzard_talentui", "blizzard_talkingheadui", "blizzard_testdataset", "blizzard_testdataseteditor", "blizzard_testframe", "blizzard_testingmode", "blizzard_timemanager", "blizzard_tokenui", "blizzard_toolsui", "blizzard_torghastlevelpicker", "blizzard_tradeskillui", "blizzard_trainerui", "blizzard_tutorial", "blizzard_tutorialmanager", "blizzard_tutorials", "blizzard_tutorialtemplates", "blizzard_uiframemanager", "blizzard_uiwidgets", "blizzard_undosystem", "blizzard_utility", "blizzard_voidstorageui", "blizzard_warboardui", "blizzard_warfrontspartyposeui", "blizzard_warfrontui", "blizzard_weeklyrewards", "blizzard_worldmap", "blizzard_wowtokenui" };
 -- manual list of Toplevel frames that we don't handle on purpose
@@ -190,27 +221,49 @@ local ignoredFrames = {
     BarberShopBannerFrame = true, -- graphic at the top of the screen in classic
     BarberShopFrame = true, -- fullscreen frame
     BattlefieldMapFrame = true, -- movable by default
+    BonusRollFrame = true, -- not a window
+    ChatMenu = true, -- popup menu
     ClassTrialThanksForPlayingDialog = true, -- popup frame
+    CoinPickupFrame = true, -- popup frame
     CombatText = true, -- seems to be scrolling combat text - don't move it
+    ComboFrame = true, -- not sure what it is
     CommentatorEventAlertsFrame = true, -- unsure what it is, might be commentator-mode only
     CommunitiesAvatarPickerDialog = true, -- fullscreen popup frame
     CommunitiesTicketManagerDialog = true, -- popup frame, not sure if we want to move it
     CompactRaidFrameManager = true, -- does not behave like a window
+    DeadlyDebuffFrame = true, -- not a window
+    EventToastManagerFrame = true, -- not a window
     EventTrace = true, -- movable by default
     ExpansionTrialThanksForPlayingDialog = true, -- popup frame
     GMChatFrame = true, -- movable by default
     GMChatStatusFrame = true, -- popup frame
     GuideFrame = true, -- not sure what it is
+    IconIntroTracker = true, -- has no visuals
     KioskSessionFinishedDialog = true, -- popup frame
+    LossOfControlFrame = true, -- not a window
     MawBuffsBelowMinimapFrame = true, -- does not behave like a window
     MovePadFrame = true, -- movable by default
     NamePlateDriverFrame = true, -- has no visuals
     OrderHallCommandBar = true, -- the bar at the top of the screen
+    OverrideActionBar = true, -- the vehicle UI
     PerksProgramFrame = true, -- fullscreen frame
     PlayerChoiceFrame = true, -- causes various issues when opening in combat
     PlayerChoiceTimeRemaining = true, -- presumed to have the same issues as PlayerChoiceFrame
+    PlayerInteractionFrameManager = true, -- has no visuals
+    PrivateRaidBossEmoteFrameAnchor = true, -- has no visuals
+    PVPReadyDialog = true, -- popup frame
+    RaidBossEmoteFrame = true, -- not a window
+    RaidWarningFrame = true, -- not a window
+    ReportFrame = true, -- popup frame
+    StackSplitFrame = true, -- popup frame
+    StaticPopup1 = true, -- popup frame
+    StaticPopup2 = true, -- popup frame
+    StaticPopup3 = true, -- popup frame
+    StaticPopup4 = true, -- popup frame
     StopwatchFrame = true, -- movable by default
+    StreamingIcon = true, -- not a window
     TableAttributeDisplay = true, -- movable by default
+    TicketStatusFrame = true, -- not a window
     UIFrameManager = true, -- has no visuals
     UIWidgetManager = true, -- has no visuals
     UIWidgetTopCenterContainerFrame = true, -- not sure what it is
@@ -237,21 +290,26 @@ function Module:DumpTopLevelFrames()
     local data = {};
     local frame = EnumerateFrames();
     while frame do
-        local name = getFrameName(frame);
+        local name = getFrameName(frame, 'NoName');
         if (
-            name
+            name and name ~= 'NoName'
+            and getFrameByName(name) == frame
+            and name:sub(-7) ~= 'Tooltip'
             and not ignoredFrames[name]
             and not registeredFrames[frame]
             and not BlizzMove.FrameData[frame]
-            and frame.IsToplevel and frame:IsToplevel()
-            and frame.GetParent and (frame:GetParent() == UIParent or frame:GetParent() == nil)
+            and not callFrameMethod(frame, 'IsMovable')
+            and callFrameMethod(frame, 'IsToplevel')
+            and callFrameMethod(frame, 'GetObjectType') == 'Frame'
+            and (callFrameMethod(frame, 'GetParent') == UIParent or callFrameMethod(frame, 'GetParent') == nil)
+            and (strataLevels[callFrameMethod(frame, 'GetFrameStrata')] or 1) >= strataLevels.MEDIUM
         ) then
-            local source = frame.GetSourceLocation and frame:GetSourceLocation() or 'Unknown';
-            -- source starts with Interface/AddOns/Blizzard_
-            if source:match('Interface/AddOns/Blizzard_(.*)') then
+            local source = callFrameMethod(frame, 'GetSourceLocation') or 'Unknown';
+            -- source starts with Interface/AddOns/Blizzard_, or is outside Interface/AddOns/
+            if source:match('Interface/AddOns/Blizzard_(.*)') or (source:match('Interface/.*') and not source:match('Interface/AddOns/.*')) then
                 table.insert(data, {
                     name = name,
-                    source = source
+                    source = source,
                 });
             end
         end

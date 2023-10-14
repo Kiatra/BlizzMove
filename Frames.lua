@@ -259,6 +259,10 @@ BlizzMoveAPI:RegisterFrames(
 	{
 		MinVersion = 0,
 	},
+	["ModelPreviewFrame"] =
+	{
+		MinVersion = 0,
+	},
 	["PetitionFrame"] =
 	{
 		MinVersion = 0,
@@ -266,6 +270,10 @@ BlizzMoveAPI:RegisterFrames(
 	["PetStableFrame"] =
 	{
 		MinVersion = 0,
+	},
+	["PingSystemTutorial"] =
+	{
+		MinVersion = 100107,
 	},
 	["PVEFrame"] =
 	{
