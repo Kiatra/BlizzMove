@@ -277,21 +277,24 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["PVEFrame"] =
 	{
-		MinVersion = 40000, -- Added when?
+		MinVersion = 30403,
 		SubFrames =
 		{
 			["LFGListApplicationViewerScrollFrame"] =
 			{
+				MinVersion = 40000, -- Added when?
 				MaxVersion = 100000,
 			},
 			["LFGListFrame.ApplicationViewer.UnempoweredCover"] = {},
 			["LFGListSearchPanelScrollFrame"] =
 			{
+				MinVersion = 40000, -- Added when?
 				MaxVersion = 100000,
 				IgnoreMouseWheel = true,
 			},
 			["ScenarioQueueFrameSpecific"] =
 			{
+				MinVersion = 40000, -- Added when?
 				MaxVersion = 90000,
 			},
 		},
