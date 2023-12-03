@@ -12,7 +12,8 @@ local IsAddOnLoaded = _G.IsAddOnLoaded;
 local GetNumAddOns = _G.GetNumAddOns;
 local GetAddOnInfo = _G.GetAddOnInfo;
 local GetAddOnMetadata = _G.GetAddOnMetadata or _G.C_AddOns.GetAddOnMetadata;
-local GetFrameMetatable = _G.GetFrameMetatable or function() getmetatable(CreateFrame('FRAME')) end
+local GetFrameMetatable = _G.GetFrameMetatable or function() return getmetatable(CreateFrame('FRAME')) end
+local LoadAddOn = _G.LoadAddOn or _G.C_AddOns.LoadAddOn;
 
 local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove');
 if not BlizzMove then return ; end
@@ -33,13 +34,13 @@ Module.frameConfig = {
     width = 750,
     height = 400,
 }
-Module.bannedCharacterPattern = '[^a-zA-Z0-9 !@#$%^&*()_+\-=,.:;?~`{}[<>]';
+Module.bannedCharacterPattern = '[^a-zA-Z0-9 !@#$%^&*()_+\\-=,.:;?~`{}[<>]';
 
 local function encode_string(val)
     return '"' .. val:gsub(Module.bannedCharacterPattern, function(c) return string__format('"..strchar(%d).."', c:byte()); end) .. '"';
 end
 
- function callFrameMethod(frame, method)
+local function callFrameMethod(frame, method)
     local functionRef = frame[method] or GetFrameMetatable().__index[method] or nop;
     local ok, result = pcall(functionRef, frame);
 
