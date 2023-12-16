@@ -281,7 +281,7 @@ function Config:Initialize()
 			end
 			dialog.editBox:SetScript("OnEscapePressed", HidePopup);
 			dialog.editBox:SetScript("OnEnterPressed", HidePopup);
-			dialog.editBox:SetScript("OnKeyUp", function(_, key)
+			dialog.editBox:SetScript("OnKeyDown", function(_, key)
 				if IsControlKeyDown() and key == "C" then
 					HidePopup();
 				end
