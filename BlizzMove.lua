@@ -510,6 +510,7 @@ do
 		if framePoints and framePoints[1] then
 			frame:ClearAllPoints();
 			local SetPoint = frame.SetPointBase or frame.SetPoint;
+			local scale = frame:GetScale();
 
 			for curPoint = 1, #framePoints do
 				ignoreSetPointHook = true;
@@ -518,8 +519,8 @@ do
 					framePoints[curPoint].anchorPoint,
 					framePoints[curPoint].relativeFrame,
 					framePoints[curPoint].relativePoint,
-					framePoints[curPoint].offX,
-					framePoints[curPoint].offY
+					framePoints[curPoint].offX / scale,
+					framePoints[curPoint].offY / scale
 				);
 				ignoreSetPointHook = false;
 			end
@@ -782,7 +783,7 @@ do
 		return returnValue or parentReturnValue;
 	end
 
-	function OnShow(frame)
+	function OnShow(frame, skipAdditionalRunNextFrame)
 
 		if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
@@ -801,6 +802,9 @@ do
 			SetFrameScale(frame, BlizzMove.DB.scales[BlizzMove:GetFrameName(frame)]);
 		end
 
+		if not skipAdditionalRunNextFrame then
+			RunNextFrame(function() OnShow(frame, true) end);
+		end
 	end
 
 	function OnSubFrameHide(frame)
@@ -966,6 +970,7 @@ do
 
 		BlizzMove.FrameData[frame] = frameData;
 
+		OnShow(frame);
 		OnSizeUpdate(frame);
 		OnSetPoint(frame);
 
