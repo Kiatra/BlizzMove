@@ -278,6 +278,7 @@ BlizzMoveAPI:RegisterFrames(
 	["PVEFrame"] =
 	{
 		MinVersion = 30403,
+		SilenceCompatabilityWarnings = true, -- frame exists in classic, but is not functional
 		SubFrames =
 		{
 			["LFGListApplicationViewerScrollFrame"] =
