@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Replace toc-versions
-        uses: Numynum/ToCVersions@master
+        uses: NumyAddon/ToCVersions@v1
 
       - name: Create Package
         uses: BigWigsMods/packager@v2
