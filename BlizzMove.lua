@@ -18,7 +18,7 @@ local UpdateUIPanelPositions = _G.UpdateUIPanelPositions;
 local MouseIsOver = _G.MouseIsOver;
 local xpcall = _G.xpcall;
 local CallErrorHandler = _G.CallErrorHandler;
-local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
+local Settings_OpenToCategory = _G.Settings and _G.Settings.OpenToCategory or _G.InterfaceOptionsFrame_OpenToCategory;
 local strsplit = _G.strsplit;
 local LoadAddOn = _G.LoadAddOn;
 local GetBuildInfo = _G.GetBuildInfo;
@@ -1238,8 +1238,7 @@ do
 			return;
 		end
 
-		-- after a reload, you need to open to category twice to actually open the correct page
-		InterfaceOptionsFrame_OpenToCategory('BlizzMove'); InterfaceOptionsFrame_OpenToCategory('BlizzMove');
+		Settings_OpenToCategory('BlizzMove');
 	end
 
 	local defaults = {
