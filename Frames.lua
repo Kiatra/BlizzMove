@@ -676,6 +676,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["CollectionsJournal"] =
 		{
 			MinVersion = 30403,
+			SubFrames =
+			{
+				["CollectionsJournal.TitleContainer"] =
+				{
+					MinVersion = 100000,
+				},
+			},
 		},
 		["WardrobeFrame"] =
 		{
