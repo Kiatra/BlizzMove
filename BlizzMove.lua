@@ -1182,7 +1182,9 @@ do
 		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
 		C_CVar.SetCVar('enableSourceLocationLookup', 1)
 
-		self:ADDON_LOADED(_, self.name);
+		self:ProcessFrames(self.name);
+		self:ApplyAddOnSpecificFixes(self.name);
+
 		for addOnName, _ in pairs(self.Frames) do
 			if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
 				self:ADDON_LOADED(_, addOnName);
@@ -1267,8 +1269,13 @@ do
 	end
 
 	function BlizzMove:ADDON_LOADED(_, addOnName)
-		self:ProcessFrames(addOnName);
+		if addOnName == self.name then return; end
 
+		self:ProcessFrames(addOnName);
+		self:ApplyAddOnSpecificFixes(addOnName);
+	end
+
+	function BlizzMove:ApplyAddOnSpecificFixes(addOnName)
 		-- fix a stupid anchor family connection issue blizzard added in 9.1.5
 		if addOnName == "Blizzard_Collections" then
 			local checkbox = _G.WardrobeTransmogFrame and _G.WardrobeTransmogFrame.ToggleSecondaryAppearanceCheckbox;
