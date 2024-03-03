@@ -15,10 +15,11 @@ local GetAddOnMetadata = _G.GetAddOnMetadata or _G.C_AddOns.GetAddOnMetadata;
 local GetFrameMetatable = _G.GetFrameMetatable or function() return getmetatable(CreateFrame('FRAME')) end
 local LoadAddOn = _G.LoadAddOn or _G.C_AddOns.LoadAddOn;
 
+--- @type BlizzMove
 local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove');
 if not BlizzMove then return ; end
 
---- @class BlizzMove_Debug
+--- @class BlizzMove_Debug: AceModule
 local Module = BlizzMove:NewModule('Debug')
 --- @type BlizzMoveAPI
 local BlizzMoveAPI = BlizzMoveAPI;

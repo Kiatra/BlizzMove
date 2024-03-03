@@ -31,7 +31,7 @@ local CreateFrame = _G.CreateFrame;
 local abs = _G.abs;
 
 local name = ... or "BlizzMove";
---- @class BlizzMove
+--- @class BlizzMove: AceAddon,AceConsole-3.0,AceEvent-3.0,AceHook-3.0
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
 if not BlizzMove then return; end
 
@@ -143,7 +143,7 @@ do
 		if (
 			not self:IsFrameDisabled(addOnName, frameName)
 			and IsAddOnLoaded(addOnName)
-			and (addOnName ~= self.name and self.enabled or self.initialized)
+			and self.initialized
 		) then
 			self:ProcessFrame(addOnName, frameName, copiedData);
 		end
@@ -1177,8 +1177,19 @@ do
 		for _, command in pairs(commands) do
 			self:RegisterChatCommand('bm'..command, function(message) self:OnSlashCommand(command..' '..message); end);
 		end
-		self:ProcessFrames(self.name);
 		self:SecureHook('UpdateScaleForFit', OnUpdateScaleForFit);
+
+		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
+		C_CVar.SetCVar('enableSourceLocationLookup', 1)
+
+		self:ADDON_LOADED(_, self.name);
+		for addOnName, _ in pairs(self.Frames) do
+			if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
+				self:ADDON_LOADED(_, addOnName);
+			end
+		end
+
+		self:RegisterEvent("ADDON_LOADED");
 	end
 
 	function BlizzMove:OnSlashCommand(message)
@@ -1256,7 +1267,7 @@ do
 	end
 
 	function BlizzMove:ADDON_LOADED(_, addOnName)
-		if addOnName ~= self.name then self:ProcessFrames(addOnName); end
+		self:ProcessFrames(addOnName);
 
 		-- fix a stupid anchor family connection issue blizzard added in 9.1.5
 		if addOnName == "Blizzard_Collections" then
@@ -1311,20 +1322,5 @@ do
 				end);
 			end
 		end
-	end
-
-	function BlizzMove:OnEnable()
-		self.enabled = true;
-		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
-		C_CVar.SetCVar('enableSourceLocationLookup', 1)
-
-		self:ADDON_LOADED(_, self.name);
-		for addOnName, _ in pairs(self.Frames) do
-			if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
-				self:ADDON_LOADED(_, addOnName);
-			end
-		end
-
-		self:RegisterEvent("ADDON_LOADED");
 	end
 end
