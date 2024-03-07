@@ -1003,7 +1003,7 @@ do
 		return xpcall(MakeFrameUnmovable, CallErrorHandler, frame, frameData);
 	end
 
-	function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent)
+	function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent, retriedAfterNotFound)
 		if self:IsFrameDisabled(addOnName, frameName) then return; end
 
 		local matchesBuild = self:MatchesCurrentBuild(frameData);
@@ -1024,6 +1024,13 @@ do
 		end
 
 		if not frame then
+			if not retriedAfterNotFound then
+				RunNextFrame(function()
+					self:ProcessFrame(addOnName, frameName, frameData, frameParent, true);
+				end);
+
+				return false;
+			end
 			self.notFoundFrames = self.notFoundFrames or {};
 			tinsert(self.notFoundFrames, frameName);
 			self:Print("Could not find frame ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
