@@ -24,6 +24,7 @@ local Module = BlizzMove:NewModule('Debug')
 --- @type BlizzMoveAPI
 local BlizzMoveAPI = BlizzMoveAPI;
 
+--- @type JsonLua-1.0
 local json = LibStub('JsonLua-1.0');
 
 Module.frameConfig = {

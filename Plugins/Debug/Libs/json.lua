@@ -22,8 +22,9 @@
 -- SOFTWARE.
 --
 
--- edited to work as a WoW Add-on library
+-- edited to work as a WoW Add-on library, original source: https://github.com/rxi/json.lua
 local MAJOR, MINOR = "JsonLua-1.0", 1
+--- @class JsonLua-1.0
 local json = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not json then return end -- No upgrade needed
