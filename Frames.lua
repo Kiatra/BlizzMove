@@ -30,12 +30,13 @@ BlizzMoveAPI:RegisterFrames(
 					["PetPaperDollFrameCompanionFrame"] =
 					{
 						MinVersion = 30000,
+						MaxVersion = 40400,
 					},
 				},
 			},
 			["CompanionFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 70300, -- Removed when?
 			},
 			["ReputationFrame"] =
@@ -54,12 +55,13 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["HonorFrame"] =
 			{
-				MaxVersion = 20000,
+				MaxVersion = 20000, -- Added back in cata, and moved to PVPFrame
+				SilenceCompatabilityWarnings = true,
 			},
 			["PVPFrame"] =
 			{
 				MinVersion = 20000,
-				MaxVersion = 30000, -- Moved to PVPParentFrame
+				MaxVersion = 30000, -- Moved to PVPParentFrame in wrath, then extracted to its own frame in cata
 				SilenceCompatabilityWarnings = true,
 				SubFrames =
 				{
@@ -122,7 +124,7 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["IgnoreListFrameScrollFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 100000,
 			},
 			["RaidInfoFrame"] =
@@ -147,16 +149,16 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["FriendsListFrameScrollFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 100000,
 			},
 			["FriendsFrameFriendsScrollFrame"] =
 			{
-				MaxVersion = 40000, -- Removed when?
+				MaxVersion = 50000, -- Removed when?
 			},
 			["QuickJoinScrollFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 100000,
 			},
 			["WhoListScrollFrame"] =
@@ -172,7 +174,7 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["GuildFrame"] =
 			{
-				MaxVersion = 40000, -- Moved to Blizzard_GuildUI when?
+				MaxVersion = 50000, -- Moved to Blizzard_GuildUI when?
 				SubFrames =
 				{
 					["GuildInfoFrame"] =
@@ -202,7 +204,7 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["GuildInviteFrame"] =
 	{
-		MinVersion = 40000, -- Added when?
+		MinVersion = 50000, -- Added when?
 	},
 	["GuildRegistrarFrame"] =
 	{
@@ -283,27 +285,39 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			["LFGListApplicationViewerScrollFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 100000,
 			},
 			["LFGListFrame.ApplicationViewer.UnempoweredCover"] = {},
 			["LFGListSearchPanelScrollFrame"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 100000,
 				IgnoreMouseWheel = true,
 			},
 			["ScenarioQueueFrameSpecific"] =
 			{
-				MinVersion = 40000, -- Added when?
+				MinVersion = 50000, -- Added when?
 				MaxVersion = 90000,
 			},
+		},
+	},
+	["PVPFrame"] =
+	{
+		MinVersion = 40400, -- Moved out of PVPParentFrame
+		MaxVersion = 70300, -- Removed when?
+		SilenceCompatabilityWarnings = true,
+		SubFrames =
+		{
+			["PVPHonorFrame"] = {},
+			["PVPConquestFrame"] = {},
+			["WarGamesFrame"] = {},
 		},
 	},
 	["PVPParentFrame"] =
 	{
 		MinVersion = 30000,
-		MaxVersion = 70300, -- Removed when?
+		MaxVersion = 40400,
 		SubFrames =
 		{
 			["BattlefieldFrame"] =
@@ -344,7 +358,7 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["QuestLogPopupDetailFrame"] =
 	{
-		MinVersion = 40000, -- Added when?
+		MinVersion = 50000, -- Added when?
 	},
 	["QuickKeybindFrame"] =
 	{
@@ -369,6 +383,7 @@ BlizzMoveAPI:RegisterFrames(
 		{
 			{ Min = 11404, Max = 20000 }, -- Backported in Classic 1.14.4
 			{ Min = 30402, Max = 40000 }, -- Backported in Wrath 3.4.2
+			{ Min = 40400, Max = 50000 },
 			{ Min = 100000 }, -- Added in DF
 		},
 	},
@@ -378,7 +393,7 @@ BlizzMoveAPI:RegisterFrames(
 	},
 	["SplashFrame"] =
 	{
-		MinVersion = 40000, -- Added when?
+		MinVersion = 50000, -- Added when?
 	},
 	["TabardFrame"] =
 	{
@@ -458,7 +473,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		},
 		["AchievementFrame.searchResults"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 			MaxVersion = 100000,
 		},
 		["AchievementFrame.SearchResults"] =
@@ -493,7 +508,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		},
 		["ArcheologyDigsiteProgressBar"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_ArtifactUI"] =
@@ -569,7 +584,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		},
 		["QuickKeybindFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 			MaxVersion = 100000, -- Moved to FrameXML
 			SilenceCompatabilityWarnings = true,
 		},
@@ -599,7 +614,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 					{
 						["CalendarCreateEventInviteListScrollFrame"] =
 						{
-							MinVersion = 40000, -- Added when?
+							MinVersion = 50000, -- Added when?
 							MaxVersion = 100000,
 						},
 					},
@@ -612,7 +627,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 						["CalendarViewEventFrame.HeaderFrame"] = {},
 						["CalendarViewEventInviteListScrollFrame"] =
 						{
-							MinVersion = 40000, -- Added when?
+							MinVersion = 50000, -- Added when?
 							MaxVersion = 100000,
 						},
 					},
@@ -686,14 +701,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		},
 		["WardrobeFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 	},
 	["Blizzard_Communities"] =
 	{
 		["ClubFinderGuildFinderFrame.RequestToJoinFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 		-- ["CommunitiesAddDialog"] = {}, -- Frame is protected, similar to the Store frame
 		["CommunitiesFrame"] =
@@ -703,20 +718,20 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["ClubFinderCommunityAndGuildFinderFrame.CommunityCards.ListScrollFrame"] =
 				{
-					MinVersion = 40000, -- Added when?
+					MinVersion = 50000, -- Added when?
 					MaxVersion = 100000,
 				},
 				["CommunitiesFrame.GuildMemberDetailFrame"] =
 				{
 					Detachable = true,
-					MinVersion = 40000, -- Added when?
+					MinVersion = 40000,
 				},
 				["CommunitiesFrame.NotificationSettingsDialog"] = {},
 			},
 		},
 		["CommunitiesFrame.RecruitmentDialog"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 		["CommunitiesSettingsDialog"] =
 		{
@@ -724,22 +739,22 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		},
 		["CommunitiesGuildLogFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 		["CommunitiesGuildNewsFiltersFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 		["CommunitiesGuildTextEditFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 	},
 	["Blizzard_Contribution"] =
 	{
 		["ContributionCollectionFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 	},
 	["Blizzard_CovenantPreviewUI"] =
@@ -774,32 +789,48 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["DeathRecapFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_EncounterJournal"] =
 	{
 		["EncounterJournal"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 			SubFrames =
 			{
 				["EncounterJournal.instanceSelect.scroll"] =
 				{
-					MaxVersion = 100000,
+					VersionRanges =
+					{
+						{ Max = 40400 },
+						{ Min = 50000, Max = 100000 },
+					},
 				},
 				["EncounterJournal.instanceSelect.ScrollBox"] =
 				{
-					MinVersion = 100000,
+					VersionRanges =
+					{
+						{ Min = 40400, Max = 50000 },
+						{ Min = 100000 },
+					},
 				},
 				["EncounterJournal.encounter.instance.loreScroll"] =
 				{
-					MaxVersion = 100000,
+					VersionRanges =
+					{
+						{ Max = 40400 },
+						{ Min = 50000, Max = 100000 },
+					},
 				},
 				["EncounterJournal.encounter.info.overviewScroll"] = {},
 				["EncounterJournal.encounter.info.lootScroll"] =
 				{
-					MaxVersion = 100000,
+					VersionRanges =
+					{
+						{ Max = 40400 },
+						{ Min = 50000, Max = 100000 },
+					},
 				},
 				["EncounterJournal.encounter.info.detailsScroll"] = {},
 				["EncounterJournal.encounter.info.model"] =
@@ -917,6 +948,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				{
 					MinVersion = 11404, -- Backported in a broken state
 					MaxVersion = 60200,
+					SubFrames =
+					{
+						["GlyphFrameScrollFrame"] = {},
+					},
 				},
 			},
 		},
@@ -940,7 +975,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["GuildControlUI"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 		},
 	},
 	["Blizzard_GuildUI"] =
@@ -997,7 +1032,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 				},
 				["InspectGuildFrame"] =
 				{
-					MinVersion = 40000, -- Added when?
+					MinVersion = 50000, -- Added when?
 				},
 			},
 		},
@@ -1042,7 +1077,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["ItemUpgradeFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_LookingForGroupUI"] =
@@ -1060,7 +1095,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["LookingForGuildFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 			MaxVersion = 90000, -- Removed when?
 		},
 	},
@@ -1130,22 +1165,26 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["PVPMatchResults"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_PVPUI"] =
 	{
 		["PVPMatchScoreboard"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_ReforgingUI"] =
 	{
 		["ReforgingFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 40000,
 			MaxVersion = 70300, -- Removed when?
+			SubFrames =
+			{
+				["ReforgingFrame.invisButton"] = {},
+			},
 		},
 	},
 	["Blizzard_RuneforgeUI"] =
@@ -1176,11 +1215,18 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			},
 		},
 	},
+	["Blizzard_StableUI"] =
+	{
+		["StableFrame"] =
+		{
+			MinVersion = 100207,
+		},
+	},
 	["Blizzard_SubscriptionInterstitialUI"] =
 	{
 		["SubscriptionInterstitialFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_TalentUI"] =
@@ -1200,7 +1246,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["TalkingHeadFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 			MaxVersion = 100000, -- Moved to FrameXML
 			SilenceCompatabilityWarnings = true,
 		},
@@ -1229,7 +1275,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
 			{
 				["TradeSkillFrame.RecipeList"] =
 				{
-					MinVersion = 40000, -- Added when?
+					MinVersion = 50000, -- Added when?
 				},
 			},
 		},
@@ -1263,14 +1309,14 @@ BlizzMoveAPI:RegisterAddOnFrames(
 	{
 		["VoidStorageFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 		},
 	},
 	["Blizzard_WarboardUI"] =
 	{
 		["WarboardQuestChoiceFrame"] =
 		{
-			MinVersion = 40000, -- Added when?
+			MinVersion = 50000, -- Added when?
 			MaxVersion = 90000, -- Removed when?
 		},
 	},

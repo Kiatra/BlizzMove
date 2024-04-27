@@ -340,13 +340,16 @@ do
 
 	local function checkRanges(ranges, needle)
 		for _, range in ipairs(ranges) do
-			if range.Min <= needle and not range.Max then
+			if not range.Min and not range.Max then
+				return false;
+			end
+			if range.Min and not range.Max and range.Min <= needle then
 				return true;
 			end
-			if not range.Min and range.Max > needle then
+			if not range.Min and range.Max and range.Max > needle then
 				return true;
 			end
-			if range.Min <= needle and range.Max > needle then
+			if range.Min and range.Max and range.Min <= needle and range.Max > needle then
 				return true;
 			end
 		end
@@ -1293,7 +1296,7 @@ do
 			end
 		end
 		-- fix another anchor family connection issue caused by blizzard being blizzard
-		if addOnName == "Blizzard_EncounterJournal" then
+		if addOnName == "Blizzard_EncounterJournal" and _G.AdventureJournal_Reward_OnEnter and _G.EncounterJournalTooltip then
 			local replacement = function(rewardFrame)
 				if rewardFrame.data then
 					_G.EncounterJournalTooltip:ClearAllPoints();
