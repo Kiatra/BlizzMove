@@ -272,6 +272,7 @@ BlizzMoveAPI:RegisterFrames(
 	["PetStableFrame"] =
 	{
 		MinVersion = 0,
+		MaxVersion = 100207,
 	},
 	["PingSystemTutorial"] =
 	{
@@ -297,8 +298,11 @@ BlizzMoveAPI:RegisterFrames(
 			},
 			["ScenarioQueueFrameSpecific"] =
 			{
-				MinVersion = 50000, -- Added when?
-				MaxVersion = 90000,
+			    VersionRanges =
+                {
+                    { Min = 50000, Max = 90000 }, -- Added when?
+                    { Min = 100207 },
+                },
 			},
 		},
 	},
@@ -1111,6 +1115,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
 		["MajorFactionRenownFrame"] =
 		{
 			MinVersion = 100000,
+		},
+	},
+	["Blizzard_MatchCelebrationPartyPoseUI"] =
+	{
+		["MatchCelebrationPartyPoseFrame"] =
+		{
+			MinVersion = 100206,
 		},
 	},
 	["Blizzard_ObliterumUI"] =
