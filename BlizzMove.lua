@@ -744,7 +744,7 @@ do
 		for _, childFrame in pairs({ frame:GetChildren() }) do
 			local childOnMouseWheel = childFrame:GetScript("OnMouseWheel");
 
-			if childOnMouseWheel and MouseIsOver(childFrame) then
+			if childOnMouseWheel and MouseIsOver(childFrame) and childFrame:IsMouseWheelEnabled() then
 				nestedOnMouseWheelCall = true;
 				childOnMouseWheel(childFrame, ...);
 				nestedOnMouseWheelCall = false;
