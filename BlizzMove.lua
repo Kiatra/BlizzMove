@@ -4,7 +4,7 @@ local InCombatLockdown = _G.InCombatLockdown;
 local LibStub = _G.LibStub;
 local pairs = _G.pairs;
 local type = _G.type;
-local IsAddOnLoaded = _G.IsAddOnLoaded;
+local IsAddOnLoaded = _G.IsAddOnLoaded or _G.C_AddOns.IsAddOnLoaded;
 local next = _G.next;
 local string__gmatch = _G.string.gmatch;
 local tonumber = _G.tonumber;
@@ -20,7 +20,7 @@ local xpcall = _G.xpcall;
 local CallErrorHandler = _G.CallErrorHandler;
 local Settings_OpenToCategory = _G.Settings and _G.Settings.OpenToCategory or _G.InterfaceOptionsFrame_OpenToCategory;
 local strsplit = _G.strsplit;
-local LoadAddOn = _G.LoadAddOn;
+local LoadAddOn = _G.LoadAddOn or _G.C_AddOns.LoadAddOn;
 local GetBuildInfo = _G.GetBuildInfo;
 local tinsert = _G.tinsert;
 local unpack = _G.unpack;
@@ -1187,7 +1187,12 @@ do
 		for _, command in pairs(commands) do
 			self:RegisterChatCommand('bm'..command, function(message) self:OnSlashCommand(command..' '..message); end);
 		end
-		self:SecureHook('UpdateScaleForFit', OnUpdateScaleForFit);
+
+        if UIPanelUpdateScaleForFit then
+            self:SecureHook('UIPanelUpdateScaleForFit', OnUpdateScaleForFit);
+        elseif UpdateScaleForFit then
+            self:SecureHook('UpdateScaleForFit', OnUpdateScaleForFit);
+        end
 
 		self:SavePositionStrategyChanged(nil, self.DB.savePosStrategy);
 		C_CVar.SetCVar('enableSourceLocationLookup', 1)
