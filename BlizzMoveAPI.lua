@@ -14,80 +14,80 @@ _G.BlizzMoveAPI = _G.BlizzMoveAPI or {};
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
 function BlizzMoveAPI:GetVersion()
-	local rawVersion = BlizzMove.Config.version;
+    local rawVersion = BlizzMove.Config.version;
 
-	local mayor, minor, patch = string_match(rawVersion, "v(%d*)%.(%d*)%.(%d*)[a-z]?")
-	local versionInt = patch and (patch + minor * 100 + mayor * 10000);
+    local mayor, minor, patch = string_match(rawVersion, "v(%d*)%.(%d*)%.(%d*)[a-z]?")
+    local versionInt = patch and (patch + minor * 100 + mayor * 10000);
 
-	return rawVersion, mayor, minor, patch, versionInt
+    return rawVersion, mayor, minor, patch, versionInt
 end
 
 function BlizzMoveAPI:ToggleDebugPrints()
-	BlizzMove.DB.DebugPrints = not BlizzMove.DB.DebugPrints;
+    BlizzMove.DB.DebugPrints = not BlizzMove.DB.DebugPrints;
 
-	BlizzMove:Print("Debug prints have been:", (BlizzMove.DB.DebugPrints and "Enabled") or "Disabled");
+    BlizzMove:Print("Debug prints have been:", (BlizzMove.DB.DebugPrints and "Enabled") or "Disabled");
 end
 
 function BlizzMoveAPI:RegisterFrames(framesTable)
-	for frameName, frameData in pairs(framesTable) do
-		if not BlizzMove:ValidateFrame(frameName, frameData) then
-			BlizzMove:DebugPrint("Invalid frame data provided for frame: '", frameName, "'.");
+    for frameName, frameData in pairs(framesTable) do
+        if not BlizzMove:ValidateFrame(frameName, frameData) then
+            BlizzMove:DebugPrint("Invalid frame data provided for frame: '", frameName, "'.");
 
-			return false;
-		end
+            return false;
+        end
 
-		BlizzMove:RegisterFrame(nil, frameName, frameData, true);
-	end
+        BlizzMove:RegisterFrame(nil, frameName, frameData, true);
+    end
 
-	if BlizzMove.initialized then
-		BlizzMove.Config:RegisterOptions();
-	end
+    if BlizzMove.initialized then
+        BlizzMove.Config:RegisterOptions();
+    end
 end
 
 function BlizzMoveAPI:RegisterAddOnFrames(addOnFramesTable)
-	for addOnName, framesTable in pairs(addOnFramesTable) do
-		for frameName, frameData in pairs(framesTable) do
-			if not BlizzMove:ValidateFrame(frameName, frameData) then
-				BlizzMove:DebugPrint("Invalid frame data provided for frame: '", frameName, "'.");
+    for addOnName, framesTable in pairs(addOnFramesTable) do
+        for frameName, frameData in pairs(framesTable) do
+            if not BlizzMove:ValidateFrame(frameName, frameData) then
+                BlizzMove:DebugPrint("Invalid frame data provided for frame: '", frameName, "'.");
 
-				return;
-			end
-			BlizzMove:RegisterFrame(addOnName, frameName, frameData, true);
-		end
-	end
+                return;
+            end
+            BlizzMove:RegisterFrame(addOnName, frameName, frameData, true);
+        end
+    end
 
-	if BlizzMove.initialized then
-		BlizzMove.Config:RegisterOptions();
-	end
+    if BlizzMove.initialized then
+        BlizzMove.Config:RegisterOptions();
+    end
 end
 
 function BlizzMoveAPI:UnregisterFrame(addOnName, frameName, permanent)
-	return BlizzMove:UnregisterFrame(addOnName, frameName, permanent);
+    return BlizzMove:UnregisterFrame(addOnName, frameName, permanent);
 end
 
 --- @return table<string, string> # Returns a table with the addon name as key and value
 function BlizzMoveAPI:GetRegisteredAddOns()
-	return BlizzMove:GetRegisteredAddOns();
+    return BlizzMove:GetRegisteredAddOns();
 end
 
 --- @param addOnName ?string # The name of the addon, defaults to BlizzMove (i.e. framexml frames)
 --- @return table<string, string> # Returns a table with the frame name as key and value
 function BlizzMoveAPI:GetRegisteredFrames(addOnName)
-	return BlizzMove:GetRegisteredFrames(addOnName);
+    return BlizzMove:GetRegisteredFrames(addOnName);
 end
 
 function BlizzMoveAPI:IsFrameDefaultDisabled(addOnName, frameName)
-	return BlizzMove:IsFrameDefaultDisabled(addOnName, frameName);
+    return BlizzMove:IsFrameDefaultDisabled(addOnName, frameName);
 end
 
 function BlizzMoveAPI:IsFrameDisabled(addOnName, frameName)
-	return BlizzMove:IsFrameDisabled(addOnName, frameName);
+    return BlizzMove:IsFrameDisabled(addOnName, frameName);
 end
 
 function BlizzMoveAPI:SetFrameDisabled(addOnName, frameName, disable)
-	if disable then
-		return BlizzMove:DisableFrame(addOnName, frameName);
-	else
-		return BlizzMove:EnableFrame(addOnName, frameName);
-	end
+    if disable then
+        return BlizzMove:DisableFrame(addOnName, frameName);
+    else
+        return BlizzMove:EnableFrame(addOnName, frameName);
+    end
 end
