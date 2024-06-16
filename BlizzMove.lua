@@ -1322,6 +1322,14 @@ do
             end
         end
 
+        -- fix anchor family connection issues when opening/closing the hero talents dialog
+        if addOnName == "Blizzard_PlayerSpells" and _G.HeroTalentsSelectionDialog and _G.PlayerSpellsFrame then
+            _G.HeroTalentsSelectionDialog:StartMoving();
+            _G.HeroTalentsSelectionDialog:StopMovingOrSizing();
+            _G.PlayerSpellsFrame:StartMoving();
+            _G.PlayerSpellsFrame:StopMovingOrSizing();
+        end
+
         if addOnName == self.name then
             -- fix BattlefieldFrame having weird positioning
             if _G.BattlefieldFrame and _G.PVPParentFrame then

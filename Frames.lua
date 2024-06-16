@@ -1158,6 +1158,9 @@ BlizzMoveAPI:RegisterAddOnFrames(
     },
     ["Blizzard_PlayerSpells"] =
     {
+        ["HeroTalentsSelectionDialog"] = {
+            MinVersion = 110000,
+        },
         ["PlayerSpellsFrame"] = {
             MinVersion = 110000,
             SubFrames =
