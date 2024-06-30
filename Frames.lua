@@ -95,6 +95,11 @@ BlizzMoveAPI:RegisterFrames(
                     {
                         MaxVersion = 100000,
                     },
+                    ["CurrencyTransferLog"] =
+                    {
+                        MinVersion = 110000,
+                        Detachable = true,
+                    },
                 },
             },
         },
@@ -420,6 +425,10 @@ BlizzMoveAPI:RegisterFrames(
         MinVersion = 0,
     },
     ["TradeFrame"] =
+    {
+        MinVersion = 0,
+    },
+    ["TutorialFrame"] =
     {
         MinVersion = 0,
     },
@@ -806,6 +815,24 @@ BlizzMoveAPI:RegisterAddOnFrames(
             MinVersion = 50000, -- Added when?
         },
     },
+    ["Blizzard_DelvesCompanionConfiguration"] =
+    {
+        ["DelvesCompanionAbilityListFrame"] =
+        {
+            MinVersion = 110000,
+        },
+        ["DelvesCompanionConfigurationFrame"] =
+        {
+            MinVersion = 110000,
+        },
+    },
+    ["Blizzard_DelvesDifficultyPicker"] =
+    {
+        ["DelvesDifficultyPickerFrame"] =
+        {
+            MinVersion = 110000,
+        },
+    },
     ["Blizzard_EncounterJournal"] =
     {
         ["EncounterJournal"] =
@@ -997,6 +1024,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
         ["GuildFrame"] =
         {
             MinVersion = 40000, -- Moved from FrameXML when?
+            MaxVersion = 110000, -- Removed when?
         },
     },
     ["Blizzard_InspectUI"] =
@@ -1180,6 +1208,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
             MinVersion = 100000,
         },
     },
+    ["Blizzard_ProfessionsBook"] =
+    {
+        ["ProfessionsBookFrame"] =
+        {
+            MinVersion = 110000,
+        },
+    },
     ["Blizzard_ProfessionsCustomerOrders"] =
     {
         ["ProfessionsCustomerOrdersFrame"] =
@@ -1273,7 +1308,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
         ["PlayerTalentFrame"] =
         {
             MinVersion = 11401,
-            -- MaxVersion = 100000, -- Not actually removed yet, but presumably will be in the near future
+            MaxVersion = 110000, -- Unused in DF, but only removed in TWW
         },
     },
     ["Blizzard_TalkingHeadUI"] =
@@ -1290,6 +1325,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
         ["TimeManagerFrame"] =
         {
             MinVersion = 0, -- Added when?
+        },
+    },
+    ["Blizzard_TokenUI"] =
+    {
+        ["CurrencyTransferMenu"] =
+        {
+            MinVersion = 110000,
         },
     },
     ["Blizzard_TorghastLevelPicker"] =
