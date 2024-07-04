@@ -10,8 +10,7 @@ body:
       multiple: true
       options:
         - Vanilla Classic
-        - Burning Crusade Classic
-        - Wrath of the Lich King Classic
+        - Cataclysm Classic
         - Retail
     validations:
       required: true
