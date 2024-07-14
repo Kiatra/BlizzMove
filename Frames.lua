@@ -713,7 +713,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
     {
         ["CollectionsJournal"] =
         {
-            MinVersion = 30403,
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 }, -- Backported in a broken state
+                { Min = 30403 },
+            },
             SubFrames =
             {
                 ["CollectionsJournal.TitleContainer"] =
@@ -731,7 +735,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
     {
         ["ClubFinderGuildFinderFrame.RequestToJoinFrame"] =
         {
-            MinVersion = 40000,
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 },
+                { Min = 40000 },
+            },
         },
         -- ["CommunitiesAddDialog"] = {}, -- Frame is protected, similar to the Store frame
         ["CommunitiesFrame"] =
@@ -747,14 +755,22 @@ BlizzMoveAPI:RegisterAddOnFrames(
                 ["CommunitiesFrame.GuildMemberDetailFrame"] =
                 {
                     Detachable = true,
-                    MinVersion = 40000,
+                    VersionRanges =
+                    {
+                        { Min = 11503, Max = 20000 },
+                        { Min = 40000 },
+                    },
                 },
                 ["CommunitiesFrame.NotificationSettingsDialog"] = {},
             },
         },
         ["CommunitiesFrame.RecruitmentDialog"] =
         {
-            MinVersion = 40000,
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 },
+                { Min = 40000 },
+            },
         },
         ["CommunitiesSettingsDialog"] =
         {
@@ -762,15 +778,27 @@ BlizzMoveAPI:RegisterAddOnFrames(
         },
         ["CommunitiesGuildLogFrame"] =
         {
-            MinVersion = 40000,
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 },
+                { Min = 40000 },
+            },
         },
         ["CommunitiesGuildNewsFiltersFrame"] =
         {
-            MinVersion = 40000,
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 },
+                { Min = 40000 },
+            },
         },
         ["CommunitiesGuildTextEditFrame"] =
         {
-            MinVersion = 40000,
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 },
+                { Min = 40000 },
+            },
         },
     },
     ["Blizzard_Contribution"] =
@@ -982,12 +1010,12 @@ BlizzMoveAPI:RegisterAddOnFrames(
         ["PlayerTalentFrame"] =
         {
             MinVersion = 11401,
-            -- MaxVersion = 100000, -- Not actually removed yet, but presumably will be in the near future
+            MaxVersion = 110000, -- Unused in DF, but only removed in TWW
             SubFrames =
             {
                 ["GlyphFrame"] =
                 {
-                    MinVersion = 11404, -- Backported in a broken state
+                    MinVersion = 30000,
                     MaxVersion = 60200,
                     SubFrames =
                     {
@@ -1002,7 +1030,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
         ["GMSurveyFrame"] =
         {
             MinVersion = 0,
-            MaxVersion = 20000,
+            MaxVersion = 11503,
         },
     },
     ["Blizzard_GuildBankUI"] =
@@ -1016,7 +1044,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
     {
         ["GuildControlUI"] =
         {
-            MinVersion = 40000,
+            VersionRanges =
+            {
+                { Min = 11404, Max = 20000 },
+                { Min = 40000 },
+            },
         },
     },
     ["Blizzard_GuildUI"] =
@@ -1128,7 +1160,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
         {
             VersionRanges =
             {
-                { Min = 11404, Max = 20000 }, -- Backported in a broken state
+                { Min = 11404, Max = 11503 }, -- Backported in a broken state
                 { Min = 20504, Max = 70000 }, -- Moved from FrameXML; Removed when?
             },
         },
@@ -1248,8 +1280,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
     {
         ["ReforgingFrame"] =
         {
-            MinVersion = 40000,
-            MaxVersion = 70300, -- Removed when?
+            VersionRanges =
+            {
+                { Min = 11503, Max = 20000 }, -- Backported in a broken state
+                { Min = 40000, Max = 70300 }, -- Removed when?
+            },
             SubFrames =
             {
                 ["ReforgingFrame.invisButton"] = {},
