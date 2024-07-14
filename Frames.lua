@@ -1019,7 +1019,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
                     MaxVersion = 60200,
                     SubFrames =
                     {
-                        ["GlyphFrameScrollFrame"] = {},
+                        ["GlyphFrameScrollFrame"] =
+                        {
+                            IgnoreMouseWheel = true,
+                        },
                     },
                 },
             },
