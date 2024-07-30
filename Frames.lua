@@ -111,6 +111,13 @@ BlizzMoveAPI:RegisterFrames(
     ["ContainerFrameCombinedBags"] =
     {
         MinVersion = 100000,
+        SubFrames =
+        {
+            ["ContainerFrameCombinedBags.TitleContainer"] =
+            {
+                MinVersion = 110000,
+            }
+        }
     },
     ["DestinyFrame"] =
     {
