@@ -7,7 +7,7 @@
 ## Title: BlizzMove - Debugging plugin
 ## Notes: This Load-On-Demand plugin allows for retrieving debugging information.
 ## Author: Numy - github.com/Kiatra/BlizzMove/
-## IconTexture: 982414
+## IconTexture: interface/cursor/ui-cursor-move.blp
 ## Version: @project-version@
 ## X-License: GNU General Public License version 3 (GPLv3)
 ## RequiredDeps: BlizzMove
