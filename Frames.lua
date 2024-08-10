@@ -1,3 +1,5 @@
+--- @type BlizzMoveAPI
+local BlizzMoveAPI = _G.BlizzMoveAPI
 if not BlizzMoveAPI then return; end
 
 BlizzMoveAPI:RegisterFrames(
