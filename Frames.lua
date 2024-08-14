@@ -121,6 +121,17 @@ BlizzMoveAPI:RegisterFrames(
             }
         }
     },
+    ["ContainerFrame1"] =
+    {
+        MinVersion = 100000,
+        SubFrames =
+        {
+            ["ContainerFrame1.TitleContainer"] =
+            {
+                MinVersion = 110000,
+            }
+        }
+    },
     ["DestinyFrame"] =
     {
         MinVersion = 50000,
@@ -217,6 +228,13 @@ BlizzMoveAPI:RegisterFrames(
     ["GameMenuFrame"] =
     {
         MinVersion = 0,
+        SubFrames =
+    {
+        ["GameMenuFrame.Header"] =
+        {
+            MinVersion = 110000,
+        }
+    }
     },
     ["GossipFrame"] =
     {
