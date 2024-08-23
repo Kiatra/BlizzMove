@@ -1325,10 +1325,15 @@ do
 
         -- fix anchor family connection issues when opening/closing the hero talents dialog
         if addOnName == "Blizzard_PlayerSpells" and _G.HeroTalentsSelectionDialog and _G.PlayerSpellsFrame then
-            _G.HeroTalentsSelectionDialog:StartMoving();
-            _G.HeroTalentsSelectionDialog:StopMovingOrSizing();
-            _G.PlayerSpellsFrame:StartMoving();
-            _G.PlayerSpellsFrame:StopMovingOrSizing();
+            local function startStopMoving(frame)
+                local backup = frame:IsMovable();
+                frame:SetMovable(true);
+                frame:StartMoving();
+                frame:StopMovingOrSizing();
+                frame:SetMovable(backup);
+            end
+            startStopMoving(_G.HeroTalentsSelectionDialog);
+            PlayerSpellsFrame:HookScript('OnShow', startStopMoving);
         end
 
         if addOnName == self.name then
