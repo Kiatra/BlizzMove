@@ -1333,7 +1333,10 @@ do
                 frame:SetMovable(backup);
             end
             startStopMoving(_G.HeroTalentsSelectionDialog);
-            PlayerSpellsFrame:HookScript('OnShow', startStopMoving);
+            PlayerSpellsFrame:HookScript('OnShow', function(frame)
+                startStopMoving(frame);
+                RunNextFrame(function() startStopMoving(frame); end);
+            end);
         end
 
         if addOnName == self.name then
