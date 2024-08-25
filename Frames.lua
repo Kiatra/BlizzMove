@@ -450,6 +450,7 @@ BlizzMoveAPI:RegisterFrames(
     {
         MinVersion = 40000, -- No longer fullscreen when?
         SilenceCompatabilityWarnings = true,
+        IgnoreSavedPositionWhenMaximized = true,
         SubFrames =
         {
             ["QuestMapFrame"] =

@@ -28,33 +28,6 @@ function BlizzMoveAPI:ToggleDebugPrints()
     BlizzMove:Print("Debug prints have been:", (BlizzMove.DB.DebugPrints and "Enabled") or "Disabled");
 end
 
---- @alias BlizzMoveAPI_FrameTable table<string, BlizzMoveAPI_FrameData> # Frame name as key
---- @alias BlizzMoveAPI_AddonFrameTable table<string, BlizzMoveAPI_FrameTable> # Addon name as key, these can be LoD addons
-
---- @class BlizzMoveAPI_FrameData
---- @field SubFrames table<string, BlizzMoveAPI_SubFrameData>|nil # Sub frame name as key, sub frames may be nested to any depth
---- @field FrameReference Frame|nil # Reference to the frame to be moved, if nil, the frame will be looked up by name
---- @field MinVersion number|nil # First Interface version that is considered compatible
---- @field MaxVersion number|nil # Last Interface version that is consider compatible
---- @field MinBuild number|nil # First Interface build number that is considered compatible
---- @field MaxBuild number|nil # Last Interface build number that is considered compatible
---- @field VersionRanges BlizzMoveAPI_Range[]|nil # Interface version ranges, can be combined with MinVersion and MaxVersion
---- @field BuildRanges BlizzMoveAPI_Range[]|nil # Interface build number ranges, can be combined with MinBuild and MaxBuild
---- @field SilenceCompatabilityWarnings boolean|nil # Suppress warnings caused by compatibility checks against Interface version and build number
---- @field IgnoreMouse boolean|nil # Ignore all mouse events, same as setting both IgnoreMouseWheel and NonDraggable to true
---- @field IgnoreMouseWheel boolean|nil # Ignore mouse wheel events
---- @field NonDraggable boolean|nil # Ignore mouse drag events
---- @field DefaultDisabled boolean|nil # Disables moving the frame in the settings by default, requiring the user to enable it manually
-
---- @class BlizzMoveAPI_SubFrameData: BlizzMoveAPI_FrameData
---- @field Detachable boolean|nil # Allow the frame to be detached from the parent and moved independently
---- @field ForceParentage boolean|nil # Will call child:SetParent(parent) on registration
---- @field ManuallyScaleWithParent boolean|nil # Manually scale the frame with the parent; will call SetScale on the child whenever the parent's scale is updated
-
---- @class BlizzMoveAPI_Range
---- @field Min number|nil # Either Min, Max, or both must be filled
---- @field Max number|nil # Either Min, Max, or both must be filled
-
 --- @param framesTable BlizzMoveAPI_FrameTable
 function BlizzMoveAPI:RegisterFrames(framesTable)
     for frameName, frameData in pairs(framesTable) do
