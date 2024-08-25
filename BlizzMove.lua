@@ -1333,7 +1333,11 @@ do
                 frame:SetMovable(backup);
             end
             startStopMoving(_G.HeroTalentsSelectionDialog);
-            PlayerSpellsFrame:HookScript('OnShow', function(frame)
+            _G.PlayerSpellsFrame:HookScript('OnShow', function(frame)
+                startStopMoving(frame);
+                RunNextFrame(function() startStopMoving(frame); end);
+            end);
+            _G.HeroTalentsSelectionDialog:HookScript('OnShow', function(frame)
                 startStopMoving(frame);
                 RunNextFrame(function() startStopMoving(frame); end);
             end);
