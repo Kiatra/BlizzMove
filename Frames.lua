@@ -110,6 +110,19 @@ BlizzMoveAPI:RegisterFrames(
     {
         MinVersion = 0,
     },
+    ["ContainerFrame1"] =
+    {
+        MinVersion = 100000,
+         -- while it does indeed exist in classic, blizzard does not make other bags follow its position automatically like in retail
+        SilenceCompatabilityWarnings = true,
+        SubFrames =
+        {
+            ["ContainerFrame1.TitleContainer"] =
+            {
+                MinVersion = 110000,
+            },
+        },
+    },
     ["ContainerFrameCombinedBags"] =
     {
         MinVersion = 100000,
@@ -118,8 +131,8 @@ BlizzMoveAPI:RegisterFrames(
             ["ContainerFrameCombinedBags.TitleContainer"] =
             {
                 MinVersion = 110000,
-            }
-        }
+            },
+        },
     },
     ["DestinyFrame"] =
     {
@@ -217,6 +230,13 @@ BlizzMoveAPI:RegisterFrames(
     ["GameMenuFrame"] =
     {
         MinVersion = 0,
+        SubFrames =
+        {
+            ["GameMenuFrame.Header"] =
+            {
+                MinVersion = 110000,
+            },
+        },
     },
     ["GossipFrame"] =
     {
