@@ -117,6 +117,7 @@ do
                 key == "IgnoreMouse"
                 or key == "IgnoreMouseWheel"
                 or key == "NonDraggable"
+                or key == "IgnoreClamping"
                 or key == "DefaultDisabled"
                 or key == "SilenceCompatabilityWarnings"
                 or key == "IgnoreSavedPositionWhenMaximized"
@@ -862,7 +863,8 @@ do
     end
 
     function OnSizeUpdate(frame)
-        if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
+        local frameData = BlizzMove.FrameData[frame];
+        if not frameData or not frameData.storage or frameData.storage.disabled or frameData.IgnoreClamping then return; end
 
         local clampDistance = 40;
         local clampWidth = (frame:GetWidth() - clampDistance) or 0;
@@ -932,7 +934,9 @@ do
             frameData.storage.disabled = false;
 
             frame:SetMovable(true);
-            frame:SetClampedToScreen(clampFrame);
+            if not frameData.IgnoreClamping then
+                frame:SetClampedToScreen(clampFrame);
+            end
 
             if not frameData.IgnoreMouse then
                 if not frameData.NonDraggable then
@@ -958,7 +962,9 @@ do
         if not frame or (frameData.storage and frameData.storage.hooked) then return false; end
 
         frame:SetMovable(true);
-        frame:SetClampedToScreen(clampFrame);
+        if not frameData.IgnoreClamping then
+            frame:SetClampedToScreen(clampFrame);
+        end
 
         if not frameData.IgnoreMouse then
             if not frameData.NonDraggable then
@@ -978,7 +984,10 @@ do
             hookScript(frame, "OnHide", OnSubFrameHide);
         end
 
-        BlizzMove:SecureHook(frame, "SetPoint",  OnSetPoint);
+        if not frameData.IgnoreMouse and not frameData.NonDraggable then
+            -- prevents rubberbanding when a frame's movement is handled by something else
+            BlizzMove:SecureHook(frame, "SetPoint",  OnSetPoint);
+        end
         BlizzMove:SecureHook(frame, "SetWidth",  OnSizeUpdate);
         BlizzMove:SecureHook(frame, "SetHeight", OnSizeUpdate);
 
@@ -1005,7 +1014,9 @@ do
         if InCombatLockdown() and frame:IsProtected() then return false; end
 
         frame:SetMovable(false);
-        frame:SetClampedToScreen(false);
+        if not frameData.IgnoreClamping then
+            frame:SetClampedToScreen(false);
+        end
 
         if not frameData.IgnoreMouse then
             frame:EnableMouse(false);

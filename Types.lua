@@ -19,6 +19,7 @@
 --- @field IgnoreMouse boolean|nil # Ignore all mouse events, same as setting both IgnoreMouseWheel and NonDraggable to true
 --- @field IgnoreMouseWheel boolean|nil # Ignore mouse wheel events
 --- @field NonDraggable boolean|nil # Ignore mouse drag events
+--- @field IgnoreClamping boolean|nil # If true, BlizzMove will not modify the frame's clamping behaviour
 --- @field DefaultDisabled boolean|nil # Disables moving the frame in the settings by default, requiring the user to enable it manually
 --- @field IgnoreSavedPositionWhenMaximized boolean|nil # Ignore the stored position when the frame is maximized (checks frame.isMaximized for this)
 
