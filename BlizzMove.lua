@@ -580,6 +580,7 @@ do
     end
 
     function SetFrameScale(frame, frameScale)
+        if InCombatLockdown() and frame:IsProtected() then return false; end
         local frameData = BlizzMove.FrameData[frame];
         local oldScale = GetFrameScale(frame);
         local newScale = frameScale;
