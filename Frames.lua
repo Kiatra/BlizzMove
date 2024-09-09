@@ -1272,6 +1272,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
         {
             MinVersion = 100000,
         },
+        ["ProfessionsFrame.CraftingPage.SchematicForm.QualityDialog"] =
+        {
+            MinVersion = 100000,
+        },
     },
     ["Blizzard_ProfessionsBook"] =
     {
