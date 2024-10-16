@@ -30,6 +30,7 @@ local GetScreenWidth = _G.GetScreenWidth;
 local GetScreenHeight = _G.GetScreenHeight;
 local CreateFrame = _G.CreateFrame;
 local abs = _G.abs;
+local GetMouseFoci = _G.GetMouseFoci or function() return { GetMouseFocus() }; end;
 
 local name = ... or "BlizzMove";
 --- @class BlizzMove: AceAddon,AceConsole-3.0,AceEvent-3.0,AceHook-3.0
@@ -44,6 +45,8 @@ BlizzMove.FrameData = {};
 BlizzMove.FrameRegistry = {};
 --- @type BlizzMove_CombatLockdownQueueItem[]
 BlizzMove.CombatLockdownQueue = {};
+--- @type table<Frame, true>
+BlizzMove.CurrentMouseoverFrames = {};
 
 local MAX_SCALE = 2.5;
 local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay above 0.25
@@ -647,6 +650,8 @@ end
 local OnMouseDown;
 local OnMouseUp;
 local OnMouseWheel;
+local OnEnter;
+local OnLeave;
 local OnShow;
 local OnSubFrameHide;
 do
@@ -751,42 +756,21 @@ do
         return returnValue or parentReturnValue;
     end
 
-    local nestedOnMouseWheelCall;
-    local function OnMouseWheelChildren(frame, ...)
-        local returnValue = false;
-
-        for _, childFrame in pairs({ frame:GetChildren() }) do
-            local childOnMouseWheel = childFrame:GetScript("OnMouseWheel");
-
-            if childOnMouseWheel and MouseIsOver(childFrame) and childFrame:IsMouseWheelEnabled() then
-                nestedOnMouseWheelCall = true;
-                childOnMouseWheel(childFrame, ...);
-                nestedOnMouseWheelCall = false;
-                returnValue = true;
-            end
-
-            returnValue = OnMouseWheelChildren(childFrame, ...) or returnValue;
-        end
-
-        return returnValue;
-    end
-
     function OnMouseWheel(frame, delta, ...)
+        if not IsControlKeyDown() then return; end
         if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
         local returnValue = false;
         local parentReturnValue = false;
         local frameData = BlizzMove.FrameData[frame];
 
-        BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta, nestedOnMouseWheelCall);
+        BlizzMove:DebugPrint("OnMouseWheel:", frameData.storage.frameName, delta);
 
-        local onChildren = not IsControlKeyDown() and not nestedOnMouseWheelCall and OnMouseWheelChildren(frame, delta, ...);
-
-        if not onChildren and not nestedOnMouseWheelCall and not frameData.storage.detached then
+        if not frameData.storage.detached then
             parentReturnValue = (frameData.storage.frameParent and OnMouseWheel(frameData.storage.frameParent, delta, ...)) or false;
         end
 
-        if (not nestedOnMouseWheelCall and (frameData.storage.detached or not parentReturnValue) and IsControlKeyDown()) then
+        if (frameData.storage.detached or not parentReturnValue) then
             local oldScale = GetFrameScale(frame) or 1;
 
             local newScale = oldScale + 0.1 * delta;
@@ -833,6 +817,91 @@ do
 
         if frameData.storage.isMoving then
             BlizzMove:WaitForGlobalMouseUp(frame);
+        end
+    end
+
+    function OnEnter(frame)
+        if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
+
+        BlizzMove.CurrentMouseoverFrames[frame] = true;
+        BlizzMove:CheckMouseWheelCapture();
+    end
+
+    function OnLeave(frame)
+        if not BlizzMove.CurrentMouseoverFrames[frame] then return; end
+
+        BlizzMove.CurrentMouseoverFrames[frame] = nil;
+        BlizzMove:CheckMouseWheelCapture();
+    end
+end
+
+------------------------------------------------------------------------------------------------------
+--- MouseWheel handling
+------------------------------------------------------------------------------------------------------
+do
+    local captureFrame
+    --[[
+    General idea of this setup:
+    - We have a frame that spans the entire screen, and overlaps all frames.
+    - When the user has CTRL down, and we're mousing over a BM handled frame that has scaling enabled,
+        and there's no frame overlapping it that captures the mousewheel, we enable the mousewheel on this frame.
+    - The mousewheel is then passed to the OnMouseWheel function, which does all the scaling magic (including scaling parent-/subframes).
+    - Whenever mousewheel is disabled, other frames will continue to capture it as normal.
+    - The above condtions are checked way more often than is needed, because my faith in any alternative working as expected is low.
+    - And we have to do all this crap because we can't simply propegate mousewheel events to children :/
+
+    The previous solution involved manually calling childFrame:GetScript("OnMouseWheel")(childFrame, delta)
+        which results in scrolling being tainted, which in rare situations would cause problems.
+    --]]
+    function BlizzMove:InitMouseWheelCaptureFrame()
+        captureFrame = CreateFrame("Frame");
+        captureFrame:SetPoint("TOPLEFT", nil);
+        captureFrame:SetPoint("BOTTOMRIGHT", nil);
+
+        captureFrame:SetScript("OnUpdate", function() self:CheckMouseWheelCapture(); end);
+        captureFrame:SetScript("OnEvent", function() self:CheckMouseWheelCapture(); end);
+        captureFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
+        captureFrame:SetScript("OnMouseWheel", function(_, delta)
+            for i, frame in ipairs(GetMouseFoci()) do
+                --- @type BlizzMoveAPI_FrameData?
+                local frameData = self.FrameData[frame];
+
+                if frameData and not (frameData.IgnoreMouse or frameData.IgnoreMouseWheel) and self.CurrentMouseoverFrames[frame] then
+                    OnMouseWheel(frame, delta);
+
+                    return;
+                end
+            end
+
+            --@debug@
+            self:Print('dev debug print: no frame found?? :-(');
+            --@end-debug@
+        end);
+        captureFrame:SetFrameStrata("TOOLTIP");
+        captureFrame:SetFrameLevel(9999); -- try to overlay everything ;-)
+        captureFrame:Show();
+        captureFrame:EnableMouseWheel(false);
+        RunNextFrame(function() self:CheckMouseWheelCapture(); end);
+    end
+
+    function BlizzMove:CheckMouseWheelCapture()
+        captureFrame:EnableMouseWheel(false);
+        if not IsControlKeyDown() or not next(self.CurrentMouseoverFrames) or not next(GetMouseFoci()) then
+            -- keep mouse wheel disabled
+            return;
+        end
+
+        for _, frame in ipairs(GetMouseFoci()) do
+            --- @type BlizzMoveAPI_FrameData?
+            local frameData = self.FrameData[frame];
+            local shouldHandleMouseWheel = frameData and not (frameData.IgnoreMouse or frameData.IgnoreMouseWheel);
+            if not shouldHandleMouseWheel and (frame:IsMouseWheelEnabled() or frame:IsMouseClickEnabled()) then return; end -- some clickable/scrollable thing is in the way
+
+            if shouldHandleMouseWheel and self.CurrentMouseoverFrames[frame] then
+                captureFrame:EnableMouseWheel(true);
+
+                return;
+            end
         end
     end
 end
@@ -976,8 +1045,13 @@ do
             end
 
             if not frameData.IgnoreMouseWheel then
-                frame:EnableMouseWheel(true);
-                hookScript(frame, "OnMouseWheel", OnMouseWheel);
+                hookScript(frame, "OnEnter", OnEnter);
+                hookScript(frame, "OnLeave", OnLeave);
+                if MouseIsOver(frame) then
+                    RunNextFrame(function()
+                        if MouseIsOver(frame) then OnEnter(frame); end
+                    end);
+                end
             end
         end
 
@@ -1227,6 +1301,8 @@ do
         self:InitDefaults();
 
         self.Config:Initialize();
+
+        self:InitMouseWheelCaptureFrame();
 
         self:RegisterChatCommand('blizzmove', 'OnSlashCommand');
         self:RegisterChatCommand('bm', 'OnSlashCommand');
