@@ -37,13 +37,16 @@ local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceE
 if not BlizzMove then return; end
 
 --- @type BlizzMoveAPI_AddonFrameTable
-BlizzMove.Frames = BlizzMove.Frames or {};
+BlizzMove.Frames = {};
 --- @type table<Frame, BlizzMove_FrameData>
-BlizzMove.FrameData = BlizzMove.FrameData or {};
+BlizzMove.FrameData = {};
 --- @type table<string, table<string, Frame>> # [addonName][frameName] = frame
-BlizzMove.FrameRegistry = BlizzMove.FrameRegistry or {};
+BlizzMove.FrameRegistry = {};
 --- @type BlizzMove_CombatLockdownQueueItem[]
-BlizzMove.CombatLockdownQueue = BlizzMove.CombatLockdownQueue or {};
+BlizzMove.CombatLockdownQueue = {};
+
+local MAX_SCALE = 2.5;
+local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay above 0.25
 
 ------------------------------------------------------------------------------------------------------
 --- Debug Functions
@@ -787,9 +790,7 @@ do
             local oldScale = GetFrameScale(frame) or 1;
 
             local newScale = oldScale + 0.1 * delta;
-
-            if newScale > 1.5 then newScale = 1.5; end
-            if newScale < 0.5 then newScale = 0.5; end
+            newScale = max(MIN_SCALE, min(MAX_SCALE, newScale));
 
             returnValue = SetFrameScale(frame, newScale) or returnValue;
         end
