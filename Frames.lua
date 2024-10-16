@@ -1282,6 +1282,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
         {
             MinVersion = 100000,
         },
+        ["ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.QualityDialog"] =
+        {
+            MinVersion = 100000,
+        },
     },
     ["Blizzard_ProfessionsBook"] =
     {
