@@ -8,6 +8,11 @@ BlizzMoveAPI:RegisterFrames(
     {
         MinVersion = 0,
     },
+    ["ArenaRegistrarFrame"] =
+    {
+        MinVersion = 40000, -- Added when?
+        MaxVersion = 50000, -- Removed when?
+    },
     ["BankFrame"] =
     {
         MinVersion = 0,
@@ -210,6 +215,21 @@ BlizzMoveAPI:RegisterFrames(
                 MaxVersion = 50000, -- Moved to Blizzard_GuildUI when?
                 SubFrames =
                 {
+                    ["GuildControlPopupFrame"] =
+                    {
+                        Detachable = true,
+                        MinVersion = 11405,
+                        MaxVersion = 50000, -- Removed when?
+                    },
+                    ["GuildEventLogFrame"] =
+                    {
+                        VersionRanges =
+                        {
+                            { Min = 11405, Max = 20000 },
+                            { Min = 30000 },
+                        },
+                        Detachable = true,
+                    },
                     ["GuildInfoFrame"] =
                     {
                         Detachable = true,
@@ -217,11 +237,6 @@ BlizzMoveAPI:RegisterFrames(
                         {
                             ["GuildInfoFrameScrollFrame"] = {},
                         },
-                    },
-                    ["GuildEventLogFrame"] =
-                    {
-                        MinVersion = 30000,
-                        Detachable = true,
                     },
                 },
             },
@@ -349,6 +364,11 @@ BlizzMoveAPI:RegisterFrames(
             },
         },
     },
+    ["PVPBannerFrame"] =
+    {
+        MinVersion = 40000, -- Added when?
+        MaxVersion = 50000, -- Removed when?
+    },
     ["PVPFrame"] =
     {
         MinVersion = 40400, -- Moved out of PVPParentFrame
@@ -474,13 +494,13 @@ BlizzMoveAPI:RegisterFrames(
     },
     ["WorldMapFrame"] =
     {
-        MinVersion = 40000, -- No longer fullscreen when?
-        SilenceCompatabilityWarnings = true,
+        MinVersion = 11505,
         IgnoreSavedPositionWhenMaximized = true,
         SubFrames =
         {
             ["QuestMapFrame"] =
             {
+                MinVersion = 40000, -- No longer fullscreen when?
                 SubFrames =
                 {
                     ["QuestMapFrame.DetailsFrame.RewardsFrame"] = {
@@ -488,6 +508,11 @@ BlizzMoveAPI:RegisterFrames(
                     },
                     ["QuestMapFrame.DetailsFrame.ScrollFrame"] = {},
                 },
+            },
+            ["WorldMapTitleButton"] =
+            {
+                MinVersion = 11505,
+                MaxVersion = 50000, -- Removed when?
             },
         },
     },
@@ -945,6 +970,28 @@ BlizzMoveAPI:RegisterAddOnFrames(
             },
         },
     },
+    ["Blizzard_EngravingUI"] =
+    {
+        ["CharacterFrame"] =
+        {
+            MinVersion = 0,
+            SubFrames =
+            {
+                ["EngravingFrame"] =
+                {
+                    MinVersion = 10000, -- usable in SoD only
+                    MaxVersion = 50000, -- technically exists in all classic flavors at the moment
+                    Detachable = true,
+                    ManuallyScaleWithParent = true,
+                    SubFrames =
+                    {
+                        ["EngravingFrame.Border"] = {},
+                        ["EngravingFrameScrollFrame"] = {},
+                    },
+                },
+            }
+        },
+    },
     ["Blizzard_ExpansionLandingPage"] =
     {
         ["ExpansionLandingPage"] =
@@ -1070,6 +1117,16 @@ BlizzMoveAPI:RegisterAddOnFrames(
         {
             MinVersion = 0,
             MaxVersion = 11503,
+        },
+    },
+    ["Blizzard_GroupFinder_VanillaStyle"] =
+    {
+        ["LFGParentFrame"] =
+        {
+            VersionRanges =
+            {
+                { Min = 11405, Max = 20000 }, -- classic era version of LFG, which only exists on specific realms
+            },
         },
     },
     ["Blizzard_GuildBankUI"] =
