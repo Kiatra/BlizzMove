@@ -41,7 +41,7 @@ if not BlizzMove then return; end
 BlizzMove.Frames = {};
 --- @type table<Frame, BlizzMove_FrameData>
 BlizzMove.FrameData = {};
---- @type table<string, table<string, Frame>> # [addonName][frameName] = frame
+--- @type table<string, table<string, Frame>> # [addOnName][frameName] = frame
 BlizzMove.FrameRegistry = {};
 --- @type BlizzMove_CombatLockdownQueueItem[]
 BlizzMove.CombatLockdownQueue = {};
@@ -1322,9 +1322,26 @@ do
         self:ProcessFrames(self.name);
         self:ApplyAddOnSpecificFixes(self.name);
 
-        for addOnName, _ in pairs(self.Frames) do
+        EventRegistry:RegisterCallback('SetItemRef', function(_, link)
+            local linkType, addOnName, linkData = strsplit(':', link, 3);
+            if linkType == 'addon' and addOnName == 'blizzmoveCopy' then
+                self.Config:ShowURLPopup(linkData)
+            elseif linkType == 'addon' and addOnName == 'blizzmoveMuteWarning' and linkData then
+                ---@diagnostic disable-next-line: assign-type-mismatch
+                self.DB.mutedCompatWarnings[linkData] = date('%Y%m%d');
+                self:Print('Muted warning for', linkData);
+            end
+        end);
+
+        for i = 1, C_AddOns.GetNumAddOns() do
+            local addOnName = C_AddOns.GetAddOnInfo(i);
+            if IsAddOnLoaded(addOnName) then
+                self:CheckCompatibility(addOnName);
+            end
+        end
+        for addOnName in pairs(self.Frames) do
             if addOnName ~= self.name and IsAddOnLoaded(addOnName) then
-                self:ADDON_LOADED(_, addOnName);
+                self:ADDON_LOADED(nil, addOnName);
             end
         end
 
@@ -1398,6 +1415,7 @@ do
         saveScaleStrategy = "session",
         points = {},
         scales = {},
+        mutedCompatWarnings = {},
     };
     function BlizzMove:InitDefaults()
         for property, value in pairs(defaults) do
@@ -1412,6 +1430,7 @@ do
 
         self:ProcessFrames(addOnName);
         self:ApplyAddOnSpecificFixes(addOnName);
+        self:CheckCompatibility(addOnName);
     end
 
     function BlizzMove:ApplyAddOnSpecificFixes(addOnName)
@@ -1487,6 +1506,17 @@ do
                     skipHook = false
                 end);
             end
+        end
+    end
+
+    function BlizzMove:CheckCompatibility(addOnName)
+        local warnings = {
+            ['MoveAny'] = 'MoveAny is loaded, some users reported this breaks moving frames, if you encounter this issue yourself, try disabling MoveAny.',
+            ['DeModal'] = 'DeModal is loaded, this addon is known to cause issues, consider replacing it with |cff71d5ff|Haddon:blizzmoveCopy:https://www.curseforge.com/wow/addons/no-auto-close|h[NoAutoClose]|h|r instead.',
+        };
+        -- muted warnings are muted for 3 months
+        if warnings[addOnName] and (not self.DB.mutedCompatWarnings[addOnName] or tonumber(self.DB.mutedCompatWarnings[addOnName]) < (date("%Y%m%d") - 300)) then
+            self:Print(warnings[addOnName], ' |cff71d5ff|Haddon:blizzmoveMuteWarning:'..addOnName..'|h[Mute this warning]|h|r');
         end
     end
 end

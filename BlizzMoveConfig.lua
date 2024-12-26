@@ -17,9 +17,9 @@ if not BlizzMove then return; end
 ---@type BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
-BlizzMove.Config = BlizzMove.Config or {};
 ---@class BlizzMoveConfig
-local Config = BlizzMove.Config;
+local Config = {};
+BlizzMove.Config = Config;
 
 Config.version = GetAddOnMetadata(name, "Version") or "unknown";
 
