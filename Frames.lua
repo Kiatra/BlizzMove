@@ -257,6 +257,34 @@ BlizzMoveAPI:RegisterFrames(
     {
         MinVersion = 0,
     },
+    ["GroupLootContainer"] =
+    {
+        MinVersion = 0,
+        DefaultDisabled = true,
+        SubFrames =
+        {
+            ["GroupLootFrame1"] =
+            {
+                MinVersion = 0,
+                ManuallyScaleWithParent = true,
+            },
+            ["GroupLootFrame2"] =
+            {
+                MinVersion = 0,
+                ManuallyScaleWithParent = true,
+            },
+            ["GroupLootFrame3"] =
+            {
+                MinVersion = 0,
+                ManuallyScaleWithParent = true,
+            },
+            ["GroupLootFrame4"] =
+            {
+                MinVersion = 0,
+                ManuallyScaleWithParent = true,
+            },
+        },
+    },
     ["GuildInviteFrame"] =
     {
         MinVersion = 50000, -- Added when?
