@@ -77,7 +77,7 @@
 --- @field scales table<string, number> # [frameName] = scale
 --- @field disabledFrames table<string, table<string, boolean>>|nil # [addonName][frameName] = true
 --- @field enabledFrames table<string, table<string, boolean>>|nil # [addonName][frameName] = true
---- @field mutedCompatWarnings table<string, string> # [addonName] = dateWhenMuted
+--- @field mutedCompatWarnings table<string, string|number> # [addonName] = dateWhenMuted|timestampWhenMuted
 
 --- @alias BlizzMove_SavePosStrategy "session"|"permanent"|"off"
 --- @alias BlizzMove_SaveScaleStrategy "session"|"permanent"|

@@ -1304,12 +1304,19 @@ BlizzMoveAPI:RegisterAddOnFrames(
             MinVersion = 70000, -- Added when?
         },
     },
+    ["Blizzard_PlayerChoice"] =
+    {
+        ["PlayerChoiceFrame"] =
+        {
+            MinVersion = 100000, -- Moved from Blizzard_PlayerChoiceUI
+        },
+    },
     ["Blizzard_PlayerChoiceUI"] =
     {
         ["PlayerChoiceFrame"] =
         {
             MinVersion = 90000,
-            MaxVersion = 100000,
+            MaxVersion = 100000, -- Moved to Blizzard_PlayerChoice
         },
     },
     ["Blizzard_PlayerSpells"] =

@@ -1423,6 +1423,11 @@ do
                 self.DB[property] = value;
             end
         end
+        for addOnName, mutedAt in pairs(self.DB.mutedCompatWarnings) do
+            if type(mutedAt) ~= 'number' then
+                self.DB.mutedCompatWarnings[addOnName] = GetServerTime();
+            end
+        end
     end
 
     function BlizzMove:ADDON_LOADED(_, addOnName)
@@ -1463,6 +1468,14 @@ do
                 dialog:ClearAllPoints();
                 dialog:SetAllPoints();
             end
+        end
+        -- fix anchor family connection issues when opening PlayerChoiceFrame after moving it
+        if addOnName == "Blizzard_PlayerChoice" and _G.PlayerChoiceFrame then
+            _G.PlayerChoiceFrame:HookScript("OnHide", function()
+                if not InCombatLockdown() or not _G.PlayerChoiceFrame:IsProtected() then
+                    _G.PlayerChoiceFrame:ClearAllPoints();
+                end
+            end);
         end
 
         -- fix anchor family connection issues when opening/closing the hero talents dialog
@@ -1515,7 +1528,7 @@ do
             ['DeModal'] = 'DeModal is loaded, this addon is known to cause issues, consider replacing it with |cff71d5ff|Haddon:blizzmoveCopy:https://www.curseforge.com/wow/addons/no-auto-close|h[NoAutoClose]|h|r instead.',
         };
         -- muted warnings are muted for 3 months
-        if warnings[addOnName] and (not self.DB.mutedCompatWarnings[addOnName] or tonumber(self.DB.mutedCompatWarnings[addOnName]) < (date("%Y%m%d") - 300)) then
+        if warnings[addOnName] and (not self.DB.mutedCompatWarnings[addOnName] or self.DB.mutedCompatWarnings[addOnName] < (GetServerTime() - (3 * 31 * 24 * 3600))) then
             self:Print(warnings[addOnName], ' |cff71d5ff|Haddon:blizzmoveMuteWarning:'..addOnName..'|h[Mute this warning]|h|r');
         end
     end
