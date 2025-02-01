@@ -172,7 +172,11 @@ BlizzMoveAPI:RegisterFrames(
                 {
                     ["RaidInfoScrollFrame"] =
                     {
-                        MaxVersion = 100000,
+                        VersionRanges =
+                        {
+                            { Min = 0, Max = 11506 },
+                            { Min = 20000, Max = 100000 },
+                        },
                     },
                 },
             },
@@ -811,7 +815,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
             {
                 ["CollectionsJournal.TitleContainer"] =
                 {
-                    MinVersion = 100000,
+                    VersionRanges =
+                    {
+                        { Min = 11506, Max = 20000 }, -- Backported in a broken state
+                        { Min = 100000 },
+                    },
                 },
             },
         },
