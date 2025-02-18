@@ -175,7 +175,7 @@ BlizzMoveAPI:RegisterFrames(
                         VersionRanges =
                         {
                             { Min = 0, Max = 11506 },
-                            { Min = 20000, Max = 100000 },
+                            { Min = 20000, Max = 40402 },
                         },
                     },
                 },
@@ -642,7 +642,11 @@ BlizzMoveAPI:RegisterAddOnFrames(
     {
         ["AuctionHouseFrame"] =
         {
-            MinVersion = 80300,
+            VersionRanges =
+            {
+                { Min = 40402, Max = 50000 },
+                { Min = 80300 },
+            },
         },
     },
     ["Blizzard_AuctionUI"] =
@@ -818,6 +822,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
                     VersionRanges =
                     {
                         { Min = 11506, Max = 20000 }, -- Backported in a broken state
+                        { Min = 40402, Max = 50000 },
                         { Min = 100000 },
                     },
                 },
@@ -1156,11 +1161,12 @@ BlizzMoveAPI:RegisterAddOnFrames(
     },
     ["Blizzard_GroupFinder_VanillaStyle"] =
     {
-        ["LFGParentFrame"] =
+        ["LFGParentFrame"] = -- classic era version of LFG, which only exists on specific realms
         {
             VersionRanges =
             {
-                { Min = 11405, Max = 20000 }, -- classic era version of LFG, which only exists on specific realms
+                { Min = 11405, Max = 20000 },
+                { Min = 40402, Max = 50000 }, -- exists, but is unused
             },
         },
     },
