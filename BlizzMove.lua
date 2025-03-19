@@ -37,6 +37,9 @@ local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
 if not BlizzMove then return; end
 
+local L = LibStub("AceLocale-3.0"):GetLocale(name);
+-- Various debug texts have been left untranslated on purpose, to make debugging easier. Instructions or information for users is translated.
+
 --- @type BlizzMoveAPI_AddonFrameTable
 BlizzMove.Frames = {};
 --- @type table<Frame, BlizzMove_FrameData>
@@ -452,18 +455,18 @@ do
         if not frame:GetLeft() then
             local frameData = BlizzMove.FrameData[frame];
             local frameName = frameData and frameData.storage and frameData.storage.frameName or 'unknown';
-            local sharedText = string__format('BlizzMove: The frame you just moved (%s) is probably in a broken state, possibly because of other addons. ', frameName);
+            local sharedText = L['BlizzMove: The frame you just moved (%s) is probably in a broken state, possibly because of other addons.']:format(frameName);
 
             EnableAddOn('BlizzMove_Debug', UnitName('player')); -- force enable the debug module before loading it
             local loaded = LoadAddOn('BlizzMove_Debug');
             --- @type BlizzMove_Debug
             local DebugModule = loaded and BlizzMove:GetModule('Debug'); ---@diagnostic disable-line: assign-type-mismatch
             if (not DebugModule) then
-                error(sharedText .. 'Enable the Blizzmove_Debug plugin, to find more debugging information.');
+                error(sharedText .. ' ' .. L['Enable the Blizzmove_Debug plugin, to find more debugging information.']);
                 return;
             end
             local result = DebugModule:FindBadAnchorConnections(frame);
-            local text = sharedText .. 'Copy the text from this popup window, and report it to the addon author.\n\nBad anchor connections for "' .. frameName .. '":\n';
+            local text = sharedText .. ' ' .. L['Copy the text from this popup window, and report it to the addon author.'] .. '\n\nBad anchor connections for "' .. frameName .. '":\n';
             for _, info in pairs(result) do
                 text = text .. string__format(
                     '\n\n"%s" is outside anchor family, but referenced by "%s" (created in "%s", and "%s" respectively)',
@@ -471,7 +474,7 @@ do
                 );
             end
             DebugModule:GetMainFrame(text):Show();
-            error(sharedText .. 'Copy the text from the popup window, and report it to the addon author.');
+            error(sharedText .. L['Copy the text from the popup window, and report it to the addon author.']);
             return;
         end
         local left, top = frame:GetLeft() * scale, frame:GetTop() * scale
@@ -1136,7 +1139,7 @@ do
 
         if(not matchesBuild) then
             if(frame and not frameData.SilenceCompatabilityWarnings) then
-                self:Print("Frame was marked as incompatible, but does exist ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
+                self:Print(L["Frame was marked as incompatible, but does exist"], "( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
             end
 
             return false;
@@ -1152,7 +1155,7 @@ do
             end
             self.notFoundFrames = self.notFoundFrames or {};
             tinsert(self.notFoundFrames, frameName);
-            self:Print("Could not find frame ( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
+            self:Print(L["Could not find frame"], "( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
 
             return false;
         end
@@ -1240,10 +1243,10 @@ do
     local onUpdateFrame = CreateFrame("Frame")
     function BlizzMove:SavePositionStrategyChanged(oldValue, newValue)
         if oldValue == 'permanent' then
-            self:Unhook(onUpdateFrame, 'OnUpdate')
+            onUpdateFrame:SetScript("OnUpdate", nil);
         end
         if newValue == 'permanent' then
-            self:RawHookScript(onUpdateFrame, 'OnUpdate')
+            onUpdateFrame:SetScript("OnUpdate", function() self:OnUpdate(); end);
         end
     end
 
@@ -1329,7 +1332,7 @@ do
             elseif linkType == 'addon' and addOnName == 'blizzmoveMuteWarning' and linkData then
                 ---@diagnostic disable-next-line: assign-type-mismatch
                 self.DB.mutedCompatWarnings[linkData] = date('%Y%m%d');
-                self:Print('Muted warning for', linkData);
+                self:Print(L['Muted warning for %s']:format(linkData));
             end
         end);
 
@@ -1374,7 +1377,7 @@ do
             elseif arg1 == commands.debugAnchor then
                 local result = DebugModule:FindBadAnchorConnections(self:GetFrameFromName(name, arg2));
                 if #result > 0 then
-                    self:Print('Found bad anchor connections, copy the popup window contents to analyze them.');
+                    self:Print(L['Found bad anchor connections, copy the popup window contents to analyze them.']);
                     local text = 'Bad anchor connections for "' .. arg2 .. '":\n';
                     for _, info in pairs(result) do
                         text = text .. string__format(
@@ -1384,7 +1387,7 @@ do
                     end
                     DebugModule:GetMainFrame(text):Show();
                 else
-                    self:Print('No bad anchor connections found');
+                    self:Print(L['No bad anchor connections found']);
                 end
             elseif arg1 == commands.dumpTopLevelFrames then
                 DebugModule:DumpTopLevelFrames();
@@ -1524,12 +1527,12 @@ do
 
     function BlizzMove:CheckCompatibility(addOnName)
         local warnings = {
-            ['MoveAny'] = 'MoveAny is loaded, some users reported this breaks moving frames, if you encounter this issue yourself, try disabling MoveAny.',
-            ['DeModal'] = 'DeModal is loaded, this addon is known to cause issues, consider replacing it with |cff71d5ff|Haddon:blizzmoveCopy:https://www.curseforge.com/wow/addons/no-auto-close|h[NoAutoClose]|h|r instead.',
+            ['MoveAny'] = L['MoveAny is loaded, some users reported this breaks moving frames. If you encounter this issue yourself, try disabling MoveAny.'],
+            ['DeModal'] = L['DeModal is loaded, this addon is known to cause issues, consider replacing it with %s instead.']:format('|cff71d5ff|Haddon:blizzmoveCopy:https://www.curseforge.com/wow/addons/no-auto-close|h[NoAutoClose]|h|r'),
         };
         -- muted warnings are muted for 3 months
         if warnings[addOnName] and (not self.DB.mutedCompatWarnings[addOnName] or self.DB.mutedCompatWarnings[addOnName] < (GetServerTime() - (3 * 31 * 24 * 3600))) then
-            self:Print(warnings[addOnName], ' |cff71d5ff|Haddon:blizzmoveMuteWarning:'..addOnName..'|h[Mute this warning]|h|r');
+            self:Print(warnings[addOnName], ' |cff71d5ff|Haddon:blizzmoveMuteWarning:' .. addOnName .. '|h[' .. L['Mute this warning'] .. ']|h|r');
         end
     end
 end

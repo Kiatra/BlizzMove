@@ -17,6 +17,13 @@ jobs:
       - name: Replace toc-versions
         uses: NumyAddon/ToCVersions@v1
 
+      - name: Update Locale
+        run: |
+          sudo apt-get install lua5.3
+          ./.github/scripts/update_translation.sh
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+
       - name: Create Package
         uses: BigWigsMods/packager@v2
         with:

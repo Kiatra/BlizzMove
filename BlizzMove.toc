@@ -29,6 +29,7 @@
 Libs\Libs.xml
 
 # Add-On
+Locale\Locale.xml
 BlizzMove.lua
 BlizzMoveAPI.lua
 BlizzMoveConfig.lua

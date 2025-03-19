@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+https://raw.githubusercontent.com/Meorawr/wow-ui-schema/main/UI.xsd">
     <!--@non-debug@
     <Script file="LibStub\LibStub.lua"/>
     <Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
@@ -9,6 +9,7 @@
     <Include file="AceHook-3.0\AceHook-3.0.xml"/>
     <Include file="AceGUI-3.0\AceGUI-3.0.xml"/>
     <Include file="AceConfig-3.0\AceConfig-3.0.xml"/>
+    <Include file="AceLocale-3.0\AceLocale-3.0.xml"/>
     <Include file="TaintLess\TaintLess.xml"/>
     @end-non-debug@-->
 </Ui>

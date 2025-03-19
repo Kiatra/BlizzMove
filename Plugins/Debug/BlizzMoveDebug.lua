@@ -38,6 +38,10 @@ Module.frameConfig = {
 }
 Module.bannedCharacterPattern = '[^a-zA-Z0-9 !@#$%^&*()_+\\-=,.:;?~`{}[<>]';
 
+local function json_encode(val)
+    return (C_EncodingUtil and C_EncodingUtil.SerializeJSON and C_EncodingUtil.SerializeJSON(val)) or json.encode(val);
+end
+
 local function encode_string(val)
     return '"' .. val:gsub(Module.bannedCharacterPattern, function(c) return string__format('"..strchar(%d).."', c:byte()); end) .. '"';
 end
@@ -137,7 +141,7 @@ function Module:DumpAllData(changedCVarsOnly)
     data.savedVars = self:ExtractSavedVars();
     data.addons = self:ExtractAddonList();
 
-    local frame = self:GetMainFrame(json.encode(data));
+    local frame = self:GetMainFrame(json_encode(data));
     frame:Show();
 end
 
@@ -157,7 +161,7 @@ function Module:DumpCVars(options)
         for _, info in pairs(data) do
             info.value = info.value:gsub(self.bannedCharacterPattern, function(c) return string__format('\\u%04x', c:byte()); end)
         end
-        text = json.encode(data);
+        text = json_encode(data);
     end
 
     local frame = self:GetMainFrame(text);
@@ -354,7 +358,7 @@ function Module:DumpTopLevelFrames()
         frame = EnumerateFrames(frame);
     end
 
-    local mainFrame = self:GetMainFrame(json.encode(data));
+    local mainFrame = self:GetMainFrame(json_encode(data));
     mainFrame:Show();
 end
 

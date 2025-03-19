@@ -14,6 +14,8 @@ local name = ... or "BlizzMove";
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
+local L = LibStub("AceLocale-3.0"):GetLocale(name);
+
 ---@type BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
@@ -24,8 +26,10 @@ BlizzMove.Config = Config;
 Config.version = GetAddOnMetadata(name, "Version") or "unknown";
 
 function Config:GetOptions()
-    local count = 1;
-    local function increment() count = count + 1; return count end;
+    local leftClick = CreateAtlasMarkup('NPE_LeftClick', 18, 18);
+    local rightClick = CreateAtlasMarkup('NPE_RightClick', 18, 18);
+    local increment = CreateCounter();
+
     return {
         type = "group",
         childGroups = "tab",
@@ -33,45 +37,45 @@ function Config:GetOptions()
             version = {
                 order = increment(),
                 type = "description",
-                name = "Version: " .. self.version
+                name = L["Version:"] .. " " .. self.version
             },
             mainTab = {
                 order = increment(),
-                name = "Info",
+                name = L["Info"],
                 type = "group",
                 args = {
                     description = {
                         order = increment(),
                         type = "description",
-                        name = [[
-This addon makes the Blizzard windows movable.
-
-To temporarily move a window just Left-Click the window and drag it to where you want it for the current game session.
-
-CTRL + SCROLL over a window to adjust the scale of the window.
-
-ALT + Left-Click while dragging a detachable child window will detach it from the parent
-Detached windows can be moved and resized independently from the parent.
-
-Resetting a frame:
-  SHIFT + Right-Click to reset the position.
-  CTRL + Right-Click to reset the scale of a window.
-  ALT + Right-Click to re-attach a child window.
-
-Addon authors can enable support for their own custom frames by utilizing the BlizzMoveAPI functions
-]],
+                        name =
+                            L["This addon makes the Blizzard windows movable."] .. "\n"
+                            .. "\n"
+                            .. L["To temporarily move a window just %s the window and drag it to where you want it for the current game session."]:format(leftClick) .. "\n"
+                            .. "\n"
+                            .. L["CTRL + SCROLL over a window to adjust the scale of the window."] .. "\n"
+                            .. "\n"
+                            .. L["ALT + %s while dragging a detachable child window will detach it from the parent"]:format(leftClick) .. "\n"
+                            .. L["Detached windows can be moved and resized independently from the parent."] .. "\n"
+                            .. "\n"
+                            .. L["Resetting a frame:"] .. "\n"
+                            .. "  " .. L["SHIFT + %s to reset the position."]:format(rightClick) .. "\n"
+                            .. "  " .. L["CTRL + %s to reset the scale of a window."]:format(rightClick) .. "\n"
+                            .. "  " .. L["ALT + %s to re-attach a child window."]:format(rightClick) .. "\n"
+                            .. "\n"
+                            .. L["Addon authors can enable support for their own custom frames by utilizing the BlizzMoveAPI functions"],
                     },
                     plugins = {
                         order = increment(),
                         type = "execute",
-                        name = "Search for plugins here",
+                        name = L["Search for plugins here"],
                         func = function() Config:ShowURLPopup("https://www.curseforge.com/wow/addons/search?search=BlizzMove+plugin"); end,
+                        width = 1.5,
                     },
                 },
             },
             fullFramesTab = {
                 order = increment(),
-                name = "List of frames",
+                name = L["List of frames"],
                 type = "group",
                 childGroups = "tree",
                 get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
@@ -80,7 +84,7 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
             },
             disabledFramesTab = {
                 order = increment(),
-                name = "Default disabled frames",
+                name = L["Default disabled frames"],
                 type = "group",
                 childGroups = "tree",
                 get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
@@ -89,16 +93,17 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
             },
             globalConfigTab = {
                 order = increment(),
-                name = "Global Config",
+                name = L["Global Config"],
                 type = "group",
                 get = function(info) return Config:GetConfig(info[#info]); end,
                 set = function(info, value) return Config:SetConfig(info[#info], value); end,
                 args = {
                     requireMoveModifier = {
                         order = increment(),
-                        name = "Require move modifier.",
-                        desc = "If enabled BlizzMove requires to hold shift to move frames.",
+                        name = L["Require move modifier"],
+                        desc = L["If enabled BlizzMove requires to hold SHIFT to move frames."],
                         type = "toggle",
+                        width = "full",
                     },
                     newline1 = {
                         order = increment(),
@@ -108,30 +113,32 @@ Addon authors can enable support for their own custom frames by utilizing the Bl
                     savePosStrategy = {
                         order = increment(),
                         width = 1.5,
-                        name = "How should frame positions be remembered?",
-                        desc = [[Do not remember >> frame positions are reset when you close and reopen them
-
-In Session >> frame positions are saved until you reload your UI
-
-Remember Permanently >> frame positions are remembered until you switch to another option; click the reset button; or disable BlizzMove]],
+                        name = L["How should frame positions be remembered?"],
+                        desc =
+                            L["Do not remember"] .. " >> " .. L["frame positions are reset when you close and reopen them"] .. "\n"
+                            .. "\n"
+                            .. L["In Session"] .. " >> " .. L["frame positions are saved until you reload your UI"] .. "\n"
+                            .. "\n"
+                            .. L["Remember Permanently"] .. " >> " .. L["frame positions are remembered until you switch to another option, click the reset button, or disable BlizzMove"],
                         type = "select",
                         values = {
-                            off = "Do not remember",
-                            session = "In Session, until you reload",
-                            permanent = "Remember permanently",
+                            off = L["Do not remember"],
+                            session = L["In Session, until you reload"],
+                            permanent = L["Remember Permanently"],
                         },
                     },
                     saveScaleStrategy = {
                         order = increment(),
                         width = 1.5,
-                        name = "How should frame scales be remembered?",
-                        desc = [[In Session >> frame scales are saved until you reload your UI
-
-Remember Permanently >> frame scales are remembered until you switch to another option; click the reset button; or disable BlizzMove]],
+                        name = L["How should frame scales be remembered?"],
+                        desc =
+                            L["In Session"] .. " >> " .. L["frame scales are saved until you reload your UI"] .. "\n"
+                            .. "\n"
+                            .. L["Remember Permanently"] .. " >> " .. L["frame scales are remembered until you switch to another option, click the reset button, or disable BlizzMove"],
                         type = "select",
                         values = {
-                            session = "In Session, until you reload",
-                            permanent = "Remember permanently",
+                            session = L["In Session, until you reload"],
+                            permanent = L["Remember Permanently"],
                         },
                     },
                     newline2 = {
@@ -142,20 +149,20 @@ Remember Permanently >> frame scales are remembered until you switch to another 
                     resetPositions = {
                         order = increment(),
                         width = 1.5,
-                        name = "Reset Permanent Positions",
-                        desc = "Reset permanently stored positions",
+                        name = L["Reset Permanent Positions"],
+                        desc = L["Reset permanently stored positions"],
                         type = "execute",
                         func = function() BlizzMove:ResetPointStorage(); ReloadUI(); end,
-                        confirm = function() return "Are you sure you want to reset permanently stored positions? This will reload the UI." end,
+                        confirm = function() return L["Are you sure you want to reset permanently stored positions? This will reload the UI."] end,
                     },
                     resetScales = {
                         order = increment(),
                         width = 1.5,
-                        name = "Reset Permanent Scales",
-                        desc = "Reset permanently stored scales",
+                        name = L["Reset Permanent Scales"],
+                        desc = L["Reset permanently stored scales"],
                         type = "execute",
                         func = function() BlizzMove:ResetScaleStorage(); ReloadUI(); end,
-                        confirm = function() return "Are you sure you want to reset permanently stored scales? This will reload the UI." end,
+                        confirm = function() return L["Are you sure you want to reset permanently stored scales? This will reload the UI."] end,
                     },
                 },
             },
@@ -174,24 +181,24 @@ function Config:GetFramesTables()
 
     local allFrames = {
         ["0"] = {
-            name = "Filter",
+            name = L["Filter"],
             type = "input",
-            desc = "Search by frame name, or '-' for disabled frames, or '+' for enabled frames.",
+            desc = L["Search by frame name, or '-' for disabled frames, or '+' for enabled frames."],
             order = 1,
             get = function() return self.search; end,
             set = function(_, value) self.search = value; end
         },
         ["1"] = {
-            name = "Clear",
+            name = L["Clear"],
             type = "execute",
-            desc = "Clear the search filter.",
+            desc = L["Clear the search filter."],
             order = 2,
             func = function() self.search = ""; end,
             width = 0.5,
         },
     }
     listOfFrames["0"] = {
-        name = "All frames",
+        name = L["All frames"],
         type = "group",
         order = 1,
         args = allFrames,
@@ -204,14 +211,14 @@ function Config:GetFramesTables()
             order = addonOrder,
             args = {
                 [addOnName] = {
-                    name = "Movable frames for " .. addOnName,
+                    name = L["Movable frames for %s"]:format(addOnName),
                     type = "multiselect",
                     values = function(info) return BlizzMoveAPI:GetRegisteredFrames(info[#info]); end,
                 },
             },
         };
         allFrames[addOnName] = {
-            name = "Movable frames for " .. addOnName,
+            name = L["Movable frames for %s"]:format(addOnName),
             type = "multiselect",
             order = addonOrder,
             values = function(info) return self:GetFilteredFrames(info[#info], self.search); end,
@@ -225,7 +232,7 @@ function Config:GetFramesTables()
                     order = addonOrder,
                     args = {
                         [addOnName] = {
-                            name = "Movable frames for " .. addOnName,
+                            name = L["Movable frames for %s"]:format(addOnName),
                             type = "multiselect",
                             values = function(info) return self:GetDefaultDisabledFrames(info[#info]); end,
                         },
@@ -273,8 +280,8 @@ function Config:Initialize()
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BlizzMove", "BlizzMove");
 
     StaticPopupDialogs["BlizzMoveURLDialog"] = {
-        text = "CTRL-C to copy",
-        button1 = "Close",
+        text = L["CTRL-C to copy"],
+        button1 = CLOSE,
         OnShow = function(dialog, data)
             local function HidePopup()
                 dialog:Hide();

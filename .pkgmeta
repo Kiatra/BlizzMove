@@ -12,6 +12,7 @@ externals:
     Libs/AceHook-3.0: https://repos.wowace.com/wow/ace3/trunk/AceHook-3.0
     Libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
     Libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
+    Libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
     Libs/TaintLess:
         url: https://www.townlong-yak.com/addons.git/taintless
         commit: default
