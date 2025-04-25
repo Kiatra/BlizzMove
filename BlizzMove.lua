@@ -975,9 +975,12 @@ end
 --- Processing Frame Functions
 ------------------------------------------------------------------------------------------------------
 do
+    --- @param frame Frame
+    --- @param script ScriptFrame
+    --- @param handler? function|string
     local function hookScript(frame, script, handler)
-        BlizzMove:SecureHookScript(frame, script, handler);
         if (frame:HasScript(script)) then
+            BlizzMove:SecureHookScript(frame, script, handler);
             hooksecurefunc(frame, 'SetScript', function(self, scriptName)
                 if (scriptName == script and self == frame) then
                     BlizzMove:DebugPrint('SetScript hook triggered for ', BlizzMove:GetFrameName(frame), scriptName);
