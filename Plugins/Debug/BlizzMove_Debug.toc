@@ -4,6 +4,7 @@
 ## Interface-BCC: @toc-version-bcc@
 ## Interface-Wrath: @toc-version-wrath@
 ## Interface-Cata: @toc-version-cata@
+## Interface-Mists: @toc-version-mists@
 ## Title: BlizzMove - Debugging plugin
 ## Notes: This Load-On-Demand plugin allows for retrieving debugging information.
 ## Author: Numy - github.com/Kiatra/BlizzMove/
