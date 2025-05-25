@@ -10,7 +10,10 @@ body:
       multiple: true
       options:
         - Vanilla Classic
+        - TBC Classic
+        - Wrath Classic
         - Cataclysm Classic
+        - MoP Classic
         - Retail
     validations:
       required: true
