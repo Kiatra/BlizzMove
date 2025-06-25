@@ -1001,6 +1001,7 @@ BlizzMoveAPI:RegisterAddOnFrames(
                 {
                     VersionRanges =
                     {
+                        { Min = 40402, Max = 50000 },
                         { Min = 50500, Max = 60000 },
                         { Min = 100000 },
                     },
