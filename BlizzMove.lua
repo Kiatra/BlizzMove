@@ -648,6 +648,65 @@ do
 end
 
 ------------------------------------------------------------------------------------------------------
+--- Frame movement
+------------------------------------------------------------------------------------------------------
+local StartMoving;
+local StopMoving;
+do
+    local lastPrinted = 0;
+    local function printMovementError()
+        if (time() - lastPrinted) < 600 then return; end
+        lastPrinted = time();
+        --[[
+            extra context:
+            Blizzard got super paranoid about addons laundering data into the RestrictedEnvironment during combat after a WA was created that showcased a rotation bot (right after Blizzard published their official one)
+            So they went through all frame methods, to locked down anything that looked like it could potentially maybe perhaps be abused.
+            Apparently the thought that legitimate addons might be using these methods never crossed their mind, or worse they just didn't care.
+
+            This affects all protected frames while in combat, but there's no way to detect whether this change has gone live on the player's current client.
+            As of writing (25-06-2025), this change is only live on retail, not on classic or even retail PTR.
+
+            Has this been live everywhere, it might've been possible to fix some more issues, such as combat starting while you're actively moving a frame, causing the frame to permanently stay moving -.-
+        --]]
+        BlizzMove:Print(L['Blizzard has blocked the ability for addons to move certain frames. They did this without any warning or comment, after it has worked for decades. Tell them on the forums if you think this should be changed.']);
+    end
+    local eventFrame = CreateFrame('Frame');
+    eventFrame:SetScript('OnEvent', function(self)
+        if self.callback then self.callback() end
+    end)
+
+    local function catchErrorActionBlocked(func, ...)
+        local blocked = false;
+        eventFrame:RegisterEvent('ADDON_ACTION_BLOCKED');
+        eventFrame.callback = function() blocked = true; end
+
+        local success = pcall(func, ...);
+
+        eventFrame:UnregisterEvent('ADDON_ACTION_BLOCKED');
+
+        return blocked or not success;
+    end
+
+    function StartMoving(frame)
+        local blocked = catchErrorActionBlocked(frame.StartMoving, frame)
+        if blocked then
+            printMovementError();
+
+            return false;
+        end
+    end
+
+    function StopMoving(frame)
+        local blocked = catchErrorActionBlocked(frame.StopMovingOrSizing, frame)
+        if blocked then
+            printMovementError();
+
+            return false;
+        end
+    end
+end
+
+------------------------------------------------------------------------------------------------------
 --- Secure Script Hook Handlers
 ------------------------------------------------------------------------------------------------------
 local OnMouseDown;
@@ -681,18 +740,18 @@ do
                 parentReturnValue = (frameData.storage.frameParent and OnMouseDown(frameData.storage.frameParent, button)) or false;
             end
 
-            if (
+            if
                 (frameData.storage.detached or not parentReturnValue)
                 and (not (BlizzMove.DB and BlizzMove.DB.requireMoveModifier) or IsShiftKeyDown())
-            ) then
-                    local userPlaced = frame:IsUserPlaced();
+            then
+                local userPlaced = frame:IsUserPlaced();
 
-                    frame:SetMovable(true);
-                    frame:StartMoving();
-                    frame:SetUserPlaced(userPlaced);
-                    frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetFramePoints(frame);
-                    frameData.storage.isMoving = true;
-                    returnValue = true;
+                frame:SetMovable(true);
+                StartMoving(frame);
+                frame:SetUserPlaced(userPlaced);
+                frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetFramePoints(frame);
+                frameData.storage.isMoving = true;
+                returnValue = true;
             end
         end
 
@@ -714,7 +773,7 @@ do
 
         if frameData.storage.detached or not parentReturnValue then
             if button == "LeftButton" and frameData.storage.isMoving then
-                frame:StopMovingOrSizing();
+                StopMoving(frame);
 
                 frameData.storage.points.dragPoints = GetAbsoluteFramePosition(frame);
                 frameData.storage.points.dragged = true;
@@ -1489,8 +1548,8 @@ do
             local function startStopMoving(frame)
                 local backup = frame:IsMovable();
                 frame:SetMovable(true);
-                frame:StartMoving();
-                frame:StopMovingOrSizing();
+                StartMoving(frame);
+                StopMoving(frame);
                 frame:SetMovable(backup);
             end
             startStopMoving(_G.HeroTalentsSelectionDialog);
