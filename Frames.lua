@@ -386,14 +386,6 @@ BlizzMoveAPI:RegisterFrames(
                 MaxVersion = 100000,
                 IgnoreMouseWheel = true,
             },
-            ["ScenarioQueueFrameSpecific"] =
-            {
-                VersionRanges =
-                {
-                    { Min = 50000, Max = 90000 },
-                    { Min = 100207 },
-                },
-            },
         },
     },
     ["PVPBannerFrame"] =
