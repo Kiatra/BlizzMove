@@ -250,7 +250,7 @@ do
             frameData = self.Frames[addOnName][frameName];
         end
 
-        if (frameData) then
+        if (frameData and IsAddOnLoaded(addOnName)) then
             self:ProcessFrame(addOnName, frameName, frameData, (frameData.storage and frameData.storage.frameParent) or nil);
         end
     end
@@ -1192,15 +1192,15 @@ do
 
         local matchesBuild = self:MatchesCurrentBuild(frameData);
 
-        if(frameData.FrameReference) then
+        if (frameData.FrameReference) then
             self.FrameRegistry[addOnName] = self.FrameRegistry[addOnName] or {}
             self.FrameRegistry[addOnName][frameName] = frameData.FrameReference;
         end
 
         local frame = self:GetFrameFromName(addOnName, frameName);
 
-        if(not matchesBuild) then
-            if(frame and not frameData.SilenceCompatabilityWarnings) then
+        if (not matchesBuild) then
+            if (frame and not frameData.SilenceCompatabilityWarnings) then
                 self:Print(L["Frame was marked as incompatible, but does exist"], "( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
             end
 
