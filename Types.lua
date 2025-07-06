@@ -37,6 +37,7 @@
 ----------------------------------------
 --- @class BlizzMove_FrameData: BlizzMoveAPI_SubFrameData
 --- @field storage BlizzMove_FrameStorage
+--- @field parentData BlizzMove_FrameData|nil
 --- @field SubFrames table<string, BlizzMove_FrameData>|nil
 
 --- @class BlizzMove_FrameStorage
@@ -44,6 +45,7 @@
 --- @field frameName string
 --- @field addOnName string
 --- @field frameParent Frame?
+--- @field moveHandles PanelDragBarTemplate[]|nil # only for protected frames
 --- @field points BlizzMove_PointsStorage?
 --- @field isMoving boolean?
 --- @field detached boolean?

@@ -46,6 +46,8 @@ BlizzMove.Frames = {};
 BlizzMove.FrameData = {};
 --- @type table<string, table<string, Frame>> # [addOnName][frameName] = frame
 BlizzMove.FrameRegistry = {};
+--- @type table<PanelDragBarTemplate, boolean> # [moveHandleFrame] = true
+BlizzMove.MoveHandles = {};
 --- @type BlizzMove_CombatLockdownQueueItem[]
 BlizzMove.CombatLockdownQueue = {};
 --- @type table<Frame, true>
@@ -57,6 +59,9 @@ local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay abo
 ------------------------------------------------------------------------------------------------------
 --- Debug Functions
 ------------------------------------------------------------------------------------------------------
+--@debug@
+_G['BlizzMove'] = BlizzMove;
+--@end-debug@
 do
     function BlizzMove:DebugPrint(...)
         if self.DB and self.DB.DebugPrints then self:Print("Debug message:\n", ...); end
@@ -525,13 +530,17 @@ do
         };
     end
 
-    function SetFramePoints(frame, framePoints)
+    --- @param frame Frame
+    --- @param framePoints BlizzMove_FramePoint[]
+    --- @param raw boolean? # if true, will not factor in the frame scale
+    --- @return boolean
+    function SetFramePoints(frame, framePoints, raw)
         if InCombatLockdown() and frame:IsProtected() then return false; end
 
         if framePoints and framePoints[1] then
             frame:ClearAllPoints();
             local SetPoint = frame.SetPointBase or frame.SetPoint;
-            local scale = frame:GetScale();
+            local scale = raw and 1 or frame:GetScale();
 
             for curPoint = 1, #framePoints do
                 ignoreSetPointHook = true;
@@ -653,56 +662,27 @@ end
 local StartMoving;
 local StopMoving;
 do
-    local lastPrinted = 0;
-    local function printMovementError()
-        if (time() - lastPrinted) < 600 then return; end
-        lastPrinted = time();
-        --[[
-            extra context:
-            Blizzard got super paranoid about addons laundering data into the RestrictedEnvironment during combat after a WA was created that showcased a rotation bot (right after Blizzard published their official one)
-            So they went through all frame methods, to locked down anything that looked like it could potentially maybe perhaps be abused.
-            Apparently the thought that legitimate addons might be using these methods never crossed their mind, or worse they just didn't care.
-
-            This affects all protected frames while in combat, but there's no way to detect whether this change has gone live on the player's current client.
-            As of writing (25-06-2025), this change is only live on retail, not on classic or even retail PTR.
-
-            Has this been live everywhere, it might've been possible to fix some more issues, such as combat starting while you're actively moving a frame, causing the frame to permanently stay moving -.-
-        --]]
-        BlizzMove:Print(L['Blizzard has blocked the ability for addons to move certain frames. They did this without any warning or comment, after it has worked for decades. Tell them on the forums if you think this should be changed.']);
+    local function setNil(table, key)
+        TextureLoadingGroupMixin.RemoveTexture({ textures = table, }, key);
     end
-    local eventFrame = CreateFrame('Frame');
-    eventFrame:SetScript('OnEvent', function(self)
-        if self.callback then self.callback() end
-    end)
-
-    local function catchErrorActionBlocked(func, ...)
-        local blocked = false;
-        eventFrame:RegisterEvent('ADDON_ACTION_BLOCKED');
-        eventFrame.callback = function() blocked = true; end
-
-        local success = pcall(func, ...);
-
-        eventFrame:UnregisterEvent('ADDON_ACTION_BLOCKED');
-
-        return blocked or not success;
-    end
+    local function returnFalse() return false; end
 
     function StartMoving(frame)
-        local blocked = catchErrorActionBlocked(frame.StartMoving, frame)
-        if blocked then
-            printMovementError();
+        if BlizzMove.MoveHandles[frame] then
+            setNil(frame, 'onDragStartCallback');
 
-            return false;
+            return;
         end
+        frame:StartMoving()
     end
 
     function StopMoving(frame)
-        local blocked = catchErrorActionBlocked(frame.StopMovingOrSizing, frame)
-        if blocked then
-            printMovementError();
+        if BlizzMove.MoveHandles[frame] then
+            frame.onDragStartCallback = returnFalse;
 
-            return false;
+            return;
         end
+        frame:StopMovingOrSizing()
     end
 end
 
@@ -710,7 +690,9 @@ end
 --- Secure Script Hook Handlers
 ------------------------------------------------------------------------------------------------------
 local OnMouseDown;
+local DoOnMouseDown;
 local OnMouseUp;
+local DoOnMouseUp;
 local OnMouseWheel;
 local OnEnter;
 local OnLeave;
@@ -718,6 +700,14 @@ local OnShow;
 local OnSubFrameHide;
 do
     function OnMouseDown(frame, button)
+        local moveHandle = BlizzMove.MoveHandles[frame] and frame or nil;
+        if moveHandle then
+            frame = moveHandle:GetParent();
+        end
+
+        return DoOnMouseDown(frame, button, moveHandle);
+    end
+    function DoOnMouseDown(frame, button, moveHandle)
         if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
         local returnValue = false;
@@ -728,7 +718,7 @@ do
         BlizzMove:DebugPrint("OnMouseDown:", frameData.storage.frameName, button);
 
         if button == "LeftButton" then
-            if IsAltKeyDown() and frameData.Detachable and not frameData.storage.detached then
+            if not moveHandle and IsAltKeyDown() and frameData.Detachable and not frameData.storage.detached then
                 frameData.storage.points.detachPoints = GetFramePoints(frame);
                 frameData.storage.detached = true;
                 returnValue = true;
@@ -737,7 +727,7 @@ do
             end
 
             if not frameData.storage.detached then
-                parentReturnValue = (frameData.storage.frameParent and OnMouseDown(frameData.storage.frameParent, button)) or false;
+                parentReturnValue = (frameData.storage.frameParent and DoOnMouseDown(frameData.storage.frameParent, button, moveHandle)) or false;
             end
 
             if
@@ -747,9 +737,9 @@ do
                 local userPlaced = frame:IsUserPlaced();
 
                 frame:SetMovable(true);
-                StartMoving(frame);
+                StartMoving(moveHandle or frame);
                 frame:SetUserPlaced(userPlaced);
-                frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetFramePoints(frame);
+                frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetAbsoluteFramePosition(frame);
                 frameData.storage.isMoving = true;
                 returnValue = true;
             end
@@ -759,6 +749,13 @@ do
     end
 
     function OnMouseUp(frame, button)
+        local moveHandle = BlizzMove.MoveHandles[frame] and frame or nil;
+        if moveHandle then
+            frame = moveHandle:GetParent();
+        end
+        return DoOnMouseUp(frame, button, moveHandle);
+    end
+    function DoOnMouseUp(frame, button, moveHandle)
         if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
         local returnValue = false;
@@ -768,12 +765,12 @@ do
         BlizzMove:DebugPrint("OnMouseUp:", frameData.storage.frameName, button);
 
         if not frameData.storage.detached then
-            parentReturnValue = (frameData.storage.frameParent and OnMouseUp(frameData.storage.frameParent, button)) or false;
+            parentReturnValue = (frameData.storage.frameParent and DoOnMouseUp(frameData.storage.frameParent, button, moveHandle)) or false;
         end
 
         if frameData.storage.detached or not parentReturnValue then
             if button == "LeftButton" and frameData.storage.isMoving then
-                StopMoving(frame);
+                StopMoving(moveHandle or frame);
 
                 frameData.storage.points.dragPoints = GetAbsoluteFramePosition(frame);
                 frameData.storage.points.dragged = true;
@@ -784,7 +781,7 @@ do
                 local fullReset = false;
 
                 if IsAltKeyDown() and frameData.storage.detached then
-                    if SetFramePoints(frame, frameData.storage.points.detachPoints) then
+                    if SetFramePoints(frame, frameData.storage.points.detachPoints, true) then
                         frameData.storage.points.detachPoints = nil;
                         frameData.storage.detached = nil;
                         returnValue = true;
@@ -798,7 +795,7 @@ do
                 end
 
                 if IsShiftKeyDown() or fullReset then
-                    if(frameData.storage.points) then
+                    if (frameData.storage.points) then
                         if (not fullReset and frameData.storage.points.startPoints) then
                             SetFramePoints(frame, frameData.storage.points.startPoints);
                             frameData.storage.points.startPoints = nil;
@@ -957,7 +954,16 @@ do
             --- @type BlizzMoveAPI_FrameData?
             local frameData = self.FrameData[frame];
             local shouldHandleMouseWheel = frameData and not (frameData.IgnoreMouse or frameData.IgnoreMouseWheel);
-            if not shouldHandleMouseWheel and (frame:IsForbidden() or frame:IsMouseWheelEnabled() or frame:IsMouseClickEnabled()) then return; end -- some clickable/scrollable thing is in the way
+            if
+                not shouldHandleMouseWheel
+                and (
+                    frame:IsForbidden()
+                    or (not self.MoveHandles[frame] and (frame:IsMouseWheelEnabled() or frame:IsMouseClickEnabled()))
+                )
+            then
+                -- some clickable/scrollable thing is in the way
+                return;
+            end
 
             if shouldHandleMouseWheel and self.CurrentMouseoverFrames[frame] then
                 captureFrame:EnableMouseWheel(true);
@@ -1050,6 +1056,66 @@ do
         end
     end
 
+    ---@param frame Frame
+    ---@param parent Frame
+    ---@return PanelDragBarTemplate
+    local function MakeMoveHandle(frame, parent)
+        BlizzMove:DebugPrint('Making move handle for', BlizzMove:GetFrameName(frame), 'parent:', BlizzMove:GetFrameName(parent));
+        local handle = CreateFrame('Frame', nil, parent, 'PanelDragBarTemplate');
+        handle:SetParent(frame);
+        handle:SetAllPoints(frame);
+        handle:SetFrameLevel(frame:GetFrameLevel() + 1);
+        handle:SetPropagateMouseMotion(true);
+        handle.onDragStartCallback = function() return false end;
+        handle:HookScript('OnMouseDown', OnMouseDown);
+        handle:HookScript('OnMouseUp', OnMouseUp);
+        handle:HookScript('OnDragStop', OnMouseUp);
+
+        return handle;
+    end
+
+    ---@param frame Frame
+    ---@param frameData BlizzMove_FrameData
+    local function MakeMoveHandles(frame, frameData)
+        if frameData.moveHandles then
+            for _, handle in pairs(frameData.moveHandles) do
+                -- disable old handles
+                handle:SetScript("OnEvent", nil);
+                handle:SetScript("OnUpdate", nil);
+                handle:Hide();
+                BlizzMove.MoveHandles[handle] = nil;
+            end
+        end
+        frameData.moveHandles = {}; ---@diagnostic disable-line: inject-field
+        local parentData = frameData;
+        while parentData.parentData do
+            --[[
+            --[==[
+                todo: handle detachable frames in the context of protected frames
+                maybe that can be done by making DoOnMouseDown/Up check the relevant moveHandle themselves, but not sure..
+                since it might require multiple moveHandles which internally have their own frame stacks
+                maybe possible by creating a bunch of them, then reparenting them to a container frame, which then flattens the layers etc?
+
+                or maybe propagate mouse clicks (do all frames get the drag events? or just the topmost one?)
+                if propagation works, we'll just have to ensure only 1 moveHandle handles the main mouse events, depending on the detached state
+                or re-attach, disable the mouse events again, and re-enable them on the main moveHandle
+                alternatively, hiding the moveHandles for detachable frames, until detached, so only 1 moveHandle is shown at a time for a given frame
+
+                for now the only sitations where this is relevant is for plugins that add detachable frames
+            --]==]
+            if parentData.Detachable then
+                tinsert(frameData.moveHandles, MakeMoveHandle(frame, parentData.storage.frame));
+            end
+            --]]
+            parentData = parentData.parentData;
+        end
+
+        local rootParent = parentData and parentData.storage and parentData.storage.frame or frame;
+        local moveHandle = MakeMoveHandle(frame, rootParent);
+        tinsert(frameData.moveHandles, moveHandle);
+        BlizzMove.MoveHandles[moveHandle] = true;
+    end
+
     --- @param frame Frame
     --- @param addOnName string
     --- @param frameName string
@@ -1089,13 +1155,25 @@ do
 
         if frame and BlizzMove.FrameData[frame] and BlizzMove.FrameData[frame].storage and not frameData.storage then
             frameData.storage = BlizzMove.FrameData[frame].storage;
+            frameData.parentData = frameParent and BlizzMove.FrameData[frameParent] or nil;
             frameData.storage.frameName = frameName;
             frameData.storage.addOnName = addOnName;
             frameData.storage.frameParent = frameParent;
             BlizzMove.FrameData[frame] = frameData; ---@diagnostic disable-line: assign-type-mismatch
         end
+        frameData.parentData = frameParent and BlizzMove.FrameData[frameParent] or nil;
 
         if not frame or (frameData.storage and frameData.storage.hooked) then return false; end
+
+        frameData.storage = {
+            hooked = true,
+            frame = frame,
+            frameName = frameName,
+            frameParent = frameParent,
+            addOnName = addOnName,
+        };
+
+        BlizzMove.FrameData[frame] = frameData; ---@diagnostic disable-line: assign-type-mismatch
 
         frame:SetMovable(true);
         if not frameData.IgnoreClamping then
@@ -1104,9 +1182,17 @@ do
 
         if not frameData.IgnoreMouse then
             if not frameData.NonDraggable then
-                frame:EnableMouse(true);
-                hookScript(frame, "OnMouseDown", OnMouseDown);
-                hookScript(frame, "OnMouseUp",   OnMouseUp);
+                local rootFrameData = frameData;
+                while rootFrameData.parentData do
+                    rootFrameData = rootFrameData.parentData;
+                end
+                if frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
+                    MakeMoveHandles(frame, frameData);
+                else
+                    frame:EnableMouse(true);
+                    hookScript(frame, "OnMouseDown", OnMouseDown);
+                    hookScript(frame, "OnMouseUp", OnMouseUp);
+                end
             end
 
             if not frameData.IgnoreMouseWheel then
@@ -1127,20 +1213,10 @@ do
 
         if not frameData.IgnoreMouse and not frameData.NonDraggable then
             -- prevents rubberbanding when a frame's movement is handled by something else
-            BlizzMove:SecureHook(frame, "SetPoint",  OnSetPoint);
+            BlizzMove:SecureHook(frame, "SetPoint", OnSetPoint);
         end
-        BlizzMove:SecureHook(frame, "SetWidth",  OnSizeUpdate);
+        BlizzMove:SecureHook(frame, "SetWidth", OnSizeUpdate);
         BlizzMove:SecureHook(frame, "SetHeight", OnSizeUpdate);
-
-        frameData.storage = {
-            hooked = true,
-            frame = frame,
-            frameName = frameName,
-            frameParent = frameParent,
-            addOnName = addOnName,
-        };
-
-        BlizzMove.FrameData[frame] = frameData; ---@diagnostic disable-line: assign-type-mismatch
 
         OnShow(frame);
         OnSizeUpdate(frame);
@@ -1230,7 +1306,7 @@ do
         end
 
         if not self:MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent) then
-            self:Print("Failed to make frame movable:", frameName);
+            self:Print(L["Failed to make frame movable:"], frameName);
 
             return false;
         end
@@ -1243,7 +1319,7 @@ do
     end
 
     function BlizzMove:ProcessFrames(addOnName)
-        if not(self.Frames and self.Frames[addOnName]) then return; end
+        if not (self.Frames and self.Frames[addOnName]) then return; end
 
         for frameName, frameData in pairs(self.Frames[addOnName]) do
             self:ProcessFrame(addOnName, frameName, frameData);
@@ -1283,6 +1359,9 @@ end
 ------------------------------------------------------------------------------------------------------
 do
     function BlizzMove:AddToCombatLockdownQueue(func, ...)
+        if not InCombatLockdown() then
+            func(...);
+        end
         if #self.CombatLockdownQueue == 0 then
             self:RegisterEvent("PLAYER_REGEN_ENABLED");
         end
@@ -1415,12 +1494,12 @@ do
 
     function BlizzMove:OnSlashCommand(message)
         local arg1, arg2 = strsplit(' ', message);
-        if (
+        if
             arg1 == commands.dumpDebugInfo
             or arg1 == commands.dumpChangedCVars
             or arg1 == commands.debugAnchor
             or arg1 == commands.dumpTopLevelFrames
-        ) then
+        then
             EnableAddOn('BlizzMove_Debug', UnitName('player')); -- force enable the debug module before loading it
             local loaded = LoadAddOn('BlizzMove_Debug');
             --- @type BlizzMove_Debug
@@ -1465,8 +1544,8 @@ do
             return;
         elseif arg1 == commands.dumpMissingFrames then
             self.Config:ShowURLPopup(
-                'Build:' .. self.gameBuild.. '| Version:' .. self.gameVersion.. '| BMVersion:' .. self.Config.version .. "\n\n"
-                        .. table.concat(self.notFoundFrames or {'<none>'}, "\n")
+                'Build:' .. self.gameBuild .. '| Version:' .. self.gameVersion .. '| BMVersion:' .. self.Config.version .. "\n\n"
+                .. table.concat(self.notFoundFrames or { '<none>' }, "\n")
             );
             return;
         end
@@ -1546,6 +1625,10 @@ do
         -- fix anchor family connection issues when opening/closing the hero talents dialog
         if addOnName == "Blizzard_PlayerSpells" and _G.HeroTalentsSelectionDialog and _G.PlayerSpellsFrame then
             local function startStopMoving(frame)
+                if InCombatLockdown() and frame:IsProtected() then
+                    -- well... nothing can be done about this, yelling at blizzard likely won't help, since this is relatively tricky to fix
+                    return;
+                end
                 local backup = frame:IsMovable();
                 frame:SetMovable(true);
                 StartMoving(frame);
