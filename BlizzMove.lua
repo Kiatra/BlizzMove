@@ -756,6 +756,7 @@ do
         return DoOnMouseUp(frame, button, moveHandle);
     end
     function DoOnMouseUp(frame, button, moveHandle)
+        if moveHandle then StopMoving(moveHandle); end
         if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
         local returnValue = false;
