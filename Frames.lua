@@ -203,17 +203,6 @@ BlizzMoveAPI:RegisterFrames(
                 MinVersion = 60000, -- Added when?
                 MaxVersion = 100000,
             },
-            ["WhoListScrollFrame"] =
-            {
-                MinVersion = 40000, -- check comment below
-                MaxVersion = 100000,
-                SilenceCompatabilityWarnings = true,
-                -- Classic: Not required, but does not break anything.
-                -- TBC: Not required, but breaks clicking on results other then the first.
-                -- Wrath: Not required, but breaks clicking on results other then the first.
-                -- Shadowlands: Required.
-                -- Dragonflight: Not required, and renamed
-            },
             ["GuildFrame"] =
             {
                 MaxVersion = 60000, -- Moved to Blizzard_GuildUI when?
