@@ -539,6 +539,13 @@ BlizzMoveAPI:RegisterFrames(
 
 BlizzMoveAPI:RegisterAddOnFrames(
 {
+    ["Blizzard_AccountStore"] =
+    {
+        ["AccountStoreFrame"] =
+        {
+            MinVersion = 110205,
+        },
+    },
     ["Blizzard_AchievementUI"] =
     {
         ["AchievementFrame"] =
@@ -893,6 +900,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
             MinVersion = 40000,
         },
     },
+    ["Blizzard_CooldownViewer"] =
+    {
+        ["CooldownViewerSettings"] =
+        {
+            MinVersion = 110205,
+        },
+    },
     ["Blizzard_CovenantPreviewUI"] =
     {
         ["CovenantPreviewFrame"] =
@@ -1184,6 +1198,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
             },
         },
     },
+    ["Blizzard_GuildRename"] =
+    {
+        ["GuildRenameFrame"] =
+        {
+            MinVersion = 110205,
+        },
+    },
     ["Blizzard_GuildUI"] =
     {
         ["GuildFrame"] =
@@ -1437,6 +1458,13 @@ BlizzMoveAPI:RegisterAddOnFrames(
             {
                 ["ReforgingFrame.invisButton"] = {},
             },
+        },
+    },
+    ["Blizzard_RemixArtifactUI"] =
+    {
+        ["RemixArtifactFrame"] =
+        {
+            MinVersion = 110205,
         },
     },
     ["Blizzard_RuneforgeUI"] =
