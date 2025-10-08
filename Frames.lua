@@ -1465,6 +1465,10 @@ BlizzMoveAPI:RegisterAddOnFrames(
         ["RemixArtifactFrame"] =
         {
             MinVersion = 110205,
+            SubFrames =
+            {
+                ["RemixArtifactFrame.ButtonsParent"] = {},
+            },
         },
     },
     ["Blizzard_RuneforgeUI"] =
