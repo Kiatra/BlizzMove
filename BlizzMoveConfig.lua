@@ -41,8 +41,10 @@ function Config:GetOptions()
             },
             mainTab = {
                 order = increment(),
-                name = L["Info"],
+                name = L["Info"] .. " & " .. L["Global Config"],
                 type = "group",
+                get = function(info) return Config:GetConfig(info[#info]); end,
+                set = function(info, value) return Config:SetConfig(info[#info], value); end,
                 args = {
                     description = {
                         order = increment(),
@@ -71,33 +73,16 @@ function Config:GetOptions()
                         func = function() Config:ShowURLPopup("https://www.curseforge.com/wow/addons/search?search=BlizzMove+plugin"); end,
                         width = 1.5,
                     },
-                },
-            },
-            fullFramesTab = {
-                order = increment(),
-                name = L["List of frames"],
-                type = "group",
-                childGroups = "tree",
-                get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
-                set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
-                args = self.ListOfFramesTable,
-            },
-            disabledFramesTab = {
-                order = increment(),
-                name = L["Default disabled frames"],
-                type = "group",
-                childGroups = "tree",
-                get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
-                set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
-                args = self.DefaultDisabledFramesTable,
-            },
-            globalConfigTab = {
-                order = increment(),
-                name = L["Global Config"],
-                type = "group",
-                get = function(info) return Config:GetConfig(info[#info]); end,
-                set = function(info, value) return Config:SetConfig(info[#info], value); end,
-                args = {
+                    newline1 = {
+                        order = increment(),
+                        type = "description",
+                        name = " ",
+                    },
+                    globalConfigHeader = {
+                        order = increment(),
+                        type = "description",
+                        name = NORMAL_FONT_COLOR:WrapTextInColorCode(L["Global Config"]),
+                    },
                     requireMoveModifier = {
                         order = increment(),
                         name = L["Require move modifier"],
@@ -105,7 +90,7 @@ function Config:GetOptions()
                         type = "toggle",
                         width = "full",
                     },
-                    newline1 = {
+                    newline2 = {
                         order = increment(),
                         type = "description",
                         name = "",
@@ -141,7 +126,7 @@ function Config:GetOptions()
                             permanent = L["Remember Permanently"],
                         },
                     },
-                    newline2 = {
+                    newline3 = {
                         order = increment(),
                         type = "description",
                         name = "",
@@ -165,6 +150,24 @@ function Config:GetOptions()
                         confirm = function() return L["Are you sure you want to reset permanently stored scales? This will reload the UI."] end,
                     },
                 },
+            },
+            fullFramesTab = {
+                order = increment(),
+                name = L["List of frames"],
+                type = "group",
+                childGroups = "tree",
+                get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
+                set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
+                args = self.ListOfFramesTable,
+            },
+            disabledFramesTab = {
+                order = increment(),
+                name = L["Default disabled frames"],
+                type = "group",
+                childGroups = "tree",
+                get = function(info, frameName) return not BlizzMoveAPI:IsFrameDisabled(info[#info], frameName); end,
+                set = function(info, frameName, enabled) return BlizzMoveAPI:SetFrameDisabled(info[#info], frameName, not enabled); end,
+                args = self.DefaultDisabledFramesTable,
             },
         },
     }
