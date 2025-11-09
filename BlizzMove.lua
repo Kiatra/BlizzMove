@@ -1647,25 +1647,22 @@ do
 
         -- fix anchor family connection issues when opening/closing the hero talents dialog
         if addOnName == "Blizzard_PlayerSpells" and _G.HeroTalentsSelectionDialog and _G.PlayerSpellsFrame then
-            local function startStopMoving(frame)
-                if InCombatLockdown() and frame:IsProtected() then
-                    -- well... nothing can be done about this, yelling at blizzard likely won't help, since this is relatively tricky to fix
-                    return;
+            local skipHook = false;
+            hooksecurefunc(TalentFrameUtil, "GetNormalizedSubTreeNodePosition", function(talentFrame)
+                if skipHook then return; end
+                if
+                    debugstack(3):find("in function .UpdateContainerVisibility.")
+                    or debugstack(3):find("in function .UpdateAllTalentButtonPositions.")
+                    or debugstack(3):find("in function .PlaceHeroTalentButton.")
+                then
+                    for talentButton in talentFrame:EnumerateAllTalentButtons() do
+                        local nodeInfo = talentButton:GetNodeInfo();
+                        if nodeInfo.subTreeID then
+                            talentButton:ClearAllPoints();
+                        end
+                    end
+                    RunNextFrame(function() skipHook = false; end);
                 end
-                local backup = frame:IsMovable();
-                frame:SetMovable(true);
-                StartMoving(frame);
-                StopMoving(frame);
-                frame:SetMovable(backup);
-            end
-            startStopMoving(_G.HeroTalentsSelectionDialog);
-            _G.PlayerSpellsFrame:HookScript('OnShow', function(frame)
-                startStopMoving(frame);
-                RunNextFrame(function() startStopMoving(frame); end);
-            end);
-            _G.HeroTalentsSelectionDialog:HookScript('OnShow', function(frame)
-                startStopMoving(frame);
-                RunNextFrame(function() startStopMoving(frame); end);
             end);
         end
 
