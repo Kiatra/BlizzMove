@@ -1651,10 +1651,14 @@ do
             hooksecurefunc(TalentFrameUtil, "GetNormalizedSubTreeNodePosition", function(talentFrame)
                 if skipHook then return; end
                 if
-                    debugstack(3):find("in function .UpdateContainerVisibility.")
-                    or debugstack(3):find("in function .UpdateAllTalentButtonPositions.")
-                    or debugstack(3):find("in function .PlaceHeroTalentButton.")
+                    (
+                        debugstack(3):find("in function .UpdateContainerVisibility.")
+                        or debugstack(3):find("in function .UpdateHeroTalentButtonPosition.")
+                        or debugstack(3):find("in function .PlaceHeroTalentButton.")
+                    )
+                    and not (debugstack(3):find("in function .InstantiateTalentButton."))
                 then
+                    skipHook = true
                     for talentButton in talentFrame:EnumerateAllTalentButtons() do
                         local nodeInfo = talentButton:GetNodeInfo();
                         if nodeInfo.subTreeID then
