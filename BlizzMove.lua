@@ -981,7 +981,8 @@ end
 local OnSetPoint;
 local OnSizeUpdate;
 do
-    function OnSetPoint(frame, ...)
+    --- @param frame Frame
+    function OnSetPoint(frame)
         if not BlizzMove.FrameData[frame] or not BlizzMove.FrameData[frame].storage or BlizzMove.FrameData[frame].storage.disabled then return; end
 
         if BlizzMove.DB.savePosStrategy == "off" then return; end
@@ -1004,9 +1005,15 @@ do
         end
     end
 
+    --- @param frame Frame
     function OnSizeUpdate(frame)
         local frameData = BlizzMove.FrameData[frame];
         if not frameData or not frameData.storage or frameData.storage.disabled or frameData.IgnoreClamping then return; end
+        if frame:IsProtected() and InCombatLockdown() then
+            BlizzMove:AddToCombatLockdownQueue(OnSizeUpdate, frame);
+
+            return;
+        end
 
         local clampDistance = 40;
         local clampWidth = (frame:GetWidth() - clampDistance) or 0;
