@@ -1211,6 +1211,98 @@ BlizzMoveAPI:RegisterAddOnFrames({
             MaxVersion = 110000, -- Removed when?
         },
     },
+    ["Blizzard_HouseList"] =
+    {
+        ["HouseListFrame"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingBulletinBoard"] =
+    {
+        ["HousingBulletinBoardFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["HousingInviteResidentFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["NeighborhoodChangeNameDialog"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingCharter"] =
+    {
+        ["HousingCharterRequestSignatureDialog"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingCornerstone"] =
+    {
+        ["HousingCornerstoneFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["HousingCornerstoneHouseInfoFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["HousingCornerstonePurchaseFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["HousingCornerstoneVisitorFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["ImportHouseConfirmationDialog"] =
+        {
+            MinVersion = 110207,
+        },
+        ["MoveHouseConfirmationDialog"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingCreateNeighborhood"] =
+    {
+        ["HousingCreateCharterNeighborhoodConfirmationFrame"] =
+        {
+            MinVersion = 110207,
+        },
+        ["HousingCreateNeighborhoodCharterFrame"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingDashboard"] =
+    {
+        ["HousingDashboardFrame"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingHouseFinder"] =
+    {
+        ["HouseFinderFrame"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingHouseSettings"] =
+    {
+        ["AbandonHouseConfirmationDialog"] =
+        {
+            MinVersion = 110207,
+        },
+        ["HousingHouseSettingsFrame"] =
+        {
+            MinVersion = 110207,
+        },
+    },
     ["Blizzard_InspectUI"] =
     {
         ["InspectFrame"] =
@@ -1304,6 +1396,13 @@ BlizzMoveAPI:RegisterAddOnFrames({
         ["ItemUpgradeFrame"] =
         {
             MinVersion = 50000,
+        },
+    },
+    ["Blizzard_Kiosk"] =
+    {
+        ["GameKioskSessionStartedDialog"] =
+        {
+            MinVersion = 110207,
         },
     },
     ["Blizzard_LookingForGroupUI"] =

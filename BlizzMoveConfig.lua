@@ -78,76 +78,104 @@ function Config:GetOptions()
                         type = "description",
                         name = " ",
                     },
-                    globalConfigHeader = {
+                    globalConfig = {
+                        type = "group",
+                        name = L["Global Config"],
                         order = increment(),
-                        type = "description",
-                        name = NORMAL_FONT_COLOR:WrapTextInColorCode(L["Global Config"]),
-                    },
-                    requireMoveModifier = {
-                        order = increment(),
-                        name = L["Require move modifier"],
-                        desc = L["If enabled BlizzMove requires to hold SHIFT to move frames."],
-                        type = "toggle",
-                        width = "full",
-                    },
-                    newline2 = {
-                        order = increment(),
-                        type = "description",
-                        name = "",
-                    },
-                    savePosStrategy = {
-                        order = increment(),
-                        width = 1.5,
-                        name = L["How should frame positions be remembered?"],
-                        desc =
-                            L["Do not remember"] .. " >> " .. L["frame positions are reset when you close and reopen them"] .. "\n"
-                            .. "\n"
-                            .. L["In Session"] .. " >> " .. L["frame positions are saved until you reload your UI"] .. "\n"
-                            .. "\n"
-                            .. L["Remember Permanently"] .. " >> " .. L["frame positions are remembered until you switch to another option, click the reset button, or disable BlizzMove"],
-                        type = "select",
-                        values = {
-                            off = L["Do not remember"],
-                            session = L["In Session, until you reload"],
-                            permanent = L["Remember Permanently"],
+                        inline = true,
+                        args = {
+                            requireMoveModifier = {
+                                order = increment(),
+                                name = L["Require move modifier"],
+                                desc = L["If enabled BlizzMove requires to hold SHIFT to move frames."],
+                                type = "toggle",
+                                width = "full",
+                            },
+                            newline2 = {
+                                order = increment(),
+                                type = "description",
+                                name = "",
+                            },
+                            savePosStrategy = {
+                                order = increment(),
+                                width = 1.5,
+                                name = L["How should frame positions be remembered?"],
+                                desc =
+                                    L["Do not remember"] .. " >> " .. L["frame positions are reset when you close and reopen them"] .. "\n"
+                                    .. "\n"
+                                    .. L["In Session"] .. " >> " .. L["frame positions are saved until you reload your UI"] .. "\n"
+                                    .. "\n"
+                                    .. L["Remember Permanently"] .. " >> " .. L["frame positions are remembered until you switch to another option, click the reset button, or disable BlizzMove"],
+                                type = "select",
+                                values = {
+                                    off = L["Do not remember"],
+                                    session = L["In Session, until you reload"],
+                                    permanent = L["Remember Permanently"],
+                                },
+                            },
+                            saveScaleStrategy = {
+                                order = increment(),
+                                width = 1.5,
+                                name = L["How should frame scales be remembered?"],
+                                desc =
+                                    L["In Session"] .. " >> " .. L["frame scales are saved until you reload your UI"] .. "\n"
+                                    .. "\n"
+                                    .. L["Remember Permanently"] .. " >> " .. L["frame scales are remembered until you switch to another option, click the reset button, or disable BlizzMove"],
+                                type = "select",
+                                values = {
+                                    session = L["In Session, until you reload"],
+                                    permanent = L["Remember Permanently"],
+                                },
+                            },
+                            newline3 = {
+                                order = increment(),
+                                type = "description",
+                                name = "",
+                            },
+                            resetPositions = {
+                                order = increment(),
+                                width = 1.5,
+                                name = L["Reset Permanent Positions"],
+                                desc = L["Reset permanently stored positions"],
+                                type = "execute",
+                                func = function() BlizzMove:ResetPointStorage(); ReloadUI(); end,
+                                confirm = function() return L["Are you sure you want to reset permanently stored positions? This will reload the UI."] end,
+                            },
+                            resetScales = {
+                                order = increment(),
+                                width = 1.5,
+                                name = L["Reset Permanent Scales"],
+                                desc = L["Reset permanently stored scales"],
+                                type = "execute",
+                                func = function() BlizzMove:ResetScaleStorage(); ReloadUI(); end,
+                                confirm = function() return L["Are you sure you want to reset permanently stored scales? This will reload the UI."] end,
+                            },
                         },
                     },
-                    saveScaleStrategy = {
-                        order = increment(),
-                        width = 1.5,
-                        name = L["How should frame scales be remembered?"],
-                        desc =
-                            L["In Session"] .. " >> " .. L["frame scales are saved until you reload your UI"] .. "\n"
-                            .. "\n"
-                            .. L["Remember Permanently"] .. " >> " .. L["frame scales are remembered until you switch to another option, click the reset button, or disable BlizzMove"],
-                        type = "select",
-                        values = {
-                            session = L["In Session, until you reload"],
-                            permanent = L["Remember Permanently"],
-                        },
-                    },
-                    newline3 = {
+                    newline4 = {
                         order = increment(),
                         type = "description",
-                        name = "",
+                        name = "\n",
                     },
-                    resetPositions = {
+                    donateText = {
                         order = increment(),
-                        width = 1.5,
-                        name = L["Reset Permanent Positions"],
-                        desc = L["Reset permanently stored positions"],
-                        type = "execute",
-                        func = function() BlizzMove:ResetPointStorage(); ReloadUI(); end,
-                        confirm = function() return L["Are you sure you want to reset permanently stored positions? This will reload the UI."] end,
+                        type = "description",
+                        name = L["If you like this addon and want to support its development, consider donating:"],
                     },
-                    resetScales = {
+                    kiatraButton = {
                         order = increment(),
-                        width = 1.5,
-                        name = L["Reset Permanent Scales"],
-                        desc = L["Reset permanently stored scales"],
                         type = "execute",
-                        func = function() BlizzMove:ResetScaleStorage(); ReloadUI(); end,
-                        confirm = function() return L["Are you sure you want to reset permanently stored scales? This will reload the UI."] end,
+                        name = "Kiatra [original author]",
+                        desc = L["Click to copy PayPal link."],
+                        func = function() Config:ShowURLPopup("https://www.paypal.com/cgi-bin/webscr?hosted_button_id=FF9F9GTXMG392&item_name=BlizzMove&cmd=_s-xclick"); end,
+                    },
+                    numyButton = {
+                        order = increment(),
+                        type = "execute",
+                        name = "Numy [current maintainer]",
+                        desc = L["Click to copy PayPal link."],
+                        width = 1.2,
+                        func = function() Config:ShowURLPopup("https://www.paypal.com/cgi-bin/webscr?hosted_button_id=C8HP9WVKPCL8C&item_name=BlizzMove&cmd=_s-xclick"); end,
                     },
                 },
             },
