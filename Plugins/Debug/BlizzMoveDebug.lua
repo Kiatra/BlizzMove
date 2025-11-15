@@ -339,8 +339,10 @@ function Module:DumpTopLevelFrames()
     local frame = EnumerateFrames();
     while frame do
         local name = getFrameName(frame, 'NoName');
-        if (
-            name and name ~= 'NoName'
+        if
+            name
+            and (not issecretvalue or not issecretvalue(name))
+            and name ~= 'NoName'
             and getFrameByName(name) == frame
             and name:sub(-7) ~= 'Tooltip'
             and not ignoredFrames[name]
@@ -350,7 +352,7 @@ function Module:DumpTopLevelFrames()
             and callFrameMethod(frame, 'GetObjectType') == 'Frame'
             and (callFrameMethod(frame, 'GetParent') == UIParent or callFrameMethod(frame, 'GetParent') == nil)
             and (strataLevels[callFrameMethod(frame, 'GetFrameStrata')] or 1) >= strataLevels.MEDIUM
-        ) then
+        then
             local source = callFrameMethod(frame, 'GetSourceLocation') or 'Unknown';
             -- source starts with Interface/AddOns/Blizzard_, or is outside Interface/AddOns/
             if source:match('Interface/AddOns/Blizzard_(.*)') or (source:match('Interface/.*') and not source:match('Interface/AddOns/.*')) then

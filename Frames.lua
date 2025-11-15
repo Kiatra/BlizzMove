@@ -150,6 +150,12 @@ BlizzMoveAPI:RegisterFrames({
             ["DressUpFrame.OutfitDetailsPanel"] =
             {
                 MinVersion = 90105,
+                MaxVersion = 120000, -- renamed to CustomSetDetailsPanel
+                Detachable = true,
+            },
+            ["DressUpFrame.CustomSetDetailsPanel"] =
+            {
+                MinVersion = 120000, -- renamed from OutfitDetailsPanel
                 Detachable = true,
             },
         },
@@ -1283,6 +1289,10 @@ BlizzMoveAPI:RegisterAddOnFrames({
         ["HousingDashboardFrame"] =
         {
             MinVersion = 110207,
+            SubFrames =
+            {
+                ["HousingDashboardFrame.HouseInfoContent.DashboardNoHousesFrame"] = {},
+            }
         },
     },
     ["Blizzard_HousingHouseFinder"] =
@@ -1299,6 +1309,13 @@ BlizzMoveAPI:RegisterAddOnFrames({
             MinVersion = 110207,
         },
         ["HousingHouseSettingsFrame"] =
+        {
+            MinVersion = 110207,
+        },
+    },
+    ["Blizzard_HousingModelPreview"] =
+    {
+        ["HousingModelPreviewFrame"] =
         {
             MinVersion = 110207,
         },
@@ -1436,6 +1453,7 @@ BlizzMoveAPI:RegisterAddOnFrames({
         ["MajorFactionRenownFrame"] =
         {
             MinVersion = 100000,
+            MaxVersion = 120000,
         },
     },
     ["Blizzard_MatchCelebrationPartyPoseUI"] =
@@ -1673,6 +1691,13 @@ BlizzMoveAPI:RegisterAddOnFrames({
         ["ClassTrainerFrame"] =
         {
             MinVersion = 0,
+        },
+    },
+    ["Blizzard_Transmog"] =
+    {
+        ["TransmogFrame"] =
+        {
+            MinVersion = 110207,
         },
     },
     ["Blizzard_UIWidgets"] =
