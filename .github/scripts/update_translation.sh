@@ -1,5 +1,5 @@
 #!/bin/bash
-# Adapted from https://github.com/Nevcairiel/Bartender4/blob/master/locale/wowace-locale-import.sh
+# Inspired by https://github.com/Nevcairiel/Bartender4/blob/master/locale/wowace-locale-import.sh
 
 cf_token=
 
