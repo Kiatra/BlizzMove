@@ -1,5 +1,5 @@
-## Interface: @toc-version-retail@,@toc-version-midnight@
-## Interface-Retail: @toc-version-retail@,@toc-version-midnight@
+## Interface: @toc-version-retail@,@toc-version-midnight@,120000
+## Interface-Retail: @toc-version-retail@,@toc-version-midnight@,120000
 ## Interface-Classic: @toc-version-classic@
 ## Interface-BCC: @toc-version-bcc@
 ## Interface-Wrath: @toc-version-wrath@
