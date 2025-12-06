@@ -1580,7 +1580,7 @@ do
             return;
         end
 
-        Settings_OpenToCategory('BlizzMove');
+        self.Config:OpenConfig();
     end
 
     --- @type BlizzMoveDB
