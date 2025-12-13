@@ -13,6 +13,11 @@ _G.BlizzMoveAPI = _G.BlizzMoveAPI or {};
 ---@class BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
+--- @return string rawVersion
+--- @return number mayor
+--- @return number minor
+--- @return number patch
+--- @return number versionInt
 function BlizzMoveAPI:GetVersion()
     local rawVersion = BlizzMove.Config.version;
 
