@@ -134,6 +134,7 @@ do
                 or key == "SilenceCompatabilityWarnings"
                 or key == "IgnoreSavedPositionWhenMaximized"
                 or key == "ForcePosition"
+                or key == "ForceUseSecureMoveHandle"
             then
                 if type(value) ~= "boolean" then validationError = true; end
             elseif key == "FrameReference" then
@@ -662,7 +663,7 @@ local StartMoving;
 local StopMoving;
 do
     local function setNil(table, key)
-        TextureLoadingGroupMixin.RemoveTexture({ textures = table, }, key);
+        TextureLoadingGroupMixin.RemoveTexture({ textures = table }, key);
     end
     local function returnFalse() return false; end
 
@@ -1076,6 +1077,7 @@ do
         handle:SetAllPoints(frame);
         handle:SetFrameLevel(frame:GetFrameLevel() + 1);
         handle:SetPropagateMouseMotion(true);
+        handle:SetPropagateMouseClicks(true);
         handle.onDragStartCallback = function() return false end;
         handle:HookScript('OnMouseDown', OnMouseDown);
         handle:HookScript('OnMouseUp', OnMouseUp);
@@ -1134,7 +1136,7 @@ do
     local function MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent)
         if not frame then return false; end
 
-        if InCombatLockdown() and frame:IsProtected() then return false; end
+        if InCombatLockdown() and (frameData.ForceUseSecureMoveHandle or frame:IsProtected()) then return false; end
 
         local clampFrame = false;
         if not frameParent or frameData.Detachable then
@@ -1164,7 +1166,7 @@ do
                     while rootFrameData.parentData do
                         rootFrameData = rootFrameData.parentData;
                     end
-                    if frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
+                    if frameData.ForceUseSecureMoveHandle or frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
                         MakeMoveHandles(frame, frameData);
                     else
                         frame:EnableMouse(true);
@@ -1204,7 +1206,7 @@ do
                 while rootFrameData.parentData do
                     rootFrameData = rootFrameData.parentData;
                 end
-                if frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
+                if frameData.ForceUseSecureMoveHandle or frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
                     MakeMoveHandles(frame, frameData);
                 else
                     frame:EnableMouse(true);
@@ -1644,11 +1646,40 @@ do
         end
         -- fix anchor family connection issues when opening PlayerChoiceFrame after moving it
         if addOnName == "Blizzard_PlayerChoice" and _G.PlayerChoiceFrame then
+            local function startStopMoving(frame)
+                if InCombatLockdown() and frame:IsProtected() then
+                    return;
+                end
+                local wasMovable = frame:IsMovable();
+                local userPlaced = frame:IsUserPlaced();
+
+                frame:SetMovable(true);
+                StartMoving(frame);
+                frame:SetUserPlaced(userPlaced);
+                StopMoving(frame);
+                frame:SetMovable(wasMovable);
+            end
+            local toggleButtons = {
+                [_G.TorghastPlayerChoiceToggleButton] = true,
+                [_G.CypherPlayerChoiceToggleButton] = true,
+                [_G.GenericPlayerChoiceToggleButton] = true,
+            };
             _G.PlayerChoiceFrame:HookScript("OnHide", function()
+                for toggleButton in pairs(toggleButtons) do
+                    startStopMoving(toggleButton);
+                end
                 if not InCombatLockdown() or not _G.PlayerChoiceFrame:IsProtected() then
                     _G.PlayerChoiceFrame:ClearAllPoints();
                 end
             end);
+            for toggleButton in pairs(toggleButtons) do
+                toggleButton:HookScript("OnHide", function()
+                    if not InCombatLockdown() or not toggleButton:IsProtected() then
+                        toggleButton:ClearAllPoints();
+                        toggleButton:SetPoint("TOP", _G.PlayerChoiceFrame, "BOTTOM", 0, 0);
+                    end
+                end);
+            end
         end
 
         -- fix anchor family connection issues when opening/closing the hero talents dialog

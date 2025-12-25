@@ -23,6 +23,7 @@
 --- @field DefaultDisabled boolean|nil # Disables moving the frame in the settings by default, requiring the user to enable it manually
 --- @field IgnoreSavedPositionWhenMaximized boolean|nil # Ignore the stored position when the frame is maximized (checks frame.isMaximized for this)
 --- @field ForcePosition boolean|nil # Only applicable when IgnoreMouse or NonDraggable is true; reverts the frame it to its saved position if it is moved by other means (by hooking SetPoint)
+--- @field ForceUseSecureMoveHandle boolean|nil # Set to true to force the use of a secure move handle, this is done by default for protected frames
 
 --- @class BlizzMoveAPI_SubFrameData: BlizzMoveAPI_FrameData
 --- @field Detachable boolean|nil # Allow the frame to be detached from the parent and moved independently
