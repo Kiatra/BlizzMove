@@ -452,6 +452,7 @@ do
         return nil;
     end
 
+    --- @return nil|{ [1]: { anchorPoint: FramePoint, relativeFrame: "UIParent", relativePoint: FramePoint, offX: number, offY: number } }
     function GetAbsoluteFramePosition(frame)
         -- inspired by LibWindow-1.1 (https://www.wowace.com/projects/libwindow-1-1)
 
