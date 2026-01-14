@@ -1685,9 +1685,10 @@ do
 
         -- fix anchor family connection issues when opening/closing the hero talents dialog
         if addOnName == "Blizzard_PlayerSpells" and _G.HeroTalentsSelectionDialog and _G.PlayerSpellsFrame then
-            local skipHook = false;
+            local skipHook = { general = false, showDialog = false };
             hooksecurefunc(TalentFrameUtil, "GetNormalizedSubTreeNodePosition", function(talentFrame)
-                if skipHook then return; end
+                local hook = debugstack(3):find("in function .ShowDialog.") and "showDialog" or "general";
+                if skipHook[hook] then return; end
                 if
                     (
                         debugstack(3):find("in function .UpdateContainerVisibility.")
@@ -1696,14 +1697,14 @@ do
                     )
                     and not (debugstack(3):find("in function .InstantiateTalentButton."))
                 then
-                    skipHook = true
+                    skipHook[hook] = true;
                     for talentButton in talentFrame:EnumerateAllTalentButtons() do
                         local nodeInfo = talentButton:GetNodeInfo();
                         if nodeInfo.subTreeID then
                             talentButton:ClearAllPoints();
                         end
                     end
-                    RunNextFrame(function() skipHook = false; end);
+                    RunNextFrame(function() skipHook[hook] = false; end);
                 end
             end);
         end
