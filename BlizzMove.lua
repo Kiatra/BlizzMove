@@ -960,6 +960,7 @@ do
                 not shouldHandleMouseWheel
                 and (
                     frame:IsForbidden()
+                    or (frame.HasSecretValues and frame:HasSecretValues())
                     or (not self.MoveHandles[frame] and (frame:IsMouseWheelEnabled() or frame:IsMouseClickEnabled()))
                 )
             then
