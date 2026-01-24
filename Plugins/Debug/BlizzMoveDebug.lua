@@ -24,9 +24,6 @@ local Module = BlizzMove:NewModule('Debug')
 --- @type BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
---- @type JsonLua-1.0
-local json = LibStub('JsonLua-1.0');
-
 Module.frameConfig = {
     point = 'CENTER',
     relativeFrame = nil,
@@ -39,7 +36,7 @@ Module.frameConfig = {
 Module.bannedCharacterPattern = '[^a-zA-Z0-9 !@#$%^&*()_+\\-=,.:;?~`{}[<>]';
 
 local function json_encode(val)
-    return (C_EncodingUtil and C_EncodingUtil.SerializeJSON and C_EncodingUtil.SerializeJSON(val)) or json.encode(val);
+    return C_EncodingUtil.SerializeJSON(val);
 end
 
 local function encode_string(val)
@@ -379,11 +376,11 @@ function Module:GetMainFrame(text)
         f:ClearAllPoints();
         -- load position from local DB
         f:SetPoint(
-                self.frameConfig.point,
-                self.frameConfig.relativeFrame,
-                self.frameConfig.relativePoint,
-                self.frameConfig.ofsx,
-                self.frameConfig.ofsy
+            self.frameConfig.point,
+            self.frameConfig.relativeFrame,
+            self.frameConfig.relativePoint,
+            self.frameConfig.ofsx,
+            self.frameConfig.ofsy
         );
         f:SetSize(self.frameConfig.width, self.frameConfig.height);
         f:SetBackdrop({

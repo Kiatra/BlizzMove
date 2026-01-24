@@ -11,8 +11,5 @@
 ## RequiredDeps: BlizzMove
 ## LoadOnDemand: 1
 
-# Libraries
-Libs\json.lua
-
 # Plugin
 BlizzMoveDebug.lua
