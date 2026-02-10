@@ -601,7 +601,7 @@ do
     end
 
     function SetFrameScale(frame, frameScale)
-        if InCombatLockdown() and frame:IsProtected() then return false; end
+        if InCombatLockdown() and frame:IsProtected() then return true; end
         local frameData = BlizzMove.FrameData[frame];
         local oldScale = GetFrameScale(frame);
         local newScale = frameScale;
@@ -929,7 +929,7 @@ do
         captureFrame:SetScript("OnEvent", function() self:CheckMouseWheelCapture(); end);
         captureFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
         captureFrame:SetScript("OnMouseWheel", function(_, delta)
-            for i, frame in ipairs(GetMouseFoci()) do
+            for _, frame in ipairs(GetMouseFoci()) do
                 --- @type BlizzMoveAPI_FrameData?
                 local frameData = self.FrameData[frame];
 
