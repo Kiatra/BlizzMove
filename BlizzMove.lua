@@ -53,6 +53,9 @@ BlizzMove.CurrentMouseoverFrames = {};
 --- @type table<string, number> # [frameName] = scale
 BlizzMove.SessionScales = {}
 
+BlizzMove.FakeUIParent = CreateFrame("Frame", "BlizzMove_FakeUIParent", nil);
+BlizzMove.FakeUIParent:SetAllPoints(UIParent);
+
 local MAX_SCALE = 2.5;
 local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay above 0.25
 
@@ -454,7 +457,8 @@ do
         return nil;
     end
 
-    --- @return nil|{ [1]: { anchorPoint: FramePoint, relativeFrame: "UIParent", relativePoint: FramePoint, offX: number, offY: number } }
+    --- @param frame Frame
+    --- @return nil|{ [1]: { anchorPoint: FramePoint, relativeFrame: "BlizzMove_FakeUIParent", relativePoint: FramePoint, offX: number, offY: number } }
     function GetAbsoluteFramePosition(frame)
         -- inspired by LibWindow-1.1 (https://www.wowace.com/projects/libwindow-1-1)
 
@@ -525,7 +529,7 @@ do
         return {
             {
                 ["anchorPoint"] = point,
-                ["relativeFrame"] = "UIParent",
+                ["relativeFrame"] = "BlizzMove_FakeUIParent",
                 ["relativePoint"] = point,
                 ["offX"] = x,
                 ["offY"] = y,
@@ -545,15 +549,20 @@ do
             local SetPoint = frame.SetPointBase or frame.SetPoint;
             local scale = raw and 1 or frame:GetScale();
 
-            for curPoint = 1, #framePoints do
+            for _, point in ipairs(framePoints) do
                 ignoreSetPointHook = true;
+                local relativeFrame = point.relativeFrame;
+                if point.relativeFrame == "UIParent" or point.relativeFrame == UIParent then
+                    relativeFrame = BlizzMove.FakeUIParent;
+                end
+
                 SetPoint(
                     frame,
-                    framePoints[curPoint].anchorPoint,
-                    framePoints[curPoint].relativeFrame,
-                    framePoints[curPoint].relativePoint,
-                    framePoints[curPoint].offX / scale,
-                    framePoints[curPoint].offY / scale
+                    point.anchorPoint,
+                    relativeFrame,
+                    point.relativePoint,
+                    point.offX / scale,
+                    point.offY / scale
                 );
                 ignoreSetPointHook = false;
             end
@@ -686,7 +695,7 @@ do
 
             return;
         end
-        frame:StopMovingOrSizing()
+        frame:StopMovingOrSizing();
     end
 end
 
@@ -781,6 +790,8 @@ do
                 frameData.storage.points.dragged = true;
                 frameData.storage.isMoving = nil;
                 returnValue = true;
+
+                SetFramePoints(frame, frameData.storage.points.dragPoints);
 
             elseif button == "RightButton" then
                 local fullReset = false;
@@ -1691,32 +1702,6 @@ do
                     end
                 end);
             end
-        end
-
-        -- fix anchor family connection issues when opening/closing the hero talents dialog
-        if addOnName == "Blizzard_PlayerSpells" and _G.HeroTalentsSelectionDialog and _G.PlayerSpellsFrame then
-            local skipHook = { general = false, showDialog = false };
-            hooksecurefunc(TalentFrameUtil, "GetNormalizedSubTreeNodePosition", function(talentFrame)
-                local hook = debugstack(3):find("in function .ShowDialog.") and "showDialog" or "general";
-                if skipHook[hook] then return; end
-                if
-                    (
-                        debugstack(3):find("in function .UpdateContainerVisibility.")
-                        or debugstack(3):find("in function .UpdateHeroTalentButtonPosition.")
-                        or debugstack(3):find("in function .PlaceHeroTalentButton.")
-                    )
-                    and not (debugstack(3):find("in function .InstantiateTalentButton."))
-                then
-                    skipHook[hook] = true;
-                    for talentButton in talentFrame:EnumerateAllTalentButtons() do
-                        local nodeInfo = talentButton:GetNodeInfo();
-                        if nodeInfo.subTreeID then
-                            talentButton:ClearAllPoints();
-                        end
-                    end
-                    RunNextFrame(function() skipHook[hook] = false; end);
-                end
-            end);
         end
 
         if addOnName == self.name then
