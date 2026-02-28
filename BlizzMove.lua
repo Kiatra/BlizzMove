@@ -53,7 +53,7 @@ BlizzMove.CurrentMouseoverFrames = {};
 --- @type table<string, number> # [frameName] = scale
 BlizzMove.SessionScales = {}
 
-BlizzMove.FakeUIParent = CreateFrame("Frame", "BlizzMove_FakeUIParent", nil);
+BlizzMove.FakeUIParent = CreateFrame("Frame", "BlizzMove_FakeUIParent", nil, "SecureFrameTemplate");
 BlizzMove.FakeUIParent:SetAllPoints(UIParent);
 
 local MAX_SCALE = 2.5;
@@ -537,6 +537,8 @@ do
         };
     end
 
+    local secureFrame = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate");
+
     --- @param frame Frame
     --- @param framePoints BlizzMove_FramePoint[]
     --- @param raw boolean? # if true, will not factor in the frame scale
@@ -552,18 +554,40 @@ do
             for _, point in ipairs(framePoints) do
                 ignoreSetPointHook = true;
                 local relativeFrame = point.relativeFrame;
-                if point.relativeFrame == "UIParent" or point.relativeFrame == UIParent then
+                if type(relativeFrame) == "string" then
+                    relativeFrame = _G[relativeFrame];
+                end
+                if point.relativeFrame == UIParent then
                     relativeFrame = BlizzMove.FakeUIParent;
                 end
 
-                SetPoint(
-                    frame,
-                    point.anchorPoint,
-                    relativeFrame,
-                    point.relativePoint,
-                    point.offX / scale,
-                    point.offY / scale
-                );
+                if not InCombatLockdown() and (not relativeFrame or select(2, relativeFrame:IsProtected())) then
+                    secureFrame:SetFrameRef('frame', frame);
+                    secureFrame:SetFrameRef('relativeFrame', relativeFrame);
+                    secureFrame:SetAttribute('anchorPoint', point.anchorPoint);
+                    secureFrame:SetAttribute('relativePoint', point.relativePoint);
+                    secureFrame:SetAttribute('offX', point.offX / scale);
+                    secureFrame:SetAttribute('offY', point.offY / scale);
+                    secureFrame:Execute([[
+                        local frame = self:GetFrameRef('frame');
+                        local relativeFrame = self:GetFrameRef('relativeFrame');
+                        local anchorPoint = self:GetAttribute('anchorPoint');
+                        local relativePoint = self:GetAttribute('relativePoint');
+                        local offX = self:GetAttribute('offX');
+                        local offY = self:GetAttribute('offY');
+
+                        frame:SetPoint(anchorPoint, relativeFrame, relativePoint, offX, offY);
+                    ]]);
+                else
+                    SetPoint(
+                        frame,
+                        point.anchorPoint,
+                        relativeFrame,
+                        point.relativePoint,
+                        point.offX / scale,
+                        point.offY / scale
+                    );
+                end
                 ignoreSetPointHook = false;
             end
         end
