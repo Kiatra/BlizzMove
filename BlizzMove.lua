@@ -1740,6 +1740,13 @@ do
                     skipHook = false
                 end);
             end
+            if self.gameVersion >= 120000 then
+                -- workaround for secret errors with the MoneyFrame
+                TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.SellPrice, function(tooltip, lineData)
+                    tooltip:AddLine(SELL_PRICE .. ': ' .. GetMoneyString(lineData.price), WHITE_FONT_COLOR:GetRGB());
+                    return true;
+                end)
+            end
         end
     end
 
