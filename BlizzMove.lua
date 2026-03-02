@@ -563,14 +563,20 @@ do
 
                 if not InCombatLockdown() and (not relativeFrame or select(2, relativeFrame:IsProtected())) then
                     secureFrame:SetFrameRef('frame', frame);
-                    secureFrame:SetFrameRef('relativeFrame', relativeFrame);
+                    if relativeFrame then
+                        secureFrame:SetFrameRef('relativeFrame', relativeFrame);
+                    end
+                    secureFrame:SetAttribute('hasRelativeFrame', relativeFrame and true or false);
                     secureFrame:SetAttribute('anchorPoint', point.anchorPoint);
                     secureFrame:SetAttribute('relativePoint', point.relativePoint);
                     secureFrame:SetAttribute('offX', point.offX / scale);
                     secureFrame:SetAttribute('offY', point.offY / scale);
                     secureFrame:Execute([[
                         local frame = self:GetFrameRef('frame');
-                        local relativeFrame = self:GetFrameRef('relativeFrame');
+                        local relativeFrame;
+                        if self:GetAttribute('hasRelativeFrame') then
+                            relativeFrame = self:GetFrameRef('relativeFrame');
+                        end
                         local anchorPoint = self:GetAttribute('anchorPoint');
                         local relativePoint = self:GetAttribute('relativePoint');
                         local offX = self:GetAttribute('offX');
