@@ -31,8 +31,8 @@ local abs = abs;
 local GetMouseFoci = GetMouseFoci or function() return { GetMouseFocus() }; end;
 
 local name = ... or "BlizzMove";
---- @class BlizzMove: AceAddon,AceConsole-3.0,AceEvent-3.0,AceHook-3.0
-local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0");
+--- @class BlizzMove: AceAddon,AceConsole-3.0,NumyAceEvent-3.0,AceHook-3.0
+local BlizzMove = LibStub("AceAddon-3.0"):NewAddon(name, "AceConsole-3.0", "NumyAceEvent-3.0", "AceHook-3.0");
 if not BlizzMove then return; end
 
 local L = LibStub("AceLocale-3.0"):GetLocale(name);
