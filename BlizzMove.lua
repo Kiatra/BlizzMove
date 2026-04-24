@@ -656,10 +656,20 @@ do
 
         BlizzMove.DB.scales[frameData.storage.frameName] = newScale;
         BlizzMove.SessionScales[frameData.storage.frameName] = newScale;
-        frame:SetScale(newScale);
+        -- Only call SetScale when the value actually changes. Redundant SetScale
+        -- calls (e.g. OnShow restoring a saved scale that's already correct) re-taint
+        -- the frame's scale value every time, which later pollutes Blizzard's widget
+        -- layout math when hovering map POIs. See issue #181.
+        local currentScale = frame:GetScale() or 1;
+        local scaleChanged = math.abs(currentScale - newScale) > 0.0001;
+        if scaleChanged then
+            frame:SetScale(newScale);
+        end
         BlizzMove:DebugPrint("SetFrameScale:", frameData.storage.frameName, string__format("%.2f %.2f %.2f", frameScale, frame:GetScale(), GetFrameScale(frame)));
 
-        SetFrameScaleSubs(frame, oldScale, newScale);
+        if scaleChanged then
+            SetFrameScaleSubs(frame, oldScale, newScale);
+        end
 
         return true;
     end
