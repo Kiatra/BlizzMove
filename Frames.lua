@@ -1251,6 +1251,13 @@ BlizzMoveAPI:RegisterAddOnFrames({
             MaxVersion = 110000, -- Removed when?
         },
     },
+    ["Blizzard_HouseEditor"] =
+    {
+        ["HouseEditorFrame.StoragePanel"] =
+        {
+            MinVersion = 120000,
+        },
+    },
     ["Blizzard_HouseList"] =
     {
         ["HouseListFrame"] =
