@@ -3,9 +3,9 @@ local InCombatLockdown = InCombatLockdown;
 local LibStub = LibStub;
 local pairs = pairs;
 local type = type;
-local IsAddOnLoaded = C_AddOns and C_AddOns.IsAddOnLoaded or IsAddOnLoaded;
-local LoadAddOn = C_AddOns and C_AddOns.LoadAddOn or LoadAddOn;
-local EnableAddOn = C_AddOns and C_AddOns.EnableAddOn or EnableAddOn;
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded;
+local LoadAddOn = C_AddOns.LoadAddOn;
+local EnableAddOn = C_AddOns.EnableAddOn;
 local next = next;
 local string__gmatch = string.gmatch;
 local tonumber = tonumber;
@@ -16,7 +16,6 @@ local SOUNDKIT = SOUNDKIT;
 local IsControlKeyDown = IsControlKeyDown;
 local IsShiftKeyDown = IsShiftKeyDown;
 local UpdateUIPanelPositions = UpdateUIPanelPositions;
-local MouseIsOver = MouseIsOver;
 local xpcall = xpcall;
 local CallErrorHandler = CallErrorHandler;
 local strsplit = strsplit;
@@ -28,7 +27,7 @@ local GetScreenWidth = GetScreenWidth;
 local GetScreenHeight = GetScreenHeight;
 local CreateFrame = CreateFrame;
 local abs = abs;
-local GetMouseFoci = GetMouseFoci or function() return { GetMouseFocus() }; end;
+local GetMouseFoci = GetMouseFoci;
 
 local name = ... or "BlizzMove";
 --- @class BlizzMove: AceAddon,AceConsole-3.0,NumyAceEvent-3.0,AceHook-3.0
@@ -1270,9 +1269,9 @@ do
             if not frameData.IgnoreMouseWheel then
                 hookScript(frame, "OnEnter", OnEnter);
                 hookScript(frame, "OnLeave", OnLeave);
-                if MouseIsOver(frame) then
+                if frame:IsMouseOver() then
                     RunNextFrame(function()
-                        if MouseIsOver(frame) then OnEnter(frame); end
+                        if frame:IsMouseOver() then OnEnter(frame); end
                     end);
                 end
             end
