@@ -1,19 +1,18 @@
 -- upvalue the globals
-local _G = getfenv(0);
-local LibStub = _G.LibStub;
-local CreateFrame = _G.CreateFrame;
-local UIParent = _G.UIParent;
-local pairs = _G.pairs;
-local C_Console__GetAllCommands = _G.ConsoleGetAllCommands or _G.C_Console.GetAllCommands;
-local string__format = _G.string.format;
-local string__gmatch = _G.string.gmatch;
-local GetCVarInfo = _G.GetCVarInfo;
-local IsAddOnLoaded = _G.IsAddOnLoaded or _G.C_AddOns.IsAddOnLoaded;
-local GetNumAddOns = _G.GetNumAddOns or _G.C_AddOns.GetNumAddOns;
-local GetAddOnInfo = _G.GetAddOnInfo or _G.C_AddOns.GetAddOnInfo;
-local GetAddOnMetadata = _G.GetAddOnMetadata or _G.C_AddOns.GetAddOnMetadata;
-local GetFrameMetatable = _G.GetFrameMetatable or function() return getmetatable(CreateFrame('FRAME')) end
-local LoadAddOn = _G.LoadAddOn or _G.C_AddOns.LoadAddOn;
+local LibStub = LibStub;
+local CreateFrame = CreateFrame;
+local UIParent = UIParent;
+local pairs = pairs;
+local C_Console__GetAllCommands = ConsoleGetAllCommands or C_Console.GetAllCommands;
+local string__format = string.format;
+local string__gmatch = string.gmatch;
+local GetCVarInfo = GetCVarInfo;
+local IsAddOnLoaded = IsAddOnLoaded or C_AddOns.IsAddOnLoaded;
+local GetNumAddOns = GetNumAddOns or C_AddOns.GetNumAddOns;
+local GetAddOnInfo = GetAddOnInfo or C_AddOns.GetAddOnInfo;
+local GetAddOnMetadata = GetAddOnMetadata or C_AddOns.GetAddOnMetadata;
+local GetFrameMetatable = GetFrameMetatable or function() return getmetatable(CreateFrame('FRAME')) end
+local LoadAddOn = LoadAddOn or C_AddOns.LoadAddOn;
 
 --- @type BlizzMove
 local BlizzMove = LibStub('AceAddon-3.0'):GetAddon('BlizzMove'); ---@diagnostic disable-line: assign-type-mismatch

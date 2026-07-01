@@ -1,15 +1,14 @@
 -- upvalue the globals
-local _G = getfenv(0);
-local LibStub = _G.LibStub;
-local pairs = _G.pairs;
-local string_match = _G.string.match;
+local LibStub = LibStub;
+local pairs = pairs;
+local string_match = string.match;
 
 local name = ... or "BlizzMove";
 ---@type BlizzMove
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name); ---@diagnostic disable-line: assign-type-mismatch
 if not BlizzMove then return; end
 
-_G.BlizzMoveAPI = _G.BlizzMoveAPI or {};
+_G.BlizzMoveAPI = {};
 ---@class BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 

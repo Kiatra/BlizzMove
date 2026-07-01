@@ -1,13 +1,12 @@
 -- up-value the globals
-local _G = getfenv(0);
-local LibStub = _G.LibStub;
-local pairs = _G.pairs;
+local LibStub = LibStub;
+local pairs = pairs;
 local GetAddOnMetadata = C_AddOns.GetAddOnMetadata;
-local ReloadUI = _G.ReloadUI;
-local string__match = _G.string.match;
-local StaticPopupDialogs = _G.StaticPopupDialogs;
-local StaticPopup_Show = _G.StaticPopup_Show;
-local IsControlKeyDown = _G.IsControlKeyDown;
+local ReloadUI = C_UI.ReloadUI;
+local string__match = string.match;
+local StaticPopupDialogs = StaticPopupDialogs;
+local StaticPopup_Show = StaticPopup_Show;
+local IsControlKeyDown = IsControlKeyDown;
 
 local name = ... or "BlizzMove";
 ---@class BlizzMove
@@ -368,5 +367,5 @@ function Config:SetConfig(property, value)
 end
 
 function Config:ShowURLPopup(url)
-    StaticPopup_Show("BlizzMoveURLDialog", _, _, url);
+    StaticPopup_Show("BlizzMoveURLDialog", nil, nil, url);
 end

@@ -527,11 +527,11 @@ do
         -- the nested table is for backwards compatibility
         return {
             {
-                ["anchorPoint"] = point,
-                ["relativeFrame"] = "BlizzMove_FakeUIParent",
-                ["relativePoint"] = point,
-                ["offX"] = x,
-                ["offY"] = y,
+                anchorPoint = point,
+                relativeFrame = "BlizzMove_FakeUIParent",
+                relativePoint = point,
+                offX = x,
+                offY = y,
             },
         };
     end
@@ -539,7 +539,7 @@ do
     local secureFrame = CreateFrame("Frame", nil, nil, "SecureHandlerBaseTemplate");
 
     --- @param frame Frame
-    --- @param framePoints BlizzMove_FramePoint[]
+    --- @param framePoints BlizzMove_FramePoint[]?
     --- @param raw boolean? # if true, will not factor in the frame scale
     --- @return boolean
     function SetFramePoints(frame, framePoints, raw)
