@@ -259,7 +259,9 @@ BlizzMoveAPI:RegisterFrames({
             {
                 VersionRanges =
                 {
+                    { Min = 11509, Max = 20000 },
                     { Min = 20505, Max = 30000 },
+                    { Min = 50504, Max = 60000 },
                     { Min = 110000 },
                 },
             },
@@ -728,6 +730,7 @@ BlizzMoveAPI:RegisterAddOnFrames({
         {
             VersionRanges =
             {
+                { Min = 11509, Max = 20000 }, -- Backported in a broken state
                 { Min = 20505, Max = 30000 }, -- Backported in a broken state
                 { Min = 50000 },
             },
@@ -850,8 +853,11 @@ BlizzMoveAPI:RegisterAddOnFrames({
         },
         ["WardrobeFrame"] =
         {
-            MinVersion = 40000,
-            MaxVersion = 120000, -- Renamed to WardrobeCollectionFrame, but no longer acts as standalone frame
+            VersionRanges =
+            { -- Renamed to WardrobeCollectionFrame, but no longer acts as standalone frame
+                { Min = 40000, Max = 50504 },
+                { Min = 60000, Max = 120000 },
+            },
         },
     },
     ["Blizzard_Communities"] =
@@ -1642,7 +1648,9 @@ BlizzMoveAPI:RegisterAddOnFrames({
         {
             VersionRanges =
             {
+                { Min = 11509, Max = 20000 },
                 { Min = 20506, Max = 30000 },
+                { Min = 50504, Max = 60000 },
                 { Min = 120000 },
             },
         },
@@ -1744,7 +1752,11 @@ BlizzMoveAPI:RegisterAddOnFrames({
     {
         ["TransmogFrame"] =
         {
-            MinVersion = 110207,
+            VersionRanges = {
+                { Min = 11509, 20000 }, -- backported in a broken state
+                { Min = 50504, 60000 },
+                { Min = 110207 },
+            },
         },
     },
     ["Blizzard_UIWidgets"] =
