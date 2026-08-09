@@ -10,4 +10,5 @@ https://raw.githubusercontent.com/Gethe/wow-ui-source/refs/heads/live/Interface/
     <Script file="ruRU.lua"/>
     <Script file="ptBR.lua"/>
     <Script file="itIT.lua"/>
+    <Script file="loadLocale.lua"/>
 </Ui>

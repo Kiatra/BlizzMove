@@ -8,12 +8,12 @@ local StaticPopupDialogs = StaticPopupDialogs;
 local StaticPopup_Show = StaticPopup_Show;
 local IsControlKeyDown = IsControlKeyDown;
 
-local name = ... or "BlizzMove";
+local name, ns = ...;
 ---@class BlizzMove
 local BlizzMove = LibStub("AceAddon-3.0"):GetAddon(name);
 if not BlizzMove then return; end
 
-local L = LibStub("AceLocale-3.0"):GetLocale(name);
+local L = ns.L;
 
 ---@type BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
