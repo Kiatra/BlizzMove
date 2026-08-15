@@ -1271,6 +1271,25 @@ BlizzMoveAPI:RegisterAddOnFrames({
             MinVersion = 110207,
         },
     },
+    ["Blizzard_HousingBlueprint"] =
+    {
+        ["HousingBlueprintContentListFrame"] =
+        {
+            MinVersion = 120100,
+        },
+        ["HousingBlueprintExportFrame"] =
+        {
+            MinVersion = 120100,
+        },
+        ["HousingBlueprintImportFrame"] =
+        {
+            MinVersion = 120100,
+        },
+        ["HousingBlueprintRenameFrame"] =
+        {
+            MinVersion = 120100,
+        },
+    },
     ["Blizzard_HousingBulletinBoard"] =
     {
         ["HousingBulletinBoardFrame"] =
