@@ -37,6 +37,28 @@ if not BlizzMove then return; end
 local L = ns.L;
 -- Various debug texts have been left untranslated on purpose, to make debugging easier. Instructions or information for users is translated.
 
+--- @enum BlizzMove_Versions
+BlizzMove.Versions = {
+    Forever = 'Forever',
+    Standard = 'Standard', -- standard retail
+    Midnight = 'Midnight',
+    TWW = 'TWW',
+    DF = 'DF',
+    SL = 'SL',
+    BFA = 'BFA',
+    Legion = 'Legion',
+    WOD = 'WOD',
+    MOP = 'MOP',
+    Cata = 'Cata',
+    Wrath = 'Wrath',
+    TBC = 'TBC',
+    Vanilla = 'Vanilla',
+    Mainline = 'Mainline', -- fallback for Retail and Forever
+    Classic = 'Classic', -- fallback for non-Retail non-Forever flavors
+    Fallback = 'Fallback', -- fallback when none of the above is matched
+}
+if table.freeze then table.freeze(BlizzMove.Versions) end
+
 --- @type BlizzMoveAPI_AddonFrameTable
 BlizzMove.Frames = {};
 --- @type table<Frame, BlizzMove_FrameData>
@@ -57,6 +79,8 @@ BlizzMove.FakeUIParent:SetAllPoints(UIParent);
 
 local MAX_SCALE = 2.5;
 local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay above 0.25
+
+local is4E = false;
 
 ------------------------------------------------------------------------------------------------------
 --- Debug Functions
@@ -88,13 +112,13 @@ do
     end
 
     function BlizzMove:ValidateFrameData(frameName, frameData, isSubFrame)
-        local validationError;
+        local validationError, context;
 
         for key, value in pairs(frameData) do
             if key == "SubFrames" then
                 if type(value) ~= "table" then validationError = true; end
                 for subFrameName, subFrameData in pairs(value) do
-                    if not self:ValidateFrame(subFrameName, subFrameData, true) then validationError = true; break; end
+                    if not self:ValidateFrame(subFrameName, subFrameData, true) then validationError = true; context = "error in subFrame " .. subFrameName break; end
                 end
             elseif
                 key == "MinVersion"
@@ -102,13 +126,16 @@ do
                 or key == "MinBuild"
                 or key == "MaxBuild"
             then
+                if frameData.Versions then validationError = true; context = "not allowed together with Versions, remove " .. key; end
                 if (type(value) ~= "number" or value < 0) then validationError = true; end
             elseif
                 key == "BuildRanges"
                 or key == "VersionRanges"
             then
+                if frameData.Versions then validationError = true; context = "not allowed together with Versions, remove " .. key; end
                 if (type(value) ~= "table") then
                     validationError = true;
+                    context = "must be a table";
                 else
                     for _, range in pairs(value) do
                         if
@@ -119,6 +146,36 @@ do
                             or (not range.Max and not range.Min)
                         then
                             validationError = true;
+                            context = "must be a table with at least 1 Min or Max field, and they must be numeric fields of 0 or higher"
+                            break;
+                        end
+                    end
+                end
+            elseif key == "Versions" then
+                if (type(value) ~= "table") then
+                    validationError = true;
+                    context = "must be a table";
+                else
+                    for version, range in pairs(value) do
+                        if not self.Versions[version] then
+
+                            validationError = true;
+                            context = "version " .. version .. " is invalid, use one of BlizzMoveAPI.Versions (current version = " .. self.gameVersion .. ")";
+                        end
+                        if
+                            (type(range) ~= "table" and range ~= true)
+                            or (
+                                type(range) == "table"
+                                and (
+                                    (range.Min and (type(range.Min) ~= "number" or range.Min < 0))
+                                    or (range.Max and (type(range.Max) ~= "number" or range.Max < 0))
+                                    or (range.Max and range.Min and range.Max < range.Min)
+                                    or (not range.Max and not range.Min)
+                                )
+                            )
+                        then
+                            validationError = true;
+                            context = "must be either true, or a table with optionally a Min or Max field, and they must be numeric fields of 0 or higher"
                             break;
                         end
                     end
@@ -128,7 +185,10 @@ do
                 or key == "ManuallyScaleWithParent"
                 or key == "ForceParentage"
             then
-                if (type(value) ~= "boolean" or (value == true and not isSubFrame)) then validationError = true; end
+                if (type(value) ~= "boolean" or (value == true and not isSubFrame)) then
+                    validationError = true;
+                    context = "must be boolean, and if true, must be a subFrame"
+                end
             elseif
                 key == "IgnoreMouse"
                 or key == "IgnoreMouseWheel"
@@ -140,15 +200,22 @@ do
                 or key == "ForcePosition"
                 or key == "ForceUseSecureMoveHandle"
             then
-                if type(value) ~= "boolean" then validationError = true; end
+                if type(value) ~= "boolean" then
+                    validationError = true;
+                    context = "must be boolean"
+                end
             elseif key == "FrameReference" then
-                if not IsFrame(value) then validationError = true; end
+                if not IsFrame(value) then
+                    validationError = true;
+                    context = "must be a valid frame object"
+                end
             else
                 self:Print("Ignoring unsupported key supplied in frameData, for frame:", frameName, "; key:", key);
             end
 
             if (validationError) then
-                self:Print('Validation error, frame:', frameName, '; key:', key, '; value:', value);
+                if context then context = "\ncontext: " .. context end
+                self:Print('Validation error, frame:', frameName, '; key:', key, '; value:', value, context or "");
 
                 return false;
             end
@@ -219,7 +286,7 @@ do
         if not self.Frames[addOnName] then return returnTable; end
 
         for frameName, frameData in pairs(self.Frames[addOnName]) do
-            if self:MatchesCurrentBuild(frameData) then
+            if self:MatchesCurrentBuild(frameData, frameName) then
                 returnTable[frameName] = frameName;
             end
         end
@@ -359,9 +426,45 @@ do
         return true;
     end
 
-    local _, buildNumber, _, gameVersion = GetBuildInfo();
+    local _, buildNumber, _, interfaceVersion = GetBuildInfo();
     BlizzMove.gameBuild   = tonumber(buildNumber);
-    BlizzMove.gameVersion = tonumber(gameVersion);
+    BlizzMove.interfaceVersion = tonumber(interfaceVersion);
+    local versionsMap = {
+        { version = BlizzMove.Versions.Vanilla, maxToc = 16001 },
+        { version = BlizzMove.Versions.Forever, maxToc = 20000 },
+        { version = BlizzMove.Versions.TBC, maxToc = 30000 },
+        { version = BlizzMove.Versions.Wrath, maxToc = 40000 },
+        { version = BlizzMove.Versions.Cata, maxToc = 50000 },
+        { version = BlizzMove.Versions.MOP, maxToc = 60000 },
+        { version = BlizzMove.Versions.WOD, maxToc = 70000 },
+        { version = BlizzMove.Versions.Legion, maxToc = 80000 },
+        { version = BlizzMove.Versions.BFA, maxToc = 90000 },
+        { version = BlizzMove.Versions.SL, maxToc = 100000 },
+        { version = BlizzMove.Versions.DF, maxToc = 110000 },
+        { version = BlizzMove.Versions.TWW, maxToc = 120000 },
+        { version = BlizzMove.Versions.Midnight, maxToc = 130000 },
+    }
+    local standardVersions = {
+        [BlizzMove.Versions.Midnight] = true,
+    }
+    BlizzMove.gameFamily = BlizzMove.Versions.Classic
+    for _, info in ipairs(versionsMap) do
+        if interfaceVersion < info.maxToc then
+            BlizzMove.gameVersion = info.version
+            if info.version == BlizzMove.Versions.Forever then
+                is4E = true
+                BlizzMove.gameFamily = BlizzMove.Versions.Mainline
+            end
+            if standardVersions[info.version] then
+                BlizzMove.gameType = BlizzMove.Versions.Standard
+                BlizzMove.gameFamily = BlizzMove.Versions.Mainline
+            else
+                BlizzMove.gameType = info.version
+            end
+            break;
+        end
+    end
+    if not BlizzMove.gameVersion then error('No game version detected') end
 
     local function checkRanges(ranges, needle)
         for _, range in ipairs(ranges) do
@@ -380,14 +483,32 @@ do
         end
         return false;
     end
-    function BlizzMove:MatchesCurrentBuild(frameData)
+
+    function BlizzMove:MatchesCurrentBuild(frameData, frameName)
+        if frameData.Versions then
+            local matching = frameData.Versions[self.gameVersion]
+                or frameData.Versions[self.gameType]
+                or frameData.Versions[self.gameFamily]
+                or frameData.Versions[self.Versions.Fallback];
+            if
+                matching and (matching == true or (
+                    (not matching.Max or matching.Max > self.interfaceVersion)
+                    and (not matching.Min or matching.Min <= self.interfaceVersion)
+                ))
+            then
+                return true;
+            end
+
+            return false;
+        end
+
         -- Compare versus current build version.
         if frameData.MinBuild and frameData.MinBuild > self.gameBuild then return false; end
         if frameData.MaxBuild and frameData.MaxBuild <= self.gameBuild then return false; end
 
         -- Compare versus current interface version.
-        if frameData.MinVersion and frameData.MinVersion > self.gameVersion then return false; end
-        if frameData.MaxVersion and frameData.MaxVersion <= self.gameVersion then return false; end
+        if frameData.MinVersion and frameData.MinVersion > self.interfaceVersion then return false; end
+        if frameData.MaxVersion and frameData.MaxVersion <= self.interfaceVersion then return false; end
 
         -- Compare ranges versus current build version.
         if frameData.BuildRanges then
@@ -396,7 +517,7 @@ do
 
         -- Compare ranges versus current interface version.
         if frameData.VersionRanges then
-            if not checkRanges(frameData.VersionRanges, self.gameVersion) then return false; end
+            if not checkRanges(frameData.VersionRanges, self.interfaceVersion) then return false; end
         end
 
         return true;
@@ -560,7 +681,7 @@ do
                     relativeFrame = BlizzMove.FakeUIParent;
                 end
 
-                if not InCombatLockdown() and (not relativeFrame or select(2, relativeFrame:IsProtected())) then
+                if not is4E and not InCombatLockdown() and (not relativeFrame or select(2, relativeFrame:IsProtected())) then
                     secureFrame:SetFrameRef('frame', frame);
                     if relativeFrame then
                         secureFrame:SetFrameRef('relativeFrame', relativeFrame);
@@ -678,7 +799,7 @@ do
         for subFrameName, subFrameData in pairs(frameData.SubFrames) do
             local subFrame = BlizzMove:GetFrameFromName(addOnName, subFrameName);
 
-            if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData) then
+            if subFrame and BlizzMove:MatchesCurrentBuild(subFrameData, subFrameName) then
                 if subFrameData.ForceParentage and subFrame.GetParent and subFrame.SetParent and subFrame:GetParent() ~= frame then
                     subFrame:SetParent(frame);
                 elseif subFrameData.ForceParentage then
@@ -1348,7 +1469,7 @@ do
     function BlizzMove:ProcessFrame(addOnName, frameName, frameData, frameParent, retriedAfterNotFound)
         if self:IsFrameDisabled(addOnName, frameName) then return; end
 
-        local matchesBuild = self:MatchesCurrentBuild(frameData);
+        local matchesBuild = self:MatchesCurrentBuild(frameData, frameName);
 
         if (frameData.FrameReference) then
             self.FrameRegistry[addOnName] = self.FrameRegistry[addOnName] or {}
@@ -1359,7 +1480,7 @@ do
 
         if (not matchesBuild) then
             if (frame and not frameData.SilenceCompatabilityWarnings) then
-                self:Print(L["Frame was marked as incompatible, but does exist"], "( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
+                self:Print(L["Frame was marked as incompatible, but does exist"], "( Build:", self.gameBuild, "| Version:", self.interfaceVersion, "| BMVersion:", self.Config.version, "):", frameName);
             end
 
             return false;
@@ -1375,7 +1496,7 @@ do
             end
             self.notFoundFrames = self.notFoundFrames or {};
             tinsert(self.notFoundFrames, frameName);
-            self:Print(L["Could not find frame"], "( Build:", self.gameBuild, "| Version:", self.gameVersion, "| BMVersion:", self.Config.version, "):", frameName);
+            self:Print(L["Could not find frame"], "( Build:", self.gameBuild, "| Version:", self.interfaceVersion, "| BMVersion:", self.Config.version, "):", frameName);
 
             return false;
         end
@@ -1417,7 +1538,7 @@ do
 
         local frameData = self.FrameData[frame];
 
-        if not self:MatchesCurrentBuild(frameData) then return; end
+        if not self:MatchesCurrentBuild(frameData, frameName) then return; end
 
         if InCombatLockdown() and frame:IsProtected() then
             self:AddToCombatLockdownQueue(BlizzMove.UnprocessFrame, self, addOnName, frameName);
@@ -1626,7 +1747,7 @@ do
             return;
         elseif arg1 == commands.dumpMissingFrames then
             self.Config:ShowURLPopup(
-                'Build:' .. self.gameBuild .. '| Version:' .. self.gameVersion .. '| BMVersion:' .. self.Config.version .. "\n\n"
+                'Build:' .. self.gameBuild .. '| Version:' .. self.interfaceVersion .. '| BMVersion:' .. self.Config.version .. "\n\n"
                 .. table.concat(self.notFoundFrames or { '<none>' }, "\n")
             );
             return;
@@ -1732,7 +1853,7 @@ do
                 _G.BattlefieldFrame:SetAllPoints();
             end
 
-            if self.gameVersion >= 100000 then
+            if self.interfaceVersion >= 100000 then
                 -- fix anchor family connection issues with the combined bag
                 local skipHook = false
                 self:SecureHook(ContainerFrameSettingsManager, "GetBagsShown", function()
@@ -1745,7 +1866,7 @@ do
                     skipHook = false
                 end);
             end
-            if self.gameVersion >= 120000 then
+            if self.interfaceVersion >= 120000 then
                 -- workaround for secret errors with the MoneyFrame
                 TooltipDataProcessor.AddLinePreCall(Enum.TooltipDataLineType.SellPrice, function(tooltip, lineData)
                     tooltip:AddLine(SELL_PRICE .. ': ' .. GetMoneyString(lineData.price), WHITE_FONT_COLOR:GetRGB());

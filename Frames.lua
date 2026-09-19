@@ -2,443 +2,372 @@
 local BlizzMoveAPI = _G.BlizzMoveAPI ---@diagnostic disable-line: undefined-field
 if not BlizzMoveAPI then return; end
 
+local v = BlizzMoveAPI.Versions;
+local ALL_VERSIONS = { [v.Fallback] = true };
+
 BlizzMoveAPI:RegisterFrames({
-    ["AddonList"] =
-    {
-        MinVersion = 0,
+    ["AddonList"] = {
+        Versions = ALL_VERSIONS,
     },
-    ["ArenaFrame"] =
-    {
-        MinVersion = 20505,
-        MaxVersion = 30000,
-    },
-    ["ArenaRegistrarFrame"] =
-    {
-        VersionRanges =
-        {
-            { Min = 20505, Max = 30000 }, -- exists, but does it do anything?
-            { Min = 40000, Max = 60000 }, -- Added when? Removed when?
+    ["ArenaFrame"] = {
+        Versions = {
+            [v.TBC] = { Min = 20505 },
         },
     },
-    ["BankFrame"] =
-    {
-        MinVersion = 0,
+    ["ArenaRegistrarFrame"] = {
+        Versions = {
+            [v.TBC] = { Min = 20505 }, -- exists, but does it do anything?
+            [v.Cata] = true, -- Added when? Removed when?
+            [v.MOP] = true,
+        },
     },
-    ["BattlefieldFrame"] =
-    {
-        MinVersion = 0,
-        MaxVersion = 30400, -- Moved to PVPParentFrame
+    ["BankFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["BattlefieldFrame"] = {
+        Versions = {
+            [v.Vanilla] = true,
+            [v.TBC] = true,
+            [v.Wrath] = { Max = 30400 },
+        },
         SilenceCompatabilityWarnings = true,
     },
-    ["CharacterFrame"] =
-    {
-        MinVersion = 0,
-        SubFrames =
-        {
+    ["CharacterFrame"] = {
+        Versions = ALL_VERSIONS,
+        SubFrames = {
+            ["CompanionFrame"] = {
+                Versions = {
+                    [v.WOD] = true, -- Added when?
+                    [v.Legion] = { Max = 70300 }, -- Removed when?
+                },
+            },
+            ["HonorFrame"] = {
+                Versions = {
+                    [v.Vanilla] = true, -- Returned in cata, and moved to PVPFrame
+                },
+                SilenceCompatabilityWarnings = true,
+            },
             ["PaperDollFrame"] = {},
-            ["PetPaperDollFrame"] =
-            {
-                MaxVersion = 70300, -- Removed when?
-                SubFrames =
-                {
-                    ["PetPaperDollFrameCompanionFrame"] =
-                    {
-                        MinVersion = 30000,
-                        MaxVersion = 40400,
+            ["PetPaperDollFrame"] = {
+                Versions = {
+                    [v.WOD] = true,
+                    [v.Legion] = { Max = 70300 }, -- Removed when?
+                    [v.Classic] = true,
+                },
+                SubFrames = {
+                    ["PetPaperDollFrameCompanionFrame"] = {
+                        Versions = {
+                            [v.Wrath] = true,
+                            [v.Cata] = { Max = 40400 },
+                        },
                     },
                 },
             },
-            ["CompanionFrame"] =
-            {
-                MinVersion = 60000, -- Added when?
-                MaxVersion = 70300, -- Removed when?
-            },
-            ["ReputationFrame"] =
-            {
-                SubFrames =
-                {
-                    ["ReputationDetailFrame"] =
-                    {
-                        Detachable = true,
-                        MaxVersion = 110000,
-                    },
-                    ["ReputationFrame.ReputationDetailFrame"] =
-                    {
-                        Detachable = true,
-                        MinVersion = 110000,
-                    },
+            ["PVPFrame"] = {
+                Versions = {
+                    [v.TBC] = true, -- Moved to PVPParentFrame in wrath, then extracted to its own frame in cata
                 },
-            },
-            ["SkillFrame"] =
-            {
-                MaxVersion = 70300, -- Removed when?
-            },
-            ["HonorFrame"] =
-            {
-                MaxVersion = 20000, -- Added back in cata, and moved to PVPFrame
                 SilenceCompatabilityWarnings = true,
-            },
-            ["PVPFrame"] =
-            {
-                MinVersion = 20000,
-                MaxVersion = 30000, -- Moved to PVPParentFrame in wrath, then extracted to its own frame in cata
-                SilenceCompatabilityWarnings = true,
-                SubFrames =
-                {
-                    ["PVPFrameHonor"] = {},
+                SubFrames = {
                     ["PVPFrameArena"] = {},
+                    ["PVPFrameHonor"] = {},
                     ["PVPTeam1"] = {},
                     ["PVPTeam2"] = {},
                     ["PVPTeam3"] = {},
                 },
             },
-            ["TokenFrame"] =
-            {
-                VersionRanges =
-                {
-                    { Min = 11404, Max = 20000 }, -- exists, but does nothing
-                    { Min = 20505, Max = 30000 }, -- exists, but does nothing
-                    { Min = 30000 },
-                },
-                SubFrames =
-                {
-                    ["TokenFramePopup"] =
-                    {
+            ["ReputationFrame"] = {
+                SubFrames = {
+                    ["ReputationDetailFrame"] = {
+                        Versions = {
+                            [v.Classic] = true,
+                            [v.WOD] = true,
+                            [v.Legion] = true,
+                            [v.BFA] = true,
+                            [v.SL] = true,
+                            [v.DF] = true,
+                        },
                         Detachable = true,
                     },
-                    ["TokenFrameContainer"] =
-                    {
-                        MaxVersion = 100000,
+                    ["ReputationFrame.ReputationDetailFrame"] = {
+                        Versions = {
+                            [v.Mainline] = true,
+                        },
+                        Detachable = true,
                     },
-                    ["CurrencyTransferLog"] =
-                    {
-                        MinVersion = 110000,
+                },
+            },
+            ["SkillFrame"] = {
+                Versions = {
+                    [v.WOD] = true,
+                    [v.Legion] = { Max = 70300 }, -- Removed when?
+                    [v.Classic] = true,
+                },
+            },
+            ["TokenFrame"] = {
+                Versions = {
+                    [v.Vanilla] = { Min = 11404 }, -- exists, but does nothing
+                    [v.TBC] = { Min = 20505 }, -- exists, but does nothing
+                    [v.Fallback] = true,
+                },
+                SubFrames = {
+                    ["CurrencyTransferLog"] = {
+                        Versions = {
+                            [v.Mainline] = true,
+                        },
+                        Detachable = true,
+                    },
+                    ["TokenFrameContainer"] = {
+                        Versions = {
+                            [v.Classic] = true,
+                        },
+                    },
+                    ["TokenFramePopup"] = {
+                        Versions = {
+                            [v.Standard] = true,
+                        },
                         Detachable = true,
                     },
                 },
             },
         },
     },
-    ["ChatConfigFrame"] =
-    {
-        MinVersion = 0,
+    ["ChatConfigFrame"] = {
+        Versions = ALL_VERSIONS,
     },
-    ["ContainerFrame1"] =
-    {
-        MinVersion = 100000,
+    ["ContainerFrame1"] = {
+        Versions = {
+            [v.Mainline] = true, -- since DF
+        },
         -- while it does indeed exist in classic, blizzard does not make other bags follow its position automatically like in retail
         SilenceCompatabilityWarnings = true,
-        SubFrames =
-        {
-            ["ContainerFrame1.TitleContainer"] =
-            {
-                MinVersion = 110000,
-            },
-        },
-    },
-    ["ContainerFrameCombinedBags"] =
-    {
-        MinVersion = 100000,
-        SubFrames =
-        {
-            ["ContainerFrameCombinedBags.TitleContainer"] =
-            {
-                MinVersion = 110000,
-            },
-        },
-    },
-    ["DestinyFrame"] =
-    {
-        MinVersion = 50000,
-    },
-    ["DressUpFrame"] =
-    {
-        MinVersion = 0,
-        SubFrames =
-        {
-            ["DressUpFrame.OutfitDetailsPanel"] =
-            {
-                MinVersion = 90105,
-                MaxVersion = 120000, -- renamed to CustomSetDetailsPanel
-                Detachable = true,
-            },
-            ["DressUpFrame.CustomSetDetailsPanel"] =
-            {
-                MinVersion = 120000, -- renamed from OutfitDetailsPanel
-                Detachable = true,
-            },
-        },
-    },
-    ["FriendsFrame"] =
-    {
-        MinVersion = 0,
-        SubFrames =
-        {
-            ["IgnoreListFrameScrollFrame"] =
-            {
-                MinVersion = 60000, -- Added when?
-                MaxVersion = 100000,
-            },
-            ["RaidInfoFrame"] =
-            {
-                Detachable = true,
-                SubFrames =
-                {
-                    ["RaidInfoScrollFrame"] =
-                    {
-                        VersionRanges =
-                        {
-                            { Min = 0, Max = 11506 },
-                            { Min = 20000, Max = 20505 },
-                            { Min = 30000, Max = 40402 },
-                        },
-                    },
+        SubFrames = {
+            ["ContainerFrame1.TitleContainer"] = {
+                Versions = {
+                    [v.Mainline] = true, -- since TWW
                 },
             },
-            ["RecruitAFriendFrame.RecruitList.ScrollFrame"] =
-            {
-                MinVersion = 90000, -- Added when?
-                MaxVersion = 100000,
+        },
+    },
+    ["ContainerFrameCombinedBags"] = {
+        Versions = {
+            [v.Mainline] = true, -- since DF
+        },
+        SubFrames = {
+            ["ContainerFrameCombinedBags.TitleContainer"] = {
+                Versions = {
+                    [v.Mainline] = true, -- since TWW
+                },
             },
-            ["FriendsFrameBattlenetFrame.BroadcastFrame"] =
-            {
+        },
+    },
+    ["DestinyFrame"] = {
+        Versions = {
+            [v.Classic] = { Min = 50000 },
+            [v.Mainline] = true,
+        },
+    },
+    ["DressUpFrame"] = {
+        Versions = ALL_VERSIONS,
+        SubFrames = {
+            ["DressUpFrame.CustomSetDetailsPanel"] = {
+                Versions = {
+                    [v.Mainline] = true,
+                },
                 Detachable = true,
             },
-            ["FriendsListFrameScrollFrame"] =
-            {
-                MinVersion = 60000, -- Added when?
-                MaxVersion = 100000,
+        },
+    },
+    ["FriendsFrame"] = {
+        Versions = ALL_VERSIONS,
+        SubFrames = {
+            ["FriendsFrameBattlenetFrame.BroadcastFrame"] = {
+                Detachable = true,
             },
-            ["FriendsFrameFriendsScrollFrame"] =
-            {
-                MaxVersion = 60000, -- Removed when?
+            ["FriendsFrameFriendsScrollFrame"] = {
+                Versions = {
+                    [v.Classic] = true, -- Removed when?
+                },
             },
-            ["QuickJoinScrollFrame"] =
-            {
-                MinVersion = 60000, -- Added when?
-                MaxVersion = 100000,
-            },
-            ["GuildFrame"] =
-            {
-                MaxVersion = 60000, -- Moved to Blizzard_GuildUI when?
-                SubFrames =
-                {
-                    ["GuildControlPopupFrame"] =
-                    {
-                        Detachable = true,
-                        MinVersion = 11405,
-                        MaxVersion = 60000, -- Removed when?
-                    },
-                    ["GuildEventLogFrame"] =
-                    {
-                        VersionRanges =
-                        {
-                            { Min = 11405, Max = 20000 },
-                            { Min = 20505 },
+            ["GuildFrame"] = {
+                Versions = {
+                    [v.Classic] = true, -- Moved to Blizzard_GuildUI when?
+                },
+                SubFrames = {
+                    ["GuildControlPopupFrame"] = {
+                        Versions = {
+                            [v.Classic] = { Min = 11405 }, -- Removed when?
                         },
                         Detachable = true,
                     },
-                    ["GuildInfoFrame"] =
-                    {
+                    ["GuildEventLogFrame"] = {
+                        Versions = {
+                            [v.Vanilla] = { Min = 11405 },
+                            [v.Fallback] = { Min = 20505 },
+                        },
                         Detachable = true,
-                        SubFrames =
-                        {
+                    },
+                    ["GuildInfoFrame"] = {
+                        Detachable = true,
+                        SubFrames = {
                             ["GuildInfoFrameScrollFrame"] = {},
                         },
                     },
                 },
             },
-        },
-    },
-    ["GameMenuFrame"] =
-    {
-        MinVersion = 0,
-        SubFrames =
-        {
-            ["GameMenuFrame.Header"] =
-            {
-                VersionRanges =
-                {
-                    { Min = 11509, Max = 20000 },
-                    { Min = 20505, Max = 30000 },
-                    { Min = 50504, Max = 60000 },
-                    { Min = 110000 },
-                },
-            },
-        },
-    },
-    ["GossipFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["GroupLootContainer"] =
-    {
-        MinVersion = 0,
-        DefaultDisabled = true,
-        SubFrames =
-        {
-            ["GroupLootFrame1"] =
-            {
-                MinVersion = 0,
-                ManuallyScaleWithParent = true,
-            },
-            ["GroupLootFrame2"] =
-            {
-                MinVersion = 0,
-                ManuallyScaleWithParent = true,
-            },
-            ["GroupLootFrame3"] =
-            {
-                MinVersion = 0,
-                ManuallyScaleWithParent = true,
-            },
-            ["GroupLootFrame4"] =
-            {
-                MinVersion = 0,
-                ManuallyScaleWithParent = true,
-            },
-        },
-    },
-    ["GuildInviteFrame"] =
-    {
-        MinVersion = 50000,
-    },
-    ["GuildRegistrarFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["HelpFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["InterfaceOptionsFrame"] =
-    {
-        VersionRanges = {
-            { Min = 0, Max = 11503 },
-            { Min = 40000, Max = 40400 },
-        },
-        MaxVersion = 100000,
-    },
-    ["ItemTextFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["LFGParentFrame"] =
-    {
-        MinVersion = 20502,
-        MaxVersion = 20503, -- Moved to Blizzard_LookingForGroupUI
-    },
-    ["LootFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["MailFrame"] =
-    {
-        MinVersion = 0,
-        SubFrames =
-        {
-            ["SendMailFrame"] = {},
-            ["MailFrameInset"] =
-            {
-                ForceParentage = true,
-            },
-            ["OpenMailFrame"] =
-            {
+            ["RaidInfoFrame"] = {
                 Detachable = true,
-                ManuallyScaleWithParent = true,
-                SubFrames =
-                {
-                    ["OpenMailSender"] = {},
-                    ["OpenMailFrameInset"] =
-                    {
-                        ForceParentage = true,
+                SubFrames = {
+                    ["RaidInfoScrollFrame"] = {
+                        Versions = {
+                            [v.Vanilla] = { Max = 11506 },
+                            [v.TBC] = { Max = 20505 },
+                            [v.Wrath] = true,
+                            [v.Cata] = { Max = 40402 },
+                        },
                     },
                 },
             },
         },
     },
-    ["MerchantFrame"] =
-    {
-        MinVersion = 0,
+    ["GameMenuFrame"] = {
+        Versions = ALL_VERSIONS,
+        SubFrames = {
+            ["GameMenuFrame.Header"] = {
+                Versions = {
+                    [v.Vanilla] = { Min = 11509 },
+                    [v.TBC] = { Min = 20505 },
+                    [v.MOP] = { Min = 50504 },
+                    [v.Mainline] = true,
+                },
+            },
+        },
     },
-    ["ModelPreviewFrame"] =
-    {
-        MinVersion = 0,
+    ["GossipFrame"] = {
+        Versions = ALL_VERSIONS,
     },
-    ["PetitionFrame"] =
-    {
-        MinVersion = 0,
+    ["GroupLootContainer"] = {
+        Versions = ALL_VERSIONS,
+        DefaultDisabled = true,
+        SubFrames = {
+            ["GroupLootFrame1"] = {
+                ManuallyScaleWithParent = true,
+            },
+            ["GroupLootFrame2"] = {
+                ManuallyScaleWithParent = true,
+            },
+            ["GroupLootFrame3"] = {
+                ManuallyScaleWithParent = true,
+            },
+            ["GroupLootFrame4"] = {
+                ManuallyScaleWithParent = true,
+            },
+        },
     },
-    ["PetStableFrame"] =
-    {
-        MinVersion = 0,
-        MaxVersion = 100207,
+    ["GuildInviteFrame"] = {
+        Versions = {
+            [v.Classic] = { Min = 50000 },
+            [v.Mainline] = true,
+        },
     },
-    ["PingSystemTutorial"] =
-    {
-        MinVersion = 100107,
+    ["GuildRegistrarFrame"] = {
+        Versions = ALL_VERSIONS,
     },
-    ["PVEFrame"] =
-    {
-        MinVersion = 30403,
+    ["HelpFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["ItemTextFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["LootFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["MailFrame"] = {
+        Versions = ALL_VERSIONS,
+        SubFrames = {
+            ["MailFrameInset"] = {
+                ForceParentage = true,
+            },
+            ["OpenMailFrame"] = {
+                Detachable = true,
+                ManuallyScaleWithParent = true,
+                SubFrames = {
+                    ["OpenMailFrameInset"] = {
+                        ForceParentage = true,
+                    },
+                    ["OpenMailSender"] = {},
+                },
+            },
+            ["SendMailFrame"] = {},
+        },
+    },
+    ["MerchantFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["ModelPreviewFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["PetitionFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["PetStableFrame"] = {
+        Versions = {
+            [v.Classic] = true,
+            [v.Forever] = true,
+        },
+    },
+    ["PingSystemTutorial"] = {
+        Versions = {
+            [v.Mainline] = true,
+        },
+    },
+    ["PVEFrame"] = {
+        Versions = {
+            [v.Classic] = { Min = 30403 },
+            [v.Standard] = true,
+        },
         SilenceCompatabilityWarnings = true, -- frame exists in classic, but is not functional
-        SubFrames =
-        {
-            ["LFGListApplicationViewerScrollFrame"] =
-            {
-                MinVersion = 60000, -- Added when?
-                MaxVersion = 100000,
-            },
+        SubFrames = {
             ["LFGListFrame.ApplicationViewer.UnempoweredCover"] = {},
-            ["LFGListSearchPanelScrollFrame"] =
-            {
-                MinVersion = 60000, -- Added when?
-                MaxVersion = 100000,
-                IgnoreMouseWheel = true,
-            },
         },
     },
-    ["PVPBannerFrame"] =
-    {
-        VersionRanges =
-        {
-            { Min = 20505, Max = 30000 }, -- exists, but does it do anything?
-            { Min = 40000, Max = 60000 }, -- Added when? Removed when?
+    ["PVPBannerFrame"] = {
+        Versions = {
+            [v.TBC] = { Min = 20505 }, -- exists, but does it do anything?
+            [v.Classic] = { Min = 40000 }, -- Added when? Removed when?
         },
     },
-    ["PVPFrame"] =
-    {
-        MinVersion = 40400, -- Moved out of PVPParentFrame
-        MaxVersion = 70300, -- Removed when?
+    ["PVPFrame"] = {
+        Versions = {
+            [v.Classic] = { Min = 40400 }, -- Moved out of PVPParentFrame - Removed when?
+        },
         SilenceCompatabilityWarnings = true,
-        SubFrames =
-        {
-            ["PVPHonorFrame"] = {},
+        SubFrames = {
             ["PVPConquestFrame"] = {},
+            ["PVPHonorFrame"] = {},
             ["WarGamesFrame"] = {},
         },
     },
-    ["PVPParentFrame"] =
-    {
-        MinVersion = 30000,
-        MaxVersion = 40400,
-        SubFrames =
-        {
-            ["BattlefieldFrame"] =
-            {
-                MinVersion = 30400, -- Moved from FrameXML
-                MaxVersion = 70300, -- Removed when?
+    ["PVPParentFrame"] = {
+        Versions = {
+            [v.Wrath] = true,
+            [v.Cata] = { Max = 40400 },
+        },
+        SubFrames = {
+            ["BattlefieldFrame"] = {
+                Versions = {
+                    [v.Classic] = { Min = 30400 }, -- Moved from FrameXML - Removed when?
+                },
                 SilenceCompatabilityWarnings = true,
             },
-            ["PVPFrame"] =
-            {
-                MinVersion = 30000, -- Moved from CharacterFrame
-                MaxVersion = 70300, -- Removed when?
+            ["PVPFrame"] = {
+                Versions = {
+                    [v.Classic] = { Min = 30000 }, -- Moved from CharacterFrame - Removed when?
+                },
                 SilenceCompatabilityWarnings = true,
-                SubFrames =
-                {
-                    ["PVPFrameHonor"] = {},
+                SubFrames = {
                     ["PVPFrameArena"] = {},
+                    ["PVPFrameHonor"] = {},
                     ["PVPTeam1"] = {},
                     ["PVPTeam2"] = {},
                     ["PVPTeam3"] = {},
@@ -446,672 +375,510 @@ BlizzMoveAPI:RegisterFrames({
             },
         },
     },
-    ["QuestFrame"] =
-    {
-        MinVersion = 0,
+    ["QuestFrame"] = {
+        Versions = ALL_VERSIONS,
     },
-    ["QuestLogDetailFrame"] =
-    {
-        MinVersion = 30000,
-        MaxVersion = 70300, -- Removed when?
-    },
-    ["QuestLogFrame"] =
-    {
-        MinVersion = 0,
-        MaxVersion = 70300, -- Removed when?
-    },
-    ["QuestLogPopupDetailFrame"] =
-    {
-        MinVersion = 60000, -- Added when?
-    },
-    ["QuickKeybindFrame"] =
-    {
-        MinVersion = 100000, -- Moved from Blizzard_BindingUI
-        SilenceCompatabilityWarnings = true,
-    },
-    ["ReadyCheckFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["RecruitAFriendRecruitmentFrame"] =
-    {
-        MinVersion = 60000, -- Added when?
-    },
-    ["RecruitAFriendRewardsFrame"] =
-    {
-        MinVersion = 82000, -- Added when?
-    },
-    ["SettingsPanel"] =
-    {
-        VersionRanges =
-        {
-            { Min = 11404, Max = 20000 }, -- Backported in Classic 1.14.4
-            { Min = 20505, Max = 30000 }, -- Backported in TBC 2.5.5
-            { Min = 30402, Max = 40000 }, -- Backported in Wrath 3.4.2
-            { Min = 40400, Max = 50000 },
-            { Min = 50500, Max = 60000 },
-            { Min = 100000 }, -- Added in DF
+    ["QuestLogDetailFrame"] = {
+        Versions = {
+            [v.Classic] = { Min = 30000 }, -- Removed when?
         },
     },
-    ["SpellBookFrame"] =
-    {
-        MinVersion = 0,
-        MaxVersion = 110000, -- Moved into Blizzard_PlayerSpells - PlayerSpellsFrame
+    ["QuestLogFrame"] = {
+        Versions = {
+            [v.Classic] = true, -- Removed when?
+        },
     },
-    ["SplashFrame"] =
-    {
-        MinVersion = 60000, -- Added when?
+    ["QuestLogPopupDetailFrame"] = {
+        Versions = {
+            [v.Mainline] = true,
+        },
     },
-    ["TabardFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["TalkingHeadFrame"] =
-    {
-        MinVersion = 100000, -- Moved from Blizzard_TalkingHeadUI
+    ["QuickKeybindFrame"] = {
+        Versions = {
+            [v.Mainline] = true, -- Moved from Blizzard_BindingUI
+        },
         SilenceCompatabilityWarnings = true,
     },
-    ["TaxiFrame"] =
-    {
-        MinVersion = 0,
+    ["ReadyCheckFrame"] = {
+        Versions = ALL_VERSIONS,
     },
-    ["TradeFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["TutorialFrame"] =
-    {
-        MinVersion = 0,
-    },
-    ["VideoOptionsFrame"] =
-    {
-        VersionRanges = {
-            { Min = 0, Max = 11503 },
-            { Min = 40000, Max = 40400 },
+    ["RecruitAFriendRecruitmentFrame"] = {
+        Versions = {
+            [v.Mainline] = true,
         },
-        MaxVersion = 100000,
     },
-    ["WorldMapFrame"] =
-    {
-        MinVersion = 11505,
+    ["RecruitAFriendRewardsFrame"] = {
+        Versions = {
+            [v.Mainline] = true,
+        },
+    },
+    ["SettingsPanel"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["SpellBookFrame"] = {
+        Versions = {
+            [v.Classic] = true, -- Moved into Blizzard_PlayerSpells - PlayerSpellsFrame
+        },
+    },
+    ["SplashFrame"] = {
+        Versions = {
+            [v.Mainline] = true, -- Added when?
+        },
+    },
+    ["TabardFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["TalkingHeadFrame"] = {
+        Versions = {
+            [v.Mainline] = true, -- Moved from Blizzard_TalkingHeadUI
+        },
+        SilenceCompatabilityWarnings = true,
+    },
+    ["TaxiFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["TradeFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["TutorialFrame"] = {
+        Versions = ALL_VERSIONS,
+    },
+    ["WorldMapFrame"] = {
+        Versions = {
+            [v.Fallback] = { Min = 11505 },
+        },
         IgnoreSavedPositionWhenMaximized = true,
-        SubFrames =
-        {
-            ["QuestMapFrame"] =
-            {
-                MinVersion = 40000, -- No longer fullscreen when?
-                SubFrames =
-                {
+        SubFrames = {
+            ["QuestMapFrame"] = {
+                Versions = {
+                    [v.Classic] = { Min = 40000 },
+                    [v.Mainline] = true,
+                },
+                SubFrames = {
                     ["QuestMapFrame.DetailsFrame.RewardsFrame"] = {
-                        MaxVersion = 110000,
+                        Versions = {
+                            [v.Classic] = true,
+                        },
                     },
                     ["QuestMapFrame.DetailsFrame.ScrollFrame"] = {},
                 },
             },
-            ["WorldMapTitleButton"] =
-            {
-                MinVersion = 11505,
-                MaxVersion = 60000, -- Removed when?
+            ["WorldMapTitleButton"] = {
+                Versions = {
+                    [v.Classic] = { Min = 11505 },
+                },
             },
         },
     },
-    ["WorldStateScoreFrame"] =
-    {
-        MinVersion = 0,
-        MaxVersion = 70300, -- Removed when?
+    ["WorldStateScoreFrame"] = {
+        Versions = {
+            [v.Classic] = true,
+        },
     },
 });
 
 BlizzMoveAPI:RegisterAddOnFrames({
-    ["Blizzard_AccountStore"] =
-    {
-        ["AccountStoreFrame"] =
-        {
-            MinVersion = 110205,
-        },
-    },
-    ["Blizzard_AchievementUI"] =
-    {
-        ["AchievementFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11404, Max = 20000 }, -- Backported in a broken state in Classic 1.14.4
-                { Min = 20505, Max = 30000 }, -- Backported in a broken state in TBC 2.5.5
-                { Min = 30000 },
-            },
-            SubFrames =
-            {
-                ["AchievementFrameHeader"] =
-                {
-                    MaxVersion = 100000,
-                },
-                ["AchievementFrame.Header"] =
-                {
-                    MinVersion = 100000,
-                },
-                ["AchievementFrameCategoriesContainer"] =
-                {
-                    MaxVersion = 100000,
-                },
-                ["AchievementFrameAchievementsContainer"] =
-                {
-                    MaxVersion = 100000,
-                },
+    ["Blizzard_AccountStore"] = {
+        ["AccountStoreFrame"] = {
+            Versions = {
+                [v.Mainline] = { Min = 110205 },
             },
         },
-        ["AchievementFrame.searchResults"] =
-        {
-            MinVersion = 60000, -- Added when?
-            MaxVersion = 100000,
+    },
+    ["Blizzard_AchievementUI"] = {
+        ["AchievementFrame"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11404 }, -- Backported in a broken state in Classic 1.14.4
+                [v.TBC] = { Min = 20505 }, -- Backported in a broken state in TBC 2.5.5
+                [v.Classic] = true,
+                [v.Mainline] = true,
+            },
+            SubFrames = {
+                ["AchievementFrame.Header"] = {
+                    Versions = {
+                        [v.Mainline] = true,
+                    },
+                },
+                ["AchievementFrameAchievementsContainer"] = {
+                    Versions = {
+                        [v.Classic] = true,
+                    },
+                },
+                ["AchievementFrameCategoriesContainer"] = {
+                    Versions = {
+                        [v.Classic] = true,
+                    },
+                },
+                ["AchievementFrameHeader"] = {
+                    Versions = {
+                        [v.Classic] = true,
+                    },
+                },
+            },
         },
-        ["AchievementFrame.SearchResults"] =
-        {
-            MinVersion = 100000,
+        ["AchievementFrame.SearchResults"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_AlliedRacesUI"] =
-    {
-        ["AlliedRacesFrame"] =
-        {
-            MinVersion = 70300,
+    ["Blizzard_AlliedRacesUI"] = {
+        ["AlliedRacesFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_AnimaDiversionUI"] =
-    {
-        ["AnimaDiversionFrame"] =
-        {
-            MinVersion = 90000,
-            SubFrames =
-            {
-                ["AnimaDiversionFrame.ScrollContainer"] = {},
+    ["Blizzard_AnimaDiversionUI"] = {
+        ["AnimaDiversionFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["AnimaDiversionFrame.ReinforceProgressFrame"] = {},
+                ["AnimaDiversionFrame.ScrollContainer"] = {},
             },
         },
     },
-    ["Blizzard_ArchaeologyUI"] =
-    {
-        ["ArchaeologyFrame"] =
-        {
-            MinVersion = 40000,
+    ["Blizzard_ArchaeologyUI"] = {
+        ["ArchaeologyFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 40000 },
+                [v.Mainline] = true,
+            },
         },
-        ["ArcheologyDigsiteProgressBar"] =
-        {
-            MinVersion = 60000, -- Added when?
-        },
-    },
-    ["Blizzard_ArtifactUI"] =
-    {
-        ["ArtifactFrame"] =
-        {
-            MinVersion = 70000,
-        },
-        ["ArtifactRelicForgeFrame"] =
-        {
-            MinVersion = 70300,
-            MaxVersion = 70300,
-        },
-    },
-    ["Blizzard_AuctionHouseUI"] =
-    {
-        ["AuctionHouseFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 20505, Max = 30000 }, -- Backported in a broken state
-                { Min = 40402, Max = 50000 },
-                { Min = 50500, Max = 60000 },
-                { Min = 80300 },
+        ["ArcheologyDigsiteProgressBar"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_AuctionUI"] =
-    {
-        ["AuctionFrame"] =
-        {
-            MinVersion = 0,
-            MaxVersion = 80300,
+    ["Blizzard_ArtifactUI"] = {
+        ["ArtifactFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_AzeriteEssenceUI"] =
-    {
-        ["AzeriteEssenceUI"] =
-        {
-            MinVersion = 80000,
+    ["Blizzard_AuctionHouseUI"] = {
+        ["AuctionHouseFrame"] = {
+            Versions = {
+                [v.TBC] = { Min = 20505 }, -- Backported in a broken state
+                [v.Cata] = { Min = 40402 },
+                [v.Classic] = { Min = 50500 },
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_AzeriteRespecUI"] =
-    {
-        ["AzeriteRespecFrame"] =
-        {
-            MinVersion = 80000,
+    ["Blizzard_AuctionUI"] = {
+        ["AuctionFrame"] = {
+            Versions = {
+                [v.Classic] = true,
+            },
         },
     },
-    ["Blizzard_AzeriteUI"] =
-    {
-        ["AzeriteEmpoweredItemUI"] =
-        {
-            MinVersion = 80000,
+    ["Blizzard_AzeriteEssenceUI"] = {
+        ["AzeriteEssenceUI"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_BarbershopUI"] =
-    {
-        ["BarberShopFrame"] =
-        {
-            MinVersion = 30000,
-            MaxVersion = 90000, -- still exists, but shouldn't be movable (fullscreen)
-            SilenceCompatabilityWarnings = true
+    ["Blizzard_AzeriteRespecUI"] = {
+        ["AzeriteRespecFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_BehavioralMessaging"] =
-    {
-        ["BehavioralMessagingDetails"] =
-        {
-            MinVersion = 0, -- Added when?
+    ["Blizzard_AzeriteUI"] = {
+        ["AzeriteEmpoweredItemUI"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_BindingUI"] =
-    {
-        ["KeyBindingFrame"] =
-        {
-            MinVersion = 0,
-            MaxVersion = 100000,
-        },
-        ["QuickKeybindFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
-            MaxVersion = 100000, -- Moved to FrameXML
+    ["Blizzard_BarbershopUI"] = {
+        ["BarberShopFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 30000 },
+            },
+            -- still exists, but shouldn't be movable (fullscreen)
             SilenceCompatabilityWarnings = true,
         },
     },
-    ["Blizzard_BlackMarketUI"] =
-    {
-        ["BlackMarketFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11509, Max = 20000 }, -- Backported in a broken state
-                { Min = 20505, Max = 30000 }, -- Backported in a broken state
-                { Min = 50000 },
+    ["Blizzard_BehavioralMessaging"] = {
+        ["BehavioralMessagingDetails"] = {
+            Versions = ALL_VERSIONS,
+        },
+    },
+    ["Blizzard_BindingUI"] = {
+        ["KeyBindingFrame"] = {
+            Versions = {
+                [v.Classic] = true,
             },
         },
     },
-    ["Blizzard_Calendar"] =
-    {
-        ["CalendarFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11404, Max = 20000 }, -- exists, in a partially broken state
-                { Min = 20505, Max = 30000 }, -- exists, in a partially broken state
-                { Min = 30000 },
+    ["Blizzard_BlackMarketUI"] = {
+        ["BlackMarketFrame"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11509 }, -- Backported in a broken state
+                [v.TBC] = { Min = 20505 }, -- Backported in a broken state
+                [v.Classic] = { Min = 50000 },
+                [v.Mainline] = true,
             },
-            SubFrames =
-            {
-                ["CalendarCreateEventFrame"] =
-                {
+        },
+    },
+    ["Blizzard_Calendar"] = {
+        ["CalendarFrame"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11404 }, -- exists, in a partially broken state
+                [v.TBC] = { Min = 20505 }, -- exists, in a partially broken state
+                [v.Classic] = { Min = 30000 },
+                [v.Mainline] = true,
+            },
+            SubFrames = {
+                ["CalendarCreateEventFrame"] = {
                     Detachable = true,
-                    SubFrames =
-                    {
-                        ["CalendarCreateEventInviteListScrollFrame"] =
-                        {
-                            MinVersion = 60000, -- Added when?
-                            MaxVersion = 100000,
-                        },
-                    },
                 },
-                ["CalendarViewEventFrame"] =
-                {
+                ["CalendarViewEventFrame"] = {
                     Detachable = true,
-                    SubFrames =
-                    {
+                    SubFrames = {
                         ["CalendarViewEventFrame.HeaderFrame"] = {},
-                        ["CalendarViewEventInviteListScrollFrame"] =
-                        {
-                            MinVersion = 60000, -- Added when?
-                            MaxVersion = 100000,
-                        },
                     },
                 },
-                ["CalendarViewHolidayFrame"] =
-                {
+                ["CalendarViewHolidayFrame"] = {
                     Detachable = true,
                 },
             },
         },
     },
-    ["Blizzard_ChallengesUI"] =
-    {
-        ["ChallengesKeystoneFrame"] =
-        {
-            MinVersion = 70000,
-        },
-    },
-    ["Blizzard_Channels"] =
-    {
-        ["ChannelFrame"] =
-        {
-            MinVersion = 0,
-        },
-    },
-    ["Blizzard_ChromieTimeUI"] =
-    {
-        ["ChromieTimeFrame"] =
-        {
-            MinVersion = 90000,
-        },
-    },
-    ["Blizzard_ClassTalentUI"] =
-    {
-        ["ClassTalentFrame"] =
-        {
-            MinVersion = 100000,
-            MaxVersion = 110000,
-            SubFrames =
-            {
-                ["ClassTalentFrame.TalentsTab.ButtonsParent"] = {},
+    ["Blizzard_ChallengesUI"] = {
+        ["ChallengesKeystoneFrame"] = {
+            Versions = {
+                [v.Mainline] = { Min = 70000 },
             },
         },
     },
-    ["Blizzard_ClickBindingUI"] =
-    {
-        ["ClickBindingFrame"] =
-        {
-            MinVersion = 90200,
-            SubFrames =
-            {
+    ["Blizzard_Channels"] = {
+        ["ChannelFrame"] = {
+            Versions = ALL_VERSIONS,
+        },
+    },
+    ["Blizzard_ChromieTimeUI"] = {
+        ["ChromieTimeFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_ClickBindingUI"] = {
+        ["ClickBindingFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["ClickBindingFrame.ScrollBox"] = {},
             },
         },
-        ["ClickBindingFrame.TutorialFrame"] =
-        {
-            MinVersion = 90200,
+        ["ClickBindingFrame.TutorialFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_Collections"] =
-    {
-        ["CollectionsJournal"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 }, -- Backported in a broken state
-                { Min = 30403 },
+    ["Blizzard_Collections"] = {
+        ["CollectionsJournal"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11503 }, -- Backported in a broken state
+                [v.Classic] = { Min = 30403 },
+                [v.Mainline] = true,
             },
-            SubFrames =
-            {
-                ["CollectionsJournal.TitleContainer"] =
-                {
-                    VersionRanges =
-                    {
-                        { Min = 11506, Max = 20000 }, -- Backported in a broken state
-                        { Min = 40402, Max = 50000 },
-                        { Min = 50500, Max = 60000 },
-                        { Min = 100000 },
+            SubFrames = {
+                ["CollectionsJournal.TitleContainer"] = {
+                    Versions = {
+                        [v.Vanilla] = { Min = 11506 }, -- Backported in a broken state
+                        [v.Cata] = { Min = 40402 },
+                        [v.Classic] = { Min = 50500 },
+                        [v.Mainline] = true,
                     },
                 },
             },
         },
-        ["WardrobeFrame"] =
-        {
-            VersionRanges =
-            { -- Renamed to WardrobeCollectionFrame, but no longer acts as standalone frame
-                { Min = 40000, Max = 50504 },
-                { Min = 60000, Max = 120000 },
+        ["WardrobeFrame"] = {
+            Versions = { -- Renamed to WardrobeCollectionFrame, but no longer acts as standalone frame
+                [v.Cata] = true,
             },
         },
     },
-    ["Blizzard_Communities"] =
-    {
-        ["ClubFinderGuildFinderFrame.RequestToJoinFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40000 },
-            },
+    ["Blizzard_Communities"] = {
+        ["ClubFinderGuildFinderFrame.RequestToJoinFrame"] = {
+            Versions = ALL_VERSIONS,
         },
-        ["CommunitiesFrame"] =
-        {
-            MinVersion = 0, -- Backported into classic from retail (with limited functionality)
-            SubFrames =
-            {
-                ["ClubFinderCommunityAndGuildFinderFrame.CommunityCards.ListScrollFrame"] =
-                {
-                    MinVersion = 60000, -- Added when?
-                    MaxVersion = 100000,
-                },
-                ["CommunitiesFrame.GuildMemberDetailFrame"] =
-                {
+        ["CommunitiesFrame"] = {
+            Versions = ALL_VERSIONS, -- Backported into classic from retail (with limited functionality)
+            SubFrames = {
+                ["CommunitiesFrame.GuildMemberDetailFrame"] = {
                     Detachable = true,
-                    VersionRanges =
-                    {
-                        { Min = 11503, Max = 20000 },
-                        { Min = 20505, Max = 30000 },
-                        { Min = 40000 },
-                    },
                 },
                 ["CommunitiesFrame.NotificationSettingsDialog"] = {},
             },
         },
-        ["CommunitiesFrame.RecruitmentDialog"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40000 },
+        ["CommunitiesFrame.RecruitmentDialog"] = {
+            Versions = ALL_VERSIONS,
+        },
+        ["CommunitiesGuildLogFrame"] = {
+            Versions = ALL_VERSIONS,
+        },
+        ["CommunitiesGuildNewsFiltersFrame"] = {
+            Versions = ALL_VERSIONS,
+        },
+        ["CommunitiesGuildTextEditFrame"] = {
+            Versions = ALL_VERSIONS,
+        },
+        ["CommunitiesSettingsDialog"] = {
+            Versions = ALL_VERSIONS,
+        },
+    },
+    ["Blizzard_Contribution"] = {
+        ["ContributionCollectionFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 40000 },
+                [v.Mainline] = true,
             },
         },
-        ["CommunitiesGuildLogFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40000 },
+    },
+    ["Blizzard_CooldownViewer"] = {
+        ["CooldownViewerSettings"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
-        ["CommunitiesGuildNewsFiltersFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40000 },
+    },
+    ["Blizzard_CovenantPreviewUI"] = {
+        ["CovenantPreviewFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
-        ["CommunitiesGuildTextEditFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40000 },
+    },
+    ["Blizzard_CovenantRenown"] = {
+        ["CovenantRenownFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
-        ["CommunitiesSettingsDialog"] =
-        {
-            MinVersion = 0, -- Added when?
+    },
+    ["Blizzard_CovenantSanctum"] = {
+        ["CovenantSanctumFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_Contribution"] =
-    {
-        ["ContributionCollectionFrame"] =
-        {
-            MinVersion = 40000,
+    ["Blizzard_CraftUI"] = {
+        ["CraftFrame"] = {
+            Versions = {
+                [v.Classic] = true,
+            },
         },
     },
-    ["Blizzard_CooldownViewer"] =
-    {
-        ["CooldownViewerSettings"] =
-        {
-            MinVersion = 110205,
+    ["Blizzard_DeathRecap"] = {
+        ["DeathRecapFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_CovenantPreviewUI"] =
-    {
-        ["CovenantPreviewFrame"] =
-        {
-            MinVersion = 90000,
+    ["Blizzard_DelvesCompanionConfiguration"] = {
+        ["DelvesCompanionAbilityListFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+        ["DelvesCompanionConfigurationFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_CovenantRenown"] =
-    {
-        ["CovenantRenownFrame"] =
-        {
-            MinVersion = 90000,
+    ["Blizzard_DelvesDifficultyPicker"] = {
+        ["DelvesDifficultyPickerFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_CovenantSanctum"] =
-    {
-        ["CovenantSanctumFrame"] =
-        {
-            MinVersion = 90000,
-        },
-    },
-    ["Blizzard_CraftUI"] =
-    {
-        ["CraftFrame"] =
-        {
-            MaxVersion = 70300, -- When was this fully replaced with TradeSkillFrame? Most frames where changed in 11306, but seems this is still used in TBC.
-        },
-    },
-    ["Blizzard_DeathRecap"] =
-    {
-        ["DeathRecapFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
-        },
-    },
-    ["Blizzard_DelvesCompanionConfiguration"] =
-    {
-        ["DelvesCompanionAbilityListFrame"] =
-        {
-            MinVersion = 110000,
-        },
-        ["DelvesCompanionConfigurationFrame"] =
-        {
-            MinVersion = 110000,
-        },
-    },
-    ["Blizzard_DelvesDifficultyPicker"] =
-    {
-        ["DelvesDifficultyPickerFrame"] =
-        {
-            MinVersion = 110000,
-        },
-    },
-    ["Blizzard_EncounterJournal"] =
-    {
-        ["EncounterJournal"] =
-        {
-            MinVersion = 40000,
-            SubFrames =
-            {
-                ["EncounterJournal.instanceSelect.scroll"] =
-                {
-                    VersionRanges =
-                    {
-                        { Max = 40400 },
-                        { Min = 60000, Max = 100000 },
-                    },
-                },
-                ["EncounterJournal.instanceSelect.ScrollBox"] =
-                {
-                    VersionRanges =
-                    {
-                        { Min = 40400, Max = 50000 },
-                        { Min = 50500, Max = 60000 },
-                        { Min = 100000 },
-                    },
-                },
-                ["EncounterJournal.encounter.instance.loreScroll"] =
-                {
-                    VersionRanges =
-                    {
-                        { Max = 40400 },
-                        { Min = 60000, Max = 100000 },
-                    },
-                },
-                ["EncounterJournal.encounter.instance.LoreScrollingFont.ScrollBox"] =
-                {
-                    VersionRanges =
-                    {
-                        { Min = 40402, Max = 50000 },
-                        { Min = 50500, Max = 60000 },
-                        { Min = 100000 },
-                    },
-                },
-                ["EncounterJournal.encounter.info.overviewScroll"] = {},
-                ["EncounterJournal.encounter.info.lootScroll"] =
-                {
-                    VersionRanges =
-                    {
-                        { Max = 40400 },
-                        { Min = 60000, Max = 100000 },
-                    },
-                },
+    ["Blizzard_EncounterJournal"] = {
+        ["EncounterJournal"] = {
+            Versions = {
+                [v.Classic] = { Min = 40000 },
+                [v.Standard] = true,
+            },
+            SubFrames = {
                 ["EncounterJournal.encounter.info.detailsScroll"] = {},
-                ["EncounterJournal.encounter.info.model"] =
-                {
+                ["EncounterJournal.encounter.info.model"] = {
                     NonDraggable = true,
                 },
+                ["EncounterJournal.encounter.info.overviewScroll"] = {},
+                ["EncounterJournal.encounter.instance.LoreScrollingFont.ScrollBox"] = {},
+                ["EncounterJournal.instanceSelect.scroll"] = {
+                    Versions = {
+                        [v.Classic] = { Max = 40400 },
+                    },
+                },
+                ["EncounterJournal.instanceSelect.ScrollBox"] = {
+                    Versions = {
+                        [v.Cata] = { Min = 40400 },
+                        [v.Classic] = { Min = 50500 },
+                        [v.Mainline] = true,
+                    },
+                },
             },
         },
     },
-    ["Blizzard_EngravingUI"] =
-    {
-        ["CharacterFrame"] =
-        {
-            MinVersion = 0,
-            SubFrames =
-            {
-                ["EngravingFrame"] =
-                {
-                    MinVersion = 10000,
-                    MaxVersion = 20000,
+    ["Blizzard_EngravingUI"] = {
+        ["CharacterFrame"] = {
+            Versions = ALL_VERSIONS,
+            SubFrames = {
+                ["EngravingFrame"] = {
+                    Versions = {
+                        [v.Vanilla] = true,
+                    },
                     SilenceCompatabilityWarnings = true, -- exists in all classic flavors, but only usable in SoD
                     Detachable = true,
                     ManuallyScaleWithParent = true,
-                    SubFrames =
-                    {
+                    SubFrames = {
                         ["EngravingFrame.Border"] = {},
                         ["EngravingFrameScrollFrame"] = {},
                     },
                 },
-            }
+            },
         },
     },
-    ["Blizzard_ExpansionLandingPage"] =
-    {
-        ["ExpansionLandingPage"] =
-        {
-            MinVersion = 100000,
+    ["Blizzard_ExpansionLandingPage"] = {
+        ["ExpansionLandingPage"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_FlightMap"] =
-    {
-        ["FlightMapFrame"] =
-        {
-            MinVersion = 0,
+    ["Blizzard_FlightMap"] = {
+        ["FlightMapFrame"] = {
+            Versions = ALL_VERSIONS,
         },
     },
-    ["Blizzard_GarrisonUI"] =
-    {
-        ["BFAMissionFrame"] =
-        {
-            MinVersion = 80000,
+    ["Blizzard_GarrisonUI"] = {
+        ["BFAMissionFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["CovenantMissionFrame"] =
-        {
-            MinVersion = 90000,
-            SubFrames =
-            {
-                ["CovenantMissionFrame.FollowerList.listScroll"] =
-                {
-                    MaxVersion = 100000,
-                },
+        ["CovenantMissionFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["CovenantMissionFrame.FollowerList.MaterialFrame"] = {},
                 ["CovenantMissionFrame.MissionTab"] = {},
                 ["CovenantMissionFrame.MissionTab.MissionList.MaterialFrame"] = {},
@@ -1120,81 +887,74 @@ BlizzMoveAPI:RegisterAddOnFrames({
                 ["CovenantMissionFrame.MissionTab.MissionPage.StartMissionFrame"] = {},
             },
         },
-        ["GarrisonBuildingFrame"] =
-        {
-            MinVersion = 60000,
-        },
-        ["GarrisonCapacitiveDisplayFrame"] =
-        {
-            MinVersion = 60000,
-        },
-        ["GarrisonLandingPage"] =
-        {
-            MinVersion = 60000,
-            SubFrames =
-            {
-                ["GarrisonLandingPageReportListListScrollFrame"] =
-                {
-                    MaxVersion = 100000,
-                },
-                ["GarrisonLandingPageFollowerListListScrollFrame"] =
-                {
-                    MaxVersion = 100000,
-                },
+        ["GarrisonBuildingFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
-        ["GarrisonMissionFrame"] =
-        {
-            MinVersion = 60000,
+        ["GarrisonCapacitiveDisplayFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["GarrisonMonumentFrame"] =
-        {
-            MinVersion = 60000,
+        ["GarrisonLandingPage"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["GarrisonRecruiterFrame"] =
-        {
-            MinVersion = 60000,
+        ["GarrisonMissionFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["GarrisonRecruitSelectFrame"] =
-        {
-            MinVersion = 60000,
+        ["GarrisonMonumentFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["GarrisonShipyardFrame"] =
-        {
-            MinVersion = 60000,
+        ["GarrisonRecruiterFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["OrderHallMissionFrame"] =
-        {
-            MinVersion = 70000,
+        ["GarrisonRecruitSelectFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+        ["GarrisonShipyardFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+        ["OrderHallMissionFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_GenericTraitUI"] =
-    {
-        ["GenericTraitFrame"] =
-        {
-            MinVersion = 100000,
-            SubFrames =
-            {
+    ["Blizzard_GenericTraitUI"] = {
+        ["GenericTraitFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["GenericTraitFrame.ButtonsParent"] = {},
             },
         },
     },
-    ["Blizzard_GlyphUI"] =
-    {
-        ["PlayerTalentFrame"] =
-        {
-            MinVersion = 11401,
-            MaxVersion = 110000, -- Unused in DF, but only removed in TWW
-            SubFrames =
-            {
-                ["GlyphFrame"] =
-                {
-                    MinVersion = 30000,
-                    MaxVersion = 60200,
-                    SubFrames =
-                    {
-                        ["GlyphFrameScrollFrame"] =
-                        {
+    ["Blizzard_GlyphUI"] = {
+        ["PlayerTalentFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 11401 },
+            },
+            SubFrames = {
+                ["GlyphFrame"] = {
+                    Versions = {
+                        [v.Classic] = { Min = 30000, Max = 60200 },
+                    },
+                    SubFrames = {
+                        ["GlyphFrameScrollFrame"] = {
                             IgnoreMouseWheel = true,
                         },
                     },
@@ -1202,627 +962,531 @@ BlizzMoveAPI:RegisterAddOnFrames({
             },
         },
     },
-    ["Blizzard_GMSurveyUI"] =
-    {
-        ["GMSurveyFrame"] =
-        {
-            MinVersion = 0,
-            MaxVersion = 11503,
-        },
-    },
-    ["Blizzard_GroupFinder_VanillaStyle"] =
-    {
-        ["LFGParentFrame"] = -- classic era version of LFG, which only exists on specific realms
-        {
-            VersionRanges =
-            {
-                { Min = 11405, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40402, Max = 50000 }, -- exists, but is unused
-                { Min = 50500, Max = 60000 }, -- exists, but is unused
+    ["Blizzard_GroupFinder_VanillaStyle"] = {
+        ["LFGParentFrame"] = { -- classic era version of LFG, which only exists on specific realms
+            Versions = {
+                [v.Vanilla] = { Min = 11405 },
+                [v.TBC] = { Min = 20505 },
+                [v.Cata] = { Min = 40402 }, -- exists, but is unused
+                [v.Classic] = { Min = 50500 }, -- exists, but is unused
+                [v.Forever] = true,
             },
         },
     },
-    ["Blizzard_GuildBankUI"] =
-    {
-        ["GuildBankFrame"] =
-        {
-            MinVersion = 20502,
-        },
-    },
-    ["Blizzard_GuildControlUI"] =
-    {
-        ["GuildControlUI"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11404, Max = 20000 },
-                { Min = 20505, Max = 30000 },
-                { Min = 40000 },
+    ["Blizzard_GuildBankUI"] = {
+        ["GuildBankFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 20502 },
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_GuildRename"] =
-    {
-        ["GuildRenameFrame"] =
-        {
-            MinVersion = 110205,
+    ["Blizzard_GuildControlUI"] = {
+        ["GuildControlUI"] = {
+            Versions = ALL_VERSIONS,
         },
     },
-    ["Blizzard_GuildUI"] =
-    {
-        ["GuildFrame"] =
-        {
-            MinVersion = 60000, -- Moved from FrameXML when?
-            MaxVersion = 110000, -- Removed when?
+    ["Blizzard_GuildRename"] = {
+        ["GuildRenameFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_HouseEditor"] =
-    {
-        ["HouseEditorFrame.StoragePanel"] =
-        {
-            MinVersion = 120000,
+    ["Blizzard_HouseEditor"] = {
+        ["HouseEditorFrame.StoragePanel"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HouseList"] =
-    {
-        ["HouseListFrame"] =
-        {
-            MinVersion = 110207,
+    ["Blizzard_HouseList"] = {
+        ["HouseListFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HousingBlueprint"] =
-    {
-        ["HousingBlueprintContentListFrame"] =
-        {
-            MinVersion = 120100,
+    ["Blizzard_HousingBlueprint"] = {
+        ["HousingBlueprintContentListFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
-        ["HousingBlueprintExportFrame"] =
-        {
-            MinVersion = 120100,
+        ["HousingBlueprintExportFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
-        ["HousingBlueprintImportFrame"] =
-        {
-            MinVersion = 120100,
+        ["HousingBlueprintImportFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
-        ["HousingBlueprintRenameFrame"] =
-        {
-            MinVersion = 120100,
-        },
-    },
-    ["Blizzard_HousingBulletinBoard"] =
-    {
-        ["HousingBulletinBoardFrame"] =
-        {
-            MinVersion = 110207,
-        },
-        ["HousingInviteResidentFrame"] =
-        {
-            MinVersion = 110207,
-        },
-        ["NeighborhoodChangeNameDialog"] =
-        {
-            MinVersion = 110207,
+        ["HousingBlueprintRenameFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HousingCharter"] =
-    {
-        ["HousingCharterRequestSignatureDialog"] =
-        {
-            MinVersion = 110207,
+    ["Blizzard_HousingBulletinBoard"] = {
+        ["HousingBulletinBoardFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["HousingInviteResidentFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["NeighborhoodChangeNameDialog"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HousingCornerstone"] =
-    {
-        ["HousingCornerstoneFrame"] =
-        {
-            MinVersion = 110207,
-        },
-        ["HousingCornerstoneHouseInfoFrame"] =
-        {
-            MinVersion = 110207,
-        },
-        ["HousingCornerstonePurchaseFrame"] =
-        {
-            MinVersion = 110207,
-        },
-        ["HousingCornerstoneVisitorFrame"] =
-        {
-            MinVersion = 110207,
-        },
-        ["ImportHouseConfirmationDialog"] =
-        {
-            MinVersion = 110207,
-        },
-        ["MoveHouseConfirmationDialog"] =
-        {
-            MinVersion = 110207,
+    ["Blizzard_HousingCharter"] = {
+        ["HousingCharterRequestSignatureDialog"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HousingCreateNeighborhood"] =
-    {
-        ["HousingCreateCharterNeighborhoodConfirmationFrame"] =
-        {
-            MinVersion = 110207,
+    ["Blizzard_HousingCornerstone"] = {
+        ["HousingCornerstoneFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
-        ["HousingCreateNeighborhoodCharterFrame"] =
-        {
-            MinVersion = 110207,
+        ["HousingCornerstoneHouseInfoFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["HousingCornerstonePurchaseFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["HousingCornerstoneVisitorFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["ImportHouseConfirmationDialog"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["MoveHouseConfirmationDialog"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HousingDashboard"] =
-    {
-        ["HousingDashboardFrame"] =
-        {
-            MinVersion = 110207,
-            SubFrames =
-            {
+    ["Blizzard_HousingCreateNeighborhood"] = {
+        ["HousingCreateCharterNeighborhoodConfirmationFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+        ["HousingCreateNeighborhoodCharterFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+    },
+    ["Blizzard_HousingDashboard"] = {
+        ["HousingDashboardFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+            SubFrames = {
                 ["HousingDashboardFrame.HouseInfoContent.DashboardNoHousesFrame"] = {},
-            }
+            },
         },
     },
-    ["Blizzard_HousingHouseFinder"] =
-    {
-        ["HouseFinderFrame"] =
-        {
-            MinVersion = 110207,
+    ["Blizzard_HousingHouseFinder"] = {
+        ["HouseFinderFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_HousingHouseSettings"] =
-    {
-        ["AbandonHouseConfirmationDialog"] =
-        {
-            MinVersion = 110207,
+    ["Blizzard_HousingHouseSettings"] = {
+        ["AbandonHouseConfirmationDialog"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
-        ["HousingHouseSettingsFrame"] =
-        {
-            MinVersion = 110207,
-        },
-    },
-    ["Blizzard_HousingModelPreview"] =
-    {
-        ["HousingModelPreviewFrame"] =
-        {
-            MinVersion = 110207,
+        ["HousingHouseSettingsFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_InspectUI"] =
-    {
-        ["InspectFrame"] =
-        {
-            MinVersion = 0,
-            SubFrames =
-            {
-                ["InspectPaperDollFrame"] = {},
-                ["InspectHonorFrame"] =
-                {
-                    MaxVersion = 20000,
+    ["Blizzard_HousingModelPreview"] = {
+        ["HousingModelPreviewFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+    },
+    ["Blizzard_InspectUI"] = {
+        ["InspectFrame"] = {
+            Versions = ALL_VERSIONS,
+            SubFrames = {
+                ["InspectGuildFrame"] = {
+                    Versions = {
+                        [v.Classic] = { Min = 50000 },
+                        [v.Mainline] = true,
+                    },
                 },
-                ["InspectPVPFrame"] =
-                {
-                    MinVersion = 20000,
-                    SubFrames =
-                    {
-                        ["InspectPVPFrameHonor"] =
-                        {
-                            MaxVersion = 50000, -- Removed when?
+                ["InspectHonorFrame"] = {
+                    Versions = {
+                        [v.Vanilla] = true,
+                    },
+                },
+                ["InspectPaperDollFrame"] = {},
+                ["InspectPVPFrame"] = {
+                    Versions = {
+                        [v.Classic] = { Min = 20000 },
+                        [v.Mainline] = true,
+                    },
+                    SubFrames = {
+                        ["InspectPVPFrameArena"] = {
+                            Versions = {
+                                [v.Classic] = { Max = 50000 },
+                            },
                         },
-                        ["InspectPVPFrameArena"] =
-                        {
-                            MaxVersion = 50000, -- Removed when?
+                        ["InspectPVPFrameHonor"] = {
+                            Versions = {
+                                [v.Classic] = { Max = 50000 },
+                            },
                         },
-                        ["InspectPVPTeam1"] =
-                        {
-                            MaxVersion = 50000, -- Removed when?
+                        ["InspectPVPTeam1"] = {
+                            Versions = {
+                                [v.Classic] = { Max = 50000 },
+                            },
                         },
-                        ["InspectPVPTeam2"] =
-                        {
-                            MaxVersion = 50000, -- Removed when?
+                        ["InspectPVPTeam2"] = {
+                            Versions = {
+                                [v.Classic] = { Max = 50000 },
+                            },
                         },
-                        ["InspectPVPTeam3"] =
-                        {
-                            MaxVersion = 50000, -- Removed when?
+                        ["InspectPVPTeam3"] = {
+                            Versions = {
+                                [v.Classic] = { Max = 50000 },
+                            },
                         },
                     },
                 },
-                ["InspectTalentFrame"] =
-                {
-                    MinVersion = 20000, -- Added when?
-                    MaxVersion = 100000,
+                ["InspectTalentFrame"] = {
+                    Versions = {
+                        [v.Classic] = { Min = 20000 },
+                    },
                     SilenceCompatabilityWarnings = true, -- hasn't been removed from the code, but is no longer visible or functional
                 },
-                ["InspectGuildFrame"] =
-                {
-                    MinVersion = 50000,
-                },
             },
         },
     },
-    ["Blizzard_IslandsPartyPoseUI"] =
-    {
-        ["IslandsPartyPoseFrame"] =
-        {
-            MinVersion = 80000,
-        },
-    },
-    ["Blizzard_IslandsQueueUI"] =
-    {
-        ["IslandsQueueFrame"] =
-        {
-            MinVersion = 80000,
-        },
-    },
-    ["Blizzard_ItemAlterationUI"] =
-    {
-        ["TransmogrifyFrame"] =
-        {
-            MinVersion = 40300,
-            MaxVersion = 70300, -- Removed when?
-        },
-    },
-    ["Blizzard_ItemInteractionUI"] =
-    {
-        ["ItemInteractionFrame"] =
-        {
-            MinVersion = 80300,
-        },
-    },
-    ["Blizzard_ItemSocketingUI"] =
-    {
-        ["ItemSocketingFrame"] =
-        {
-            MinVersion = 0,
-        },
-    },
-    ["Blizzard_ItemUpgradeUI"] =
-    {
-        ["ItemUpgradeFrame"] =
-        {
-            MinVersion = 50000,
-        },
-    },
-    ["Blizzard_LookingForGroupUI"] =
-    {
-        ["LFGParentFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11404, Max = 11503 }, -- Backported in a broken state
-                { Min = 20504, Max = 20505 }, -- Moved from FrameXML; moved to Blizzard_GroupFinder_VanillaStyle
+    ["Blizzard_IslandsPartyPoseUI"] = {
+        ["IslandsPartyPoseFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_LookingForGuildUI"] =
-    {
-        ["LookingForGuildFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
-            MaxVersion = 90000, -- Removed when?
+    ["Blizzard_IslandsQueueUI"] = {
+        ["IslandsQueueFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_MacroUI"] =
-    {
-        ["MacroFrame"] =
-        {
-            MinVersion = 0,
+    ["Blizzard_ItemAlterationUI"] = {
+        ["TransmogrifyFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 40300 },
+            },
         },
     },
-    ["Blizzard_MajorFactions"] =
-    {
-        ["MajorFactionRenownFrame"] =
-        {
-            MinVersion = 100000,
-            MaxVersion = 120000,
+    ["Blizzard_ItemInteractionUI"] = {
+        ["ItemInteractionFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_MatchCelebrationPartyPoseUI"] =
-    {
-        ["MatchCelebrationPartyPoseFrame"] =
-        {
-            MinVersion = 100206,
+    ["Blizzard_ItemSocketingUI"] = {
+        ["ItemSocketingFrame"] = {
+            Versions = ALL_VERSIONS,
         },
     },
-    ["Blizzard_ObliterumUI"] =
-    {
-        ["ObliterumForgeFrame"] =
-        {
-            MinVersion = 70000, -- Added when?
+    ["Blizzard_ItemUpgradeUI"] = {
+        ["ItemUpgradeFrame"] = {
+            Versions = {
+                [v.Classic] = { Min = 50000 },
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_OrderHallUI"] =
-    {
-        ["OrderHallTalentFrame"] =
-        {
-            MinVersion = 70000, -- Added when?
+    ["Blizzard_MacroUI"] = {
+        ["MacroFrame"] = {
+            Versions = ALL_VERSIONS,
         },
     },
-    ["Blizzard_PlayerChoice"] =
-    {
-        ["PlayerChoiceFrame"] =
-        {
-            MinVersion = 100000, -- Moved from Blizzard_PlayerChoiceUI
+    ["Blizzard_MatchCelebrationPartyPoseUI"] = {
+        ["MatchCelebrationPartyPoseFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_ObliterumUI"] = {
+        ["ObliterumForgeFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_OrderHallUI"] = {
+        ["OrderHallTalentFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_PlayerChoice"] = {
+        ["PlayerChoiceFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
             ForceUseSecureMoveHandle = true,
         },
     },
-    ["Blizzard_PlayerChoiceUI"] =
-    {
-        ["PlayerChoiceFrame"] =
-        {
-            MinVersion = 90000,
-            MaxVersion = 100000, -- Moved to Blizzard_PlayerChoice
-        },
-    },
-    ["Blizzard_PlayerSpells"] =
-    {
+    ["Blizzard_PlayerSpells"] = {
         ["HeroTalentsSelectionDialog"] = {
-            MinVersion = 110000,
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
         ["PlayerSpellsFrame"] = {
-            MinVersion = 110000,
-            SubFrames =
-            {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["PlayerSpellsFrame.TalentsFrame.ButtonsParent"] = {},
             },
         },
     },
-    ["Blizzard_Professions"] =
-    {
-        ["InspectRecipeFrame"] =
-        {
-            MinVersion = 100100,
+    ["Blizzard_Professions"] = {
+        ["InspectRecipeFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["ProfessionsFrame"] =
-        {
-            MinVersion = 100000,
+        ["ProfessionsFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["ProfessionsFrame.CraftingPage.SchematicForm.QualityDialog"] =
-        {
-            MinVersion = 100000,
+        ["ProfessionsFrame.CraftingPage.SchematicForm.QualityDialog"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
-        ["ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.QualityDialog"] =
-        {
-            MinVersion = 100000,
-        },
-    },
-    ["Blizzard_ProfessionsBook"] =
-    {
-        ["ProfessionsBookFrame"] =
-        {
-            MinVersion = 110000,
+        ["ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.QualityDialog"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
         },
     },
-    ["Blizzard_ProfessionsCustomerOrders"] =
-    {
-        ["ProfessionsCustomerOrdersFrame"] =
-        {
-            MinVersion = 100002,
-            SubFrames =
-            {
+    ["Blizzard_ProfessionsBook"] = {
+        ["ProfessionsBookFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+    },
+    ["Blizzard_ProfessionsCustomerOrders"] = {
+        ["ProfessionsCustomerOrdersFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["ProfessionsCustomerOrdersFrame.Form"] = {},
-                ["ProfessionsCustomerOrdersFrame.Form.CurrentListings"] =
-                {
+                ["ProfessionsCustomerOrdersFrame.Form.CurrentListings"] = {
                     Detachable = true,
-                }
+                },
             },
         },
     },
-    ["Blizzard_PVPMatch"] =
-    {
-        ["PVPMatchResults"] =
-        {
-            MinVersion = 60000, -- Added when?
-        },
-    },
-    ["Blizzard_PVPUI"] =
-    {
-        ["PVPMatchScoreboard"] =
-        {
-            MinVersion = 60000, -- Added when?
-        },
-    },
-    ["Blizzard_ReforgingUI"] =
-    {
-        ["ReforgingFrame"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11503, Max = 20000 }, -- Backported in a broken state
-                { Min = 20505, Max = 30000 }, -- Backported in a broken state
-                { Min = 40000, Max = 70300 }, -- Removed when?
+    ["Blizzard_PVPMatch"] = {
+        ["PVPMatchResults"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
-            SubFrames =
-            {
+        },
+    },
+    ["Blizzard_PVPUI"] = {
+        ["PVPMatchScoreboard"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_ReforgingUI"] = {
+        ["ReforgingFrame"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11503 }, -- Backported in a broken state
+                [v.TBC] = { Min = 20505 }, -- Backported in a broken state
+                [v.Cata] = true,
+                [v.Classic] = { Min = 40000 }, -- Removed when?
+            },
+            SubFrames = {
                 ["ReforgingFrame.invisButton"] = {},
             },
         },
     },
-    ["Blizzard_RemixArtifactUI"] =
-    {
-        ["RemixArtifactFrame"] =
-        {
-            MinVersion = 110205,
-            SubFrames =
-            {
+    ["Blizzard_RemixArtifactUI"] = {
+        ["RemixArtifactFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+            SubFrames = {
                 ["RemixArtifactFrame.ButtonsParent"] = {},
             },
         },
     },
-    ["Blizzard_RuneforgeUI"] =
-    {
-        ["RuneforgeFrame"] =
-        {
-            MinVersion = 90000,
-        },
-    },
-    ["Blizzard_ScrappingMachineUI"] =
-    {
-        ["ScrappingMachineFrame"] =
-        {
-            MinVersion = 80000,
-        },
-    },
-    ["Blizzard_SettingsDefinitions_Frame"] =
-    {
-        ["NamePlatesTutorial"] =
-        {
-            VersionRanges =
-            {
-                { Min = 11509, Max = 20000 },
-                { Min = 20506, Max = 30000 },
-                { Min = 50504, Max = 60000 },
-                { Min = 120000 },
+    ["Blizzard_RuneforgeUI"] = {
+        ["RuneforgeFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_Soulbinds"] =
-    {
-        ["SoulbindViewer"] =
-        {
-            MinVersion = 90000,
-            SubFrames =
-            {
-                ["SoulbindViewer.ConduitList.Charges"] =
-                {
-                    MaxVersion = 90105,
-                },
+    ["Blizzard_ScrappingMachineUI"] = {
+        ["ScrappingMachineFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_StableUI"] =
-    {
-        ["StableFrame"] =
-        {
-            MinVersion = 100207,
-        },
-    },
-    ["Blizzard_SubscriptionInterstitialUI"] =
-    {
-        ["SubscriptionInterstitialFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
-        },
-    },
-    ["Blizzard_TalentUI"] =
-    {
-        ["PlayerTalentFrame"] =
-        {
-            MinVersion = 11401,
-            MaxVersion = 110000, -- Unused in DF, but only removed in TWW
-        },
-        ["TalentFrame"] =
-        {
-            MinVersion = 0,
-            MaxVersion = 11401,
-        },
-    },
-    ["Blizzard_TalkingHeadUI"] =
-    {
-        ["TalkingHeadFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
-            MaxVersion = 100000, -- Moved to FrameXML
-            SilenceCompatabilityWarnings = true,
-        },
-    },
-    ["Blizzard_TimeManager"] =
-    {
-        ["TimeManagerFrame"] =
-        {
-            MinVersion = 0, -- Added when?
-        },
-    },
-    ["Blizzard_TokenUI"] =
-    {
-        ["CurrencyTransferMenu"] =
-        {
-            MinVersion = 110000,
-        },
-    },
-    ["Blizzard_TorghastLevelPicker"] =
-    {
-        ["TorghastLevelPickerFrame"] =
-        {
-            MinVersion = 90000,
-        },
-    },
-    ["Blizzard_TradeSkillUI"] =
-    {
-        ["TradeSkillFrame"] =
-        {
-            MinVersion = 11306,
-            MaxVersion = 100000,
-            SubFrames =
-            {
-                ["TradeSkillFrame.RecipeList"] =
-                {
-                    MinVersion = 60000, -- Added when?
-                },
+    ["Blizzard_SettingsDefinitions_Frame"] = {
+        ["NamePlatesTutorial"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11509 },
+                [v.TBC] = { Min = 20506 },
+                [v.Classic] = { Min = 50504 },
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_TrainerUI"] =
-    {
-        ["ClassTrainerFrame"] =
-        {
-            MinVersion = 0,
-        },
-    },
-    ["Blizzard_Transmog"] =
-    {
-        ["TransmogFrame"] =
-        {
-            VersionRanges = {
-                { Min = 11509, 20000 }, -- backported in a broken state
-                { Min = 50504, 60000 },
-                { Min = 110207 },
+    ["Blizzard_Soulbinds"] = {
+        ["SoulbindViewer"] = {
+            Versions = {
+                [v.Mainline] = true,
             },
         },
     },
-    ["Blizzard_UIWidgets"] =
-    {
-        ["UIWidgetBelowMinimapContainerFrame"] =
-        {
-            MinVersion = 11306, -- Added when?
+    ["Blizzard_StableUI"] = {
+        ["StableFrame"] = {
+            Versions = {
+                [v.Standard] = true,
+            },
+        },
+    },
+    ["Blizzard_SubscriptionInterstitialUI"] = {
+        ["SubscriptionInterstitialFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_TalentUI"] = {
+        ["PlayerTalentFrame"] = {
+            Versions = {
+                [v.Classic] = true,
+            },
+        },
+    },
+    ["Blizzard_TimeManager"] = {
+        ["TimeManagerFrame"] = {
+            Versions = ALL_VERSIONS,
+        },
+    },
+    ["Blizzard_TokenUI"] = {
+        ["CurrencyTransferMenu"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_TorghastLevelPicker"] = {
+        ["TorghastLevelPickerFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_TradeSkillUI"] = {
+        ["TradeSkillFrame"] = {
+            Versions = {
+                [v.Classic] = true,
+            },
+        },
+    },
+    ["Blizzard_TrainerUI"] = {
+        ["ClassTrainerFrame"] = {
+            Versions = ALL_VERSIONS,
+        },
+    },
+    ["Blizzard_Transmog"] = {
+        ["TransmogFrame"] = {
+            Versions = {
+                [v.Vanilla] = { Min = 11509 }, -- backported in a broken state
+                [v.Classic] = { Min = 50504 },
+                [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_UIWidgets"] = {
+        ["UIWidgetBelowMinimapContainerFrame"] = {
+            Versions = ALL_VERSIONS,
             DefaultDisabled = true,
         },
-        ["UIWidgetPowerBarContainerFrame"] =
-        {
-            MinVersion = 80300, -- Added when?
+        ["UIWidgetPowerBarContainerFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
             DefaultDisabled = true,
         },
-        ["UIWidgetTopCenterContainerFrame"] =
-        {
-            MinVersion = 11306, -- Added when?
+        ["UIWidgetTopCenterContainerFrame"] = {
+            Versions = ALL_VERSIONS,
             DefaultDisabled = true,
         },
     },
-    ["Blizzard_VoidStorageUI"] =
-    {
-        ["VoidStorageFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
+    ["Blizzard_VoidStorageUI"] = {
+        ["VoidStorageFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_WarboardUI"] =
-    {
-        ["WarboardQuestChoiceFrame"] =
-        {
-            MinVersion = 60000, -- Added when?
-            MaxVersion = 90000, -- Removed when?
+    ["Blizzard_WarfrontsPartyPoseUI"] = {
+        ["WarfrontsPartyPoseFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
-    ["Blizzard_WarfrontsPartyPoseUI"] =
-    {
-        ["WarfrontsPartyPoseFrame"] =
-        {
-            MinVersion = 80000,
-        },
-    },
-    ["Blizzard_WeeklyRewards"] =
-    {
-        ["WeeklyRewardsFrame"] =
-        {
-            MinVersion = 90000,
+    ["Blizzard_WeeklyRewards"] = {
+        ["WeeklyRewardsFrame"] = {
+            Versions = {
+                [v.Mainline] = true,
+            },
         },
     },
 });

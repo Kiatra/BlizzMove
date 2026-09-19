@@ -12,6 +12,27 @@ _G.BlizzMoveAPI = {};
 ---@class BlizzMoveAPI
 local BlizzMoveAPI = _G.BlizzMoveAPI;
 
+BlizzMoveAPI.Versions = {
+    Forever = BlizzMove.Versions.Forever,
+    Standard = BlizzMove.Versions.Standard, -- standard retail
+    Midnight = BlizzMove.Versions.Midnight,
+    TWW = BlizzMove.Versions.TWW,
+    DF = BlizzMove.Versions.DF,
+    SL = BlizzMove.Versions.SL,
+    BFA = BlizzMove.Versions.BFA,
+    Legion = BlizzMove.Versions.Legion,
+    WOD = BlizzMove.Versions.WOD,
+    MOP = BlizzMove.Versions.MOP,
+    Cata = BlizzMove.Versions.Cata,
+    Wrath = BlizzMove.Versions.Wrath,
+    TBC = BlizzMove.Versions.TBC,
+    Vanilla = BlizzMove.Versions.Vanilla,
+    Mainline = BlizzMove.Versions.Mainline, -- fallback for Retail and Forever
+    Classic = BlizzMove.Versions.Classic, -- fallback for non-Retail non-Forever flavors
+    Fallback = BlizzMove.Versions.Fallback, -- fallback when none of the above is matched
+}
+if table.freeze then table.freeze(BlizzMoveAPI.Versions) end
+
 --- @return string rawVersion
 --- @return number mayor
 --- @return number minor
@@ -24,6 +45,10 @@ function BlizzMoveAPI:GetVersion()
     local versionInt = patch and (patch + minor * 100 + mayor * 10000);
 
     return rawVersion, mayor, minor, patch, versionInt
+end
+
+function BlizzMoveAPI:GetGameVersion()
+    return BlizzMove.gameVersion
 end
 
 function BlizzMoveAPI:ToggleDebugPrints()

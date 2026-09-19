@@ -3,18 +3,20 @@
 ----------------------------------------
 -- BlizzMove API Types
 ----------------------------------------
+--- @alias BlizzMoveAPI_Versions BlizzMove_Versions
 --- @alias BlizzMoveAPI_FrameTable table<string, BlizzMoveAPI_FrameData> # Frame name as key
 --- @alias BlizzMoveAPI_AddonFrameTable table<string, BlizzMoveAPI_FrameTable> # Addon name as key, these can be LoD addons
 
 --- @class BlizzMoveAPI_FrameData
 --- @field SubFrames table<string, BlizzMoveAPI_SubFrameData>|nil # Sub frame name as key, sub frames may be nested to any depth
 --- @field FrameReference Frame|nil # Reference to the frame to be moved, if nil, the frame will be looked up by name
---- @field MinVersion number|nil # First Interface version that is considered compatible
---- @field MaxVersion number|nil # Last Interface version that is consider compatible
---- @field MinBuild number|nil # First Interface build number that is considered compatible
---- @field MaxBuild number|nil # Last Interface build number that is considered compatible
---- @field VersionRanges BlizzMoveAPI_Range[]|nil # Interface version ranges, can be combined with MinVersion and MaxVersion
---- @field BuildRanges BlizzMoveAPI_Range[]|nil # Interface build number ranges, can be combined with MinBuild and MaxBuild
+--- @field MinVersion number|nil # Deprecated - First Interface version that is considered compatible
+--- @field MaxVersion number|nil # Deprecated - Last Interface version that is consider compatible
+--- @field MinBuild number|nil # Deprecated - First Interface build number that is considered compatible
+--- @field MaxBuild number|nil # Deprecated - Last Interface build number that is considered compatible
+--- @field VersionRanges BlizzMoveAPI_Range[]|nil # Deprecated - Interface version ranges, can be combined with MinVersion and MaxVersion
+--- @field BuildRanges BlizzMoveAPI_Range[]|nil # Deprecated - Interface build number ranges, can be combined with MinBuild and MaxBuild
+--- @field Versions table<BlizzMoveAPI_Versions, BlizzMoveAPI_Range|true> # Specify the compatible expansions / flavors, optionally with a Min/Max interface version range - the ranges are only considered if the specified Version is loaded. Overrides all other version / build options.
 --- @field SilenceCompatabilityWarnings boolean|nil # Suppress warnings caused by compatibility checks against Interface version and build number
 --- @field IgnoreMouse boolean|nil # Ignore all mouse events, same as setting both IgnoreMouseWheel and NonDraggable to true
 --- @field IgnoreMouseWheel boolean|nil # Ignore mouse wheel events

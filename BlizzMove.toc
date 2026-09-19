@@ -1,4 +1,4 @@
-## Interface: @toc-version-midnight@, @toc-version-retail@, @toc-version-mists@, @toc-version-cata@, @toc-version-wrath@, @toc-version-bcc@, @toc-version-classic@
+## Interface: @toc-version-midnight@, @toc-version-retail@, @toc-version-forever@, @toc-version-mists@, @toc-version-cata@, @toc-version-wrath@, @toc-version-bcc@, @toc-version-classic@
 #@debug@
 ## Interface: 120000
 #@end-debug@
