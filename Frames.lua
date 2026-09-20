@@ -971,6 +971,9 @@ BlizzMoveAPI:RegisterAddOnFrames({
                 [v.Classic] = { Min = 50500 }, -- exists, but is unused
                 [v.Forever] = true,
             },
+            SubFrames = {
+                ["LFGListingFrame"] = {},
+            },
         },
     },
     ["Blizzard_GuildBankUI"] = {
@@ -1229,6 +1232,16 @@ BlizzMoveAPI:RegisterAddOnFrames({
             Versions = {
                 [v.Classic] = { Min = 50000 },
                 [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_LegacySystem"] = {
+        ["LegacySystemFrame"] = {
+            Versions = {
+                [v.Forever] = true,
+            },
+            SubFrames = {
+                ["LegacySystemFrame.TreePage.LegacyTreeTraitPanel.ButtonsParent"] = {},
             },
         },
     },
