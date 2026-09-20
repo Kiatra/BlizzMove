@@ -7,6 +7,17 @@ World of Warcraft add-on to make the default windows movable via drag & drop.
 To temporarily move a window just click title of the window and drag it to where you want it.
 Use ctrl + scroll wheel over a window title to adjust the scale of the window for the current game session.
 
+## WoW Forever beta follow-up proposal
+
+On Forever, this branch defaults new position and scale preferences to permanent;
+existing preferences are preserved. See the [full change accounting and known
+limitations](docs/FOREVER-CHANGELOG.md) for the differences from v3.8.0 and the
+earlier local adaptation. The rebased changes still need in-game validation.
+
+The beta's separate SavedVariables loading issue can require an optional,
+account-specific [Windows persistence bridge](docs/FOREVER-PERSISTENCE.md).
+It is not installed by the addon and is excluded from release packages.
+
 [![Watch the video](https://img.youtube.com/vi/jPcpkQjCTZU/hqdefault.jpg)](https://youtu.be/jPcpkQjCTZU)
 
 ## CurseForge
