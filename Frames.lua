@@ -124,6 +124,8 @@ BlizzMoveAPI:RegisterFrames({
                     },
                     ["TokenFramePopup"] = {
                         Versions = {
+                            [v.Vanilla] = { Min = 11404 }, -- exists, but does nothing
+                            [v.TBC] = { Min = 20505 }, -- exists, but does nothing
                             [v.Standard] = true,
                         },
                         Detachable = true,
@@ -972,7 +974,12 @@ BlizzMoveAPI:RegisterAddOnFrames({
                 [v.Forever] = true,
             },
             SubFrames = {
-                ["LFGListingFrame"] = {},
+                ["LFGListingFrame"] = {
+                    Versions = {
+                        [v.Forever] = true,
+                    },
+                    SilenceCompatabilityWarnings = true, -- exists on other flavors, but blocks clicks
+                },
             },
         },
     },
@@ -1460,6 +1467,7 @@ BlizzMoveAPI:RegisterAddOnFrames({
         ["TransmogFrame"] = {
             Versions = {
                 [v.Vanilla] = { Min = 11509 }, -- backported in a broken state
+                [v.TBC] = true, -- backported in a broken state
                 [v.Classic] = { Min = 50504 },
                 [v.Mainline] = true,
             },
