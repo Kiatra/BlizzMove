@@ -19,3 +19,7 @@ externals:
 
 ignore:
     - README.md
+    - docs
+    - tests
+    - tools
+    - requirements-test.txt
