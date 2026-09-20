@@ -81,6 +81,7 @@ local MAX_SCALE = 2.5;
 local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay above 0.25
 
 local is4E = false;
+local isForever69913 = false;
 
 ------------------------------------------------------------------------------------------------------
 --- Debug Functions
@@ -426,7 +427,7 @@ do
         return true;
     end
 
-    local _, buildNumber, _, interfaceVersion = GetBuildInfo();
+    local version, buildNumber, _, interfaceVersion = GetBuildInfo();
     BlizzMove.gameBuild   = tonumber(buildNumber);
     BlizzMove.interfaceVersion = tonumber(interfaceVersion);
     local versionsMap = {
@@ -465,6 +466,111 @@ do
         end
     end
     if not BlizzMove.gameVersion then error('No game version detected') end
+    isForever69913 = is4E
+        and version == "1.60.1"
+        and BlizzMove.gameBuild == 69913
+        and BlizzMove.interfaceVersion == 16001;
+
+    ------------------------------------------------------------------------------------------------------
+    --- Forever 1.60.1.69913 Native UI Guards
+    ------------------------------------------------------------------------------------------------------
+    if isForever69913 then
+        -- This build searches an active listing before its XML creates the Who page.
+        -- Filter only the built-in display/history entry; native logging and other
+        -- error handlers still receive it. The deferred repair below restores the UI.
+        local errorSuffix = "Blizzard_LFGVanilla_ParentFrame.lua:29: attempt to index global 'LFGWhoListFrame' (a nil value)";
+        local nativePath = "Interface/AddOns/Blizzard_GroupFinder_VanillaStyle/";
+        local installedFrame;
+        local listener;
+        BlizzMove.foreverLFGSuppressedErrors = 0;
+
+        local function IsKnownLoadError(message, messageType, stack)
+            -- Do not inspect secret/inaccessible values. A failed check or matcher
+            -- exception falls through to Blizzard's original display method.
+            if type(canaccessvalue) ~= "function"
+                or not canaccessvalue(message)
+                or not canaccessvalue(messageType)
+                or not canaccessvalue(stack)
+            then return false; end
+            if messageType ~= 0 or type(message) ~= "string" or type(stack) ~= "string" then return false; end
+            if message:sub(-#errorSuffix) ~= errorSuffix or _G.LFGWhoListFrame ~= nil then return false; end
+            local loadedOrLoading, loaded = IsAddOnLoaded("Blizzard_GroupFinder_VanillaStyle");
+            if loadedOrLoading ~= true or loaded ~= false then return false; end
+            local normalizedStack = stack:gsub("\\", "/");
+            return normalizedStack:find(nativePath .. "Blizzard_LFGVanilla_ParentFrame.lua]:29:", 1, true) ~= nil
+                and normalizedStack:find(nativePath .. "Blizzard_LFGVanilla_Browse.lua]:125:", 1, true) ~= nil
+                and normalizedStack:find("in function 'LFGParentFrame_SearchActiveEntry'", 1, true) ~= nil
+                and normalizedStack:find("in function 'LoadAddOn'", 1, true) ~= nil;
+        end
+
+        local function InstallDisplayFilter()
+            local frame = _G.ScriptErrorsFrame;
+            if installedFrame then return true; end
+            if not frame or type(frame.DisplayMessageInternal) ~= "function" then return false; end
+            local original = frame.DisplayMessageInternal;
+            frame.DisplayMessageInternal = function(self, ...)
+                local ok, suppress = pcall(IsKnownLoadError, ...);
+                if self == frame and ok and suppress then
+                    BlizzMove.foreverLFGSuppressedErrors = BlizzMove.foreverLFGSuppressedErrors + 1;
+                    return;
+                end
+                return original(self, ...);
+            end;
+            installedFrame = frame;
+            if listener then
+                listener:UnregisterEvent("ADDON_LOADED");
+                listener:SetScript("OnEvent", nil);
+            end
+            return true;
+        end
+
+        if not InstallDisplayFilter() then
+            listener = CreateFrame("Frame");
+            listener:RegisterEvent("ADDON_LOADED");
+            listener:SetScript("OnEvent", function(_, _, addOnName)
+                if addOnName == "Blizzard_ScriptErrorsFrame" then InstallDisplayFilter(); end
+            end);
+        end
+
+        local installedBarberFrame;
+        local barberListener;
+
+        local function InstallBarberShopGuard()
+            if installedBarberFrame then return true; end
+            local frame = _G.CharCustomizeFrame;
+            local barberShop = _G.BarberShopFrame;
+            if not frame or not barberShop or frame.parentFrame ~= barberShop
+                or type(frame.UpdateSmallButtons) ~= "function" or InCombatLockdown()
+            then return false; end
+
+            local original = frame.UpdateSmallButtons;
+            frame.UpdateSmallButtons = function(self, ...)
+                -- The collision check targets the character-creation name box.
+                -- The barbershop has no name box, so retain its XML anchors.
+                if self == frame and self.parentFrame == barberShop then return; end
+                return original(self, ...);
+            end;
+            installedBarberFrame = frame;
+            BlizzMove.foreverBarberShopGuardInstalled = true;
+            if barberListener then
+                barberListener:UnregisterEvent("ADDON_LOADED");
+                barberListener:UnregisterEvent("PLAYER_REGEN_ENABLED");
+                barberListener:SetScript("OnEvent", nil);
+            end
+            return true;
+        end
+
+        if not InstallBarberShopGuard() then
+            barberListener = CreateFrame("Frame");
+            barberListener:RegisterEvent("ADDON_LOADED");
+            barberListener:RegisterEvent("PLAYER_REGEN_ENABLED");
+            barberListener:SetScript("OnEvent", function(_, event, addOnName)
+                if event == "PLAYER_REGEN_ENABLED" or addOnName == "Blizzard_BarbershopUI"
+                    or addOnName == "Blizzard_CharacterCustomize"
+                then InstallBarberShopGuard(); end
+            end);
+        end
+    end
 
     local function checkRanges(ranges, needle)
         for _, range in ipairs(ranges) do
@@ -904,6 +1010,12 @@ do
                 frame:SetUserPlaced(userPlaced);
                 frameData.storage.points.startPoints = frameData.storage.points.startPoints or GetAbsoluteFramePosition(frame);
                 frameData.storage.isMoving = true;
+                if is4E then
+                    -- Forever does not consistently deliver OnMouseUp back to
+                    -- the frame that began a drag. Capture the global release
+                    -- so dragPoints reach permanent SavedVariables storage.
+                    BlizzMove:WaitForGlobalMouseUp(moveHandle or frame);
+                end
                 returnValue = true;
             end
         end
@@ -1023,6 +1135,23 @@ do
         SetFrameParent(frame);
 
         local frameName = BlizzMove:GetFrameName(frame);
+        -- Forever can restore a Blizzard panel through SetPointBase, which does
+        -- not trigger BlizzMove's SetPoint hook. Reapply permanent positions
+        -- whenever the panel is shown so a later stock-UI reset cannot win.
+        if is4E and BlizzMove.DB.savePosStrategy == 'permanent' then
+            BlizzMove:SetupPointStorage(frame);
+            local points = frameData.storage.points;
+            if
+                points
+                and points.dragged
+                and points.dragPoints
+                and (not frameData.IgnoreSavedPositionWhenMaximized or not frame.isMaximized)
+                and (not frameData.storage.frameParent or frameData.storage.detached)
+            then
+                BlizzMove:AddToSetFramePointsQueue(frame, points.dragPoints);
+            end
+        end
+
         if BlizzMove.DB.saveScaleStrategy == 'permanent' and BlizzMove.DB.scales[frameName] then
             SetFrameScale(frame, BlizzMove.DB.scales[frameName]);
         elseif BlizzMove.SessionScales[frameName] then
@@ -1246,8 +1375,26 @@ do
         -- can't really use a framepool, since we need the OnLoad to run with the correct parent
         local handle = CreateFrame('Frame', nil, parent, 'PanelDragBarTemplate');
         handle:SetParent(frame);
-        handle:SetAllPoints(frame);
-        handle:SetFrameLevel(frame:GetFrameLevel() + 1);
+        local handleLevel = frame:GetFrameLevel() + 1;
+        if is4E and BlizzMove:GetFrameName(parent) == 'LFGParentFrame' then
+            -- Forever's pages replace the content frame but share this title
+            -- bar. Keep the drag surface clear of the portrait and close button.
+            handle:SetPoint('TOPLEFT', parent, 'TOPLEFT', 55, -1);
+            handle:SetPoint('TOPRIGHT', parent, 'TOPRIGHT', -32, -1);
+            handle:SetHeight(30);
+            -- Full-size mouse-enabled pages can sit above the parent. Use the
+            -- highest native title level so the first-open page remains draggable.
+            for _, pageName in ipairs({ 'LFGListingFrame', 'LFGBrowseFrame', 'LFGWhoListFrame' }) do
+                local page = _G[pageName];
+                local title = page and page.TitleContainer;
+                if title and type(title.GetFrameLevel) == 'function' then
+                    handleLevel = math.max(handleLevel, title:GetFrameLevel() + 1);
+                end
+            end
+        else
+            handle:SetAllPoints(frame);
+        end
+        handle:SetFrameLevel(handleLevel);
         handle:SetPropagateMouseMotion(true);
         handle:SetPropagateMouseClicks(true);
         handle.onDragStartCallback = function() return false end;
@@ -1300,6 +1447,11 @@ do
         BlizzMove.MoveHandles[moveHandle] = true;
     end
 
+    local function ShouldForceUseSecureMoveHandle(frame, frameData, frameName)
+        return frameData.ForceUseSecureMoveHandle
+            or (is4E and (frameName or BlizzMove:GetFrameName(frame)) == 'LFGParentFrame');
+    end
+
     --- @param frame Frame
     --- @param addOnName string
     --- @param frameName string
@@ -1308,7 +1460,7 @@ do
     local function MakeFrameMovable(frame, addOnName, frameName, frameData, frameParent)
         if not frame then return false; end
 
-        if InCombatLockdown() and (frameData.ForceUseSecureMoveHandle or frame:IsProtected()) then return false; end
+        if InCombatLockdown() and (ShouldForceUseSecureMoveHandle(frame, frameData, frameName) or frame:IsProtected()) then return false; end
 
         local clampFrame = false;
         if not frameParent or frameData.Detachable then
@@ -1338,7 +1490,7 @@ do
                     while rootFrameData.parentData do
                         rootFrameData = rootFrameData.parentData;
                     end
-                    if frameData.ForceUseSecureMoveHandle or frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
+                    if ShouldForceUseSecureMoveHandle(frame, frameData, frameName) or frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
                         MakeMoveHandles(frame, frameData);
                     else
                         frame:EnableMouse(true);
@@ -1378,7 +1530,7 @@ do
                 while rootFrameData.parentData do
                     rootFrameData = rootFrameData.parentData;
                 end
-                if frameData.ForceUseSecureMoveHandle or frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
+                if ShouldForceUseSecureMoveHandle(frame, frameData, frameName) or frame:IsProtected() or rootFrameData.storage.frame:IsProtected() then
                     MakeMoveHandles(frame, frameData);
                 else
                     frame:EnableMouse(true);
@@ -1406,6 +1558,11 @@ do
         if frameData.ForcePosition or (not frameData.IgnoreMouse and not frameData.NonDraggable) then
             -- prevents rubberbanding when a frame's movement is handled by something else
             BlizzMove:SecureHook(frame, "SetPoint", OnSetPoint);
+            if is4E and type(frame.SetPointBase) == "function" then
+                -- Forever's panel manager can bypass SetPoint after login or a
+                -- tab change. Observe that path so the permanent position wins.
+                BlizzMove:SecureHook(frame, "SetPointBase", OnSetPoint);
+            end
         end
         BlizzMove:SecureHook(frame, "SetWidth", OnSizeUpdate);
         BlizzMove:SecureHook(frame, "SetHeight", OnSizeUpdate);
@@ -1501,7 +1658,7 @@ do
             return false;
         end
 
-        if InCombatLockdown() and frame:IsProtected() then
+        if InCombatLockdown() and (ShouldForceUseSecureMoveHandle(frame, frameData, frameName) or frame:IsProtected()) then
             self:AddToCombatLockdownQueue(BlizzMove.ProcessFrame, self, addOnName, frameName, frameData, frameParent);
             self:DebugPrint('Adding to combatLockdownQueue: ProcessFrame - ', addOnName, ' - ', frameName);
 
@@ -1564,6 +1721,7 @@ do
     function BlizzMove:AddToCombatLockdownQueue(func, ...)
         if not InCombatLockdown() then
             func(...);
+            return;
         end
         if #self.CombatLockdownQueue == 0 then
             self:RegisterEvent("PLAYER_REGEN_ENABLED");
@@ -1639,7 +1797,8 @@ do
         dumpMissingFrames = 'dumpMissingFrames',
         dumpTopLevelFrames = 'dumpTopLevelFrames',
     };
-    function BlizzMove:OnInitialize()
+    local function Initialize(addon)
+        local self = addon;
         self.initialized = true;
 
         _G.BlizzMoveDB = _G.BlizzMoveDB or {};
@@ -1693,6 +1852,18 @@ do
         end
 
         self:RegisterEvent("ADDON_LOADED");
+    end
+
+    function BlizzMove:OnInitialize()
+        if is4E then
+            -- Forever can invoke addon initialization while its account
+            -- SavedVariables are still being attached. Waiting one frame works
+            -- both during login and when the addon is loaded after login.
+            RunNextFrame(function() Initialize(self); end);
+            return;
+        end
+
+        Initialize(self);
     end
 
     function BlizzMove:OnSlashCommand(message)
@@ -1758,8 +1929,8 @@ do
 
     --- @type BlizzMoveDB
     local defaults = {
-        savePosStrategy = "session",
-        saveScaleStrategy = "session",
+        savePosStrategy = is4E and "permanent" or "session",
+        saveScaleStrategy = is4E and "permanent" or "session",
         points = {},
         scales = {},
         mutedCompatWarnings = {},
@@ -1806,6 +1977,45 @@ do
                 dialog:ClearAllPoints();
                 dialog:SetAllPoints();
             end
+        end
+        -- Build 69913 can abort the Group Finder Browse OnLoad after performing
+        -- its active-entry search but before the final visual setup. Finish only
+        -- that skipped tail once the native Who page exists, then refresh the
+        -- shared title-bar handle. Never fabricate Who or replay the search.
+        if isForever69913 and addOnName == "Blizzard_GroupFinder_VanillaStyle" then
+            local function refreshGroupFinder()
+                local parent = _G.LFGParentFrame;
+                if not parent then return; end
+                if InCombatLockdown() then
+                    BlizzMove:AddToCombatLockdownQueue(refreshGroupFinder);
+                    return;
+                end
+
+                local browse = _G.LFGBrowseFrame;
+                local title = browse and browse.TitleContainer and browse.TitleContainer.TitleText;
+                local background = browse and browse.Inset and browse.Inset.Bg;
+                if
+                    _G.LFGVANILLA_SETTING_MODERN_STYLE and _G.LFGWhoListFrame
+                    and C_LFGList and C_LFGList.HasActiveEntryInfo and C_LFGList.HasActiveEntryInfo()
+                    and browse and type(browse.SetPortraitAtlasRaw) == "function"
+                    and title and type(title.GetText) == "function" and type(title.SetText) == "function"
+                    and background and type(background.Hide) == "function"
+                    and (not title:GetText() or title:GetText() == "")
+                then
+                    pcall(browse.SetPortraitAtlasRaw, browse, "groupfinder-eye-frame");
+                    pcall(title.SetText, title, _G.LFG_TITLE);
+                    pcall(background.Hide, background);
+                end
+
+                if type(parent.UpdateTabs) == "function" then
+                    pcall(parent.UpdateTabs, parent);
+                end
+                if type(parent.UpdateEyePortrait) == "function" then
+                    pcall(parent.UpdateEyePortrait, parent);
+                end
+                BlizzMove:ProcessFrames(addOnName);
+            end
+            RunNextFrame(refreshGroupFinder);
         end
         -- fix anchor family connection issues when opening PlayerChoiceFrame after moving it
         if addOnName == "Blizzard_PlayerChoice" and _G.PlayerChoiceFrame then

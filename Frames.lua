@@ -1232,6 +1232,13 @@ BlizzMoveAPI:RegisterAddOnFrames({
             },
         },
     },
+    ["Blizzard_LegacySystem"] = {
+        ["LegacySystemFrame"] = {
+            Versions = {
+                [v.Forever] = true,
+            },
+        },
+    },
     ["Blizzard_MacroUI"] = {
         ["MacroFrame"] = {
             Versions = ALL_VERSIONS,
