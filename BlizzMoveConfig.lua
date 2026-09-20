@@ -176,6 +176,15 @@ function Config:GetOptions()
                         width = 1.2,
                         func = function() Config:ShowURLPopup("https://www.paypal.com/cgi-bin/webscr?hosted_button_id=C8HP9WVKPCL8C&item_name=BlizzMove&cmd=_s-xclick"); end,
                     },
+                    lauButton = {
+                        order = increment(),
+                        type = "execute",
+                        name = "Lau [WoW Forever edits]",
+                        desc = "Click to copy Streamlabs tip link.",
+                        width = 1.2,
+                        hidden = BlizzMove.gameVersion ~= BlizzMove.Versions.Forever,
+                        func = function() Config:ShowURLPopup("https://streamlabs.com/lausudo/tip"); end,
+                    },
                 },
             },
             fullFramesTab = {
