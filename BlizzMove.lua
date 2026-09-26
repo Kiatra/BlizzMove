@@ -80,8 +80,6 @@ BlizzMove.FakeUIParent:SetAllPoints(UIParent);
 local MAX_SCALE = 2.5;
 local MIN_SCALE = 0.3; -- steps are in 0.1 increments, and we'd like to stay above 0.25
 
-local is4E = false;
-
 ------------------------------------------------------------------------------------------------------
 --- Debug Functions
 ------------------------------------------------------------------------------------------------------
@@ -452,7 +450,6 @@ do
         if interfaceVersion < info.maxToc then
             BlizzMove.gameVersion = info.version
             if info.version == BlizzMove.Versions.Forever then
-                is4E = true
                 BlizzMove.gameFamily = BlizzMove.Versions.Mainline
             end
             if standardVersions[info.version] then
@@ -681,7 +678,7 @@ do
                     relativeFrame = BlizzMove.FakeUIParent;
                 end
 
-                if not is4E and not InCombatLockdown() and (not relativeFrame or select(2, relativeFrame:IsProtected())) then
+                if not InCombatLockdown() and (not relativeFrame or select(2, relativeFrame:IsProtected())) then
                     secureFrame:SetFrameRef('frame', frame);
                     if relativeFrame then
                         secureFrame:SetFrameRef('relativeFrame', relativeFrame);
