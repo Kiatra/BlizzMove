@@ -974,7 +974,19 @@ BlizzMoveAPI:RegisterAddOnFrames({
                 [v.Forever] = true,
             },
             SubFrames = {
+                ["LFGBrowseFrame"] = {
+                    Versions = {
+                        [v.Forever] = true,
+                    },
+                    SilenceCompatabilityWarnings = true, -- exists on other flavors, but blocks clicks
+                },
                 ["LFGListingFrame"] = {
+                    Versions = {
+                        [v.Forever] = true,
+                    },
+                    SilenceCompatabilityWarnings = true, -- exists on other flavors, but blocks clicks
+                },
+                ["LFGWhoListFrame"] = {
                     Versions = {
                         [v.Forever] = true,
                     },
