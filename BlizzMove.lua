@@ -659,11 +659,18 @@ do
     --- @param frame Frame
     --- @param framePoints BlizzMove_FramePoint[]?
     --- @param raw boolean? # if true, will not factor in the frame scale
+    --- @param overrideMoverSetup boolean? # if true, will override known "frame mover" setups (currently only ElvUI)
     --- @return boolean
-    function SetFramePoints(frame, framePoints, raw)
+    function SetFramePoints(frame, framePoints, raw, overrideMoverSetup)
         if InCombatLockdown() and frame:IsProtected() then return false; end
 
         if framePoints and framePoints[1] then
+            local moverValue = nil;
+            if overrideMoverSetup and frame.containerHolder and select(2, frame:GetPoint()) == frame.containerHolder then
+                moverValue = { containerHolder = frame.containerHolder };
+                frame.containerHolder = nil;
+            end
+
             frame:ClearAllPoints();
             local SetPoint = frame.SetPointBase or frame.SetPoint;
             local scale = raw and 1 or frame:GetScale();
@@ -712,6 +719,10 @@ do
                     );
                 end
                 ignoreSetPointHook = false;
+            end
+
+            if moverValue then
+                Mixin(frame, moverValue)
             end
         end
 

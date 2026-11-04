@@ -312,7 +312,6 @@ local ignoredFrames = {
     TutorialKeyboardMouseFrame_Frame = true, -- popup frame
     UIFrameManager = true, -- has no visuals
     UIWidgetManager = true, -- has no visuals
-    UIWidgetTopCenterContainerFrame = true, -- not sure what it is
     VoiceChatChannelActivatedNotification = true, -- popup frame, not sure if we want to move it
     VoiceChatPromptActivateChannel = true, -- popup frame, not sure if we want to move it
     WorldMapFrame = true, -- fullscreen on classic
