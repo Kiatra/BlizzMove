@@ -2,6 +2,7 @@
 local BlizzMoveAPI = _G.BlizzMoveAPI ---@diagnostic disable-line: undefined-field
 if not BlizzMoveAPI then return; end
 
+--- @type BlizzMoveAPI_Versions
 local v = BlizzMoveAPI.Versions;
 local ALL_VERSIONS = { [v.Fallback] = true };
 
@@ -1482,6 +1483,18 @@ BlizzMoveAPI:RegisterAddOnFrames({
                 [v.TBC] = true, -- backported in a broken state
                 [v.Classic] = { Min = 50504 },
                 [v.Mainline] = true,
+            },
+        },
+    },
+    ["Blizzard_SocialUI"] = {
+        ["SocialUIFrame"] = {
+            Versions = {
+                [v.Forever] = true,
+            },
+            SubFrames = {
+                ["SocialUIFrame.IgnoreListFrame"] = {
+                    Detachable = true,
+                }
             },
         },
     },

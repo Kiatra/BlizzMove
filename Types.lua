@@ -31,6 +31,7 @@
 --- @field Detachable boolean|nil # Allow the frame to be detached from the parent and moved independently
 --- @field ForceParentage boolean|nil # Will call child:SetParent(parent) on registration
 --- @field ManuallyScaleWithParent boolean|nil # Manually scale the frame with the parent; will call SetScale on the child whenever the parent's scale is updated
+--- @field Versions table<BlizzMoveAPI_Versions, BlizzMoveAPI_Range|true>|nil # Optional for subframes
 
 --- @class BlizzMoveAPI_Range
 --- @field Min number|nil # Either Min, Max, or both must be filled
