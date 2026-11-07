@@ -1489,7 +1489,7 @@ BlizzMoveAPI:RegisterAddOnFrames({
     ["Blizzard_SocialUI"] = {
         ["SocialUIFrame"] = {
             Versions = {
-                [v.Forever] = true,
+                [v.Mainline] = true,
             },
             SubFrames = {
                 ["SocialUIFrame.IgnoreListFrame"] = {
